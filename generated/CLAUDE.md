@@ -103,6 +103,26 @@ Follow these project instructions for all Home Assistant work.
 
 **Standard.** Views MUST be checked at their intended phone, tablet, desktop, or wall-panel sizes. Do not rely on editor preview alone.
 
+## HA-UX-006 — Use the design system
+
+**Standard.** Dashboard changes MUST use the tokens, components, state treatments, and layouts in `handbook/09-visual-design-system.md`; local one-off styling requires a documented reason.
+
+## HA-UX-007 — Reserve colour for meaning
+
+**Standard.** Colour MUST communicate state, severity, or a deliberate accent. Decorative colour must not compete with warnings, active controls, or unavailable states.
+
+## HA-UX-008 — Keep interaction behaviour consistent
+
+**Standard.** Equivalent controls MUST use the same tap, hold, and more-info behaviour. Consequential actions require confirmation or an interaction that makes accidental activation unlikely.
+
+## HA-UX-009 — Prefer progressive disclosure
+
+**Guideline.** Primary views SHOULD show current state and frequent actions; detail, history, settings, and diagnostics should be revealed through subviews or more-info rather than shown permanently.
+
+## HA-UX-010 — Make exceptional states explicit
+
+**Standard.** Unknown, unavailable, stale, warning, and critical states MUST be visually distinguishable without relying on colour alone and must not masquerade as a normal off state.
+
 ## HA-SEC-001 — Never commit secrets
 
 **Standard.** Passwords, tokens, private keys, webhook identifiers, precise sensitive locations, and recoverable credentials MUST NOT enter version control.
@@ -186,3 +206,47 @@ Follow these project instructions for all Home Assistant work.
 ## HA-AI-004 — Preserve unrelated work
 
 **Standard.** An assistant MUST keep changes focused and must not overwrite, reformat, or remove unrelated user changes.
+
+## HA-DESIGN-001 — Centralise visual tokens
+
+**Standard.** Colours, spacing, radii, typography, and reusable card styling MUST be defined centrally through the theme, dashboard profile, or reusable templates rather than repeated as card-local literals.
+
+## HA-DESIGN-002 — Prefer native components
+
+**Guideline.** Native Home Assistant cards and features SHOULD be preferred. Every custom frontend dependency must have a named benefit, documented installation source, fallback impact, and maintenance owner.
+
+## HA-DESIGN-003 — Follow standard view hierarchy
+
+**Standard.** Overview, room, security, and system-status views MUST follow the information hierarchy in this design system unless the consuming repository documents a user-specific reason to differ.
+
+## HA-DESIGN-004 — Keep density purposeful
+
+**Standard.** Dashboards MUST avoid both entity-dump density and decorative empty space. Each visible item needs a task, status, or navigation purpose appropriate to that view.
+
+## HA-DESIGN-005 — Preserve accessibility
+
+**Standard.** Dashboards MUST retain readable contrast, 44 by 44 pixel touch targets, text or icon reinforcement for meaningful colour, and understandable labels for icon-only actions.
+
+## HA-DESIGN-006 — Define interaction contracts
+
+**Standard.** Reusable components MUST document their displayed state and tap, hold, double-tap, confirmation, and navigation behaviour; undefined gestures should do nothing rather than surprise the user.
+
+## HA-REVIEW-001 — Gather evidence before judging
+
+**Standard.** An audit MUST cite the actual repository path and configuration object for every violation; assumptions and unavailable runtime evidence must be labelled explicitly.
+
+## HA-REVIEW-002 — Separate audit from implementation
+
+**Standard.** Reviewing a system MUST NOT silently authorise edits. Findings, proposed remediation, and applied changes are separate stages unless the user explicitly combines them.
+
+## HA-REVIEW-003 — Report by rule ID
+
+**Standard.** Every compliance finding MUST reference an applicable handbook rule ID, severity, evidence, impact, recommendation, validation, and rollback consideration.
+
+## HA-REVIEW-004 — Remediate in reversible stages
+
+**Standard.** Remediation plans MUST prioritise safety and correctness, preserve working behaviour, limit each stage to a reviewable concern, and define success and rollback before implementation.
+
+## HA-REVIEW-005 — Preserve user-specific intent
+
+**Principle.** An agent MUST treat documented accessibility needs, household routines, display constraints, and deliberate exceptions as design inputs rather than normalising them away.

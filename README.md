@@ -18,6 +18,8 @@ The handbook is the source of truth. Rules for Cursor, Claude, Copilot, Windsurf
 - `generated/` — generated assistant-specific rules; do not edit manually
 - `.github/` — contribution templates and automated checks
 
+The visual baseline and audit workflow live in `handbook/09-visual-design-system.md` and `handbook/10-review-and-audit.md`. Start a repository-specific rollout by copying `examples/dashboard-profile.yaml` and use `examples/audit-report-template.md` for a rules-based review.
+
 ## Rule language
 
 Each normative rule has a stable identifier such as `HA-ARCH-001` and a level:
