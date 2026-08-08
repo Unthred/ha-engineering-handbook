@@ -31,7 +31,18 @@ The words **MUST**, **SHOULD**, and **MAY** follow RFC 2119-style meanings.
 
 ## Status
 
-The initial chapters establish the handbook's scope, architecture, conventions, and contribution model. Content will grow through reviewed changes and recorded decisions.
+The initial chapters establish the handbook's scope, architecture, conventions, and contribution model. Machine-readable and assistant-specific rules are generated directly from those chapters and checked in CI.
+
+## Generate assistant rules
+
+Python 3.10 or newer is sufficient; there are no third-party dependencies.
+
+```shell
+python scripts/rules.py generate
+python scripts/rules.py check
+```
+
+See [`generated/README.md`](generated/README.md) for the output paths and installation targets.
 
 ## Licence
 

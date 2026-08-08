@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Unthred/ha-engineering-handbook/schemas/rule.schema.json",
+  "title": "Home Assistant engineering rule catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "rules"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "rules": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/rule" }
+    }
+  },
+  "$defs": {
+    "rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "area", "level", "text", "source", "rationale", "verification"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^HA-[A-Z]+-[0-9]{3}$" },
+        "title": { "type": "string", "minLength": 1 },
+        "area": { "type": "string", "pattern": "^[A-Z]+$" },
+        "level": { "enum": ["Principle", "Standard", "Guideline", "Example"] },
+        "text": { "type": "string", "minLength": 1 },
+        "source": { "type": "string", "pattern": "^handbook/.+\\.md$" },
+        "rationale": { "type": ["string", "null"] },
+        "verification": { "type": ["string", "null"] }
+      }
+    }
+  }
+}
