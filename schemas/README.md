@@ -1,5 +1,5 @@
 # Schemas
 
-Machine-readable schemas will validate extracted handbook rules and generator inputs.
-
-The rule model will include: stable ID, title, area, level, normative text, rationale, verification, source path, and optional assistant targeting metadata.
+`rule.schema.json` describes the generated rule catalog in `generated/rules.json`.
+The handbook Markdown remains authoritative; the catalog is a deterministic,
+machine-readable representation for tools and assistants.

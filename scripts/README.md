@@ -1,9 +1,16 @@
 # Tooling
 
-Planned tooling will:
+`rules.py` extracts normative rules directly from the handbook Markdown. It uses
+only the Python standard library.
 
-1. extract normative rules from handbook Markdown
-2. reject duplicate or malformed rule IDs
-3. validate required metadata and links
-4. generate assistant-specific rule files
-5. fail CI when generated files are stale
+```shell
+python scripts/rules.py generate
+python scripts/rules.py check
+```
+
+`generate` writes the canonical JSON catalog and assistant-specific files under
+`generated/`. `check` validates rule IDs and required fields, then fails if an
+output is missing or stale. CI runs the check for every pull request and push to
+`main`.
+
+Run the parser tests with `python -m unittest discover -s tests`.

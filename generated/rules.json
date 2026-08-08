@@ -1,0 +1,625 @@
+{
+  "schema_version": 1,
+  "rules": [
+    {
+      "id": "HA-PHIL-001",
+      "title": "The home must remain operable",
+      "area": "PHIL",
+      "level": "Principle",
+      "text": "Essential functions MUST retain a simple manual path when Home Assistant, the network, or an integration is unavailable.",
+      "source": "handbook/00-philosophy.md",
+      "rationale": "Automation should improve a home, not hold it hostage.",
+      "verification": "For each essential function, identify the fallback and test it periodically."
+    },
+    {
+      "id": "HA-PHIL-002",
+      "title": "Prefer local control",
+      "area": "PHIL",
+      "level": "Standard",
+      "text": "Local, documented interfaces SHOULD be preferred over cloud-only dependencies, especially for lighting, heating, access, safety, and accessibility.",
+      "source": "handbook/00-philosophy.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-PHIL-003",
+      "title": "Automate outcomes, not surprises",
+      "area": "PHIL",
+      "level": "Principle",
+      "text": "Behaviour MUST be predictable to occupants. Context-aware behaviour needs clear boundaries, sensible defaults, and an obvious override.",
+      "source": "handbook/00-philosophy.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-PHIL-004",
+      "title": "Complexity must earn its keep",
+      "area": "PHIL",
+      "level": "Guideline",
+      "text": "Choose the simplest design that meets reliability and usability needs. Every helper, template, dependency, and abstraction creates maintenance cost.",
+      "source": "handbook/00-philosophy.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-ARCH-001",
+      "title": "Separate concerns",
+      "area": "ARCH",
+      "level": "Standard",
+      "text": "Inputs, decision logic, and actions SHOULD be distinguishable. Reusable behaviour belongs in scripts; reusable calculations belong in helpers or template entities.",
+      "source": "handbook/01-architecture.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-ARCH-002",
+      "title": "Use stable interfaces",
+      "area": "ARCH",
+      "level": "Standard",
+      "text": "Automations MUST depend on stable entity semantics rather than device IDs or transient implementation details when an entity or helper can express the intent.",
+      "source": "handbook/01-architecture.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-ARCH-003",
+      "title": "Define ownership",
+      "area": "ARCH",
+      "level": "Standard",
+      "text": "Each behaviour MUST have one authoritative owner. Avoid overlapping automations that compete to control the same outcome without an explicit arbitration design.",
+      "source": "handbook/01-architecture.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-ARCH-004",
+      "title": "Design for degraded operation",
+      "area": "ARCH",
+      "level": "Standard",
+      "text": "Critical flows MUST define what happens when a sensor is unavailable, data is stale, a service call fails, or Home Assistant restarts mid-flow.",
+      "source": "handbook/01-architecture.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-ARCH-005",
+      "title": "Minimise hidden coupling",
+      "area": "ARCH",
+      "level": "Guideline",
+      "text": "Dependencies between packages, helpers, scripts, dashboards, and external systems SHOULD be documented close to the controlling logic.",
+      "source": "handbook/01-architecture.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-YAML-001",
+      "title": "Name by purpose",
+      "area": "YAML",
+      "level": "Standard",
+      "text": "IDs and aliases MUST describe intent, not merely location or implementation. Prefer `bedroom_blackout_close` to `blind_automation_2`.",
+      "source": "handbook/02-naming-and-yaml.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-YAML-002",
+      "title": "Use consistent identifiers",
+      "area": "YAML",
+      "level": "Standard",
+      "text": "Use lowercase `snake_case` for YAML IDs and helper names. Entity-friendly display names MAY use natural language.",
+      "source": "handbook/02-naming-and-yaml.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-YAML-003",
+      "title": "Optimise for review",
+      "area": "YAML",
+      "level": "Guideline",
+      "text": "Keep YAML explicit, consistently formatted, and locally understandable. Avoid clever templates where a straightforward condition or helper is clearer.",
+      "source": "handbook/02-naming-and-yaml.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-YAML-004",
+      "title": "Explain the reason",
+      "area": "YAML",
+      "level": "Standard",
+      "text": "Comments SHOULD document constraints, unusual device behaviour, or rationale. Do not narrate syntax that the YAML already makes obvious.",
+      "source": "handbook/02-naming-and-yaml.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-YAML-005",
+      "title": "Avoid copied constants",
+      "area": "YAML",
+      "level": "Guideline",
+      "text": "Values that represent household policy or are reused across behaviours SHOULD live in an appropriately named helper or shared variable.",
+      "source": "handbook/02-naming-and-yaml.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-AUTO-001",
+      "title": "Define trigger semantics",
+      "area": "AUTO",
+      "level": "Standard",
+      "text": "Every automation MUST make clear whether it responds to an edge, a sustained state, a schedule, or an event. Restart behaviour and initial state must be considered.",
+      "source": "handbook/03-automations.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-AUTO-002",
+      "title": "Make execution mode deliberate",
+      "area": "AUTO",
+      "level": "Standard",
+      "text": "Choose `single`, `restart`, `queued`, or `parallel` based on concurrency semantics; do not accept the default accidentally.",
+      "source": "handbook/03-automations.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-AUTO-003",
+      "title": "Guard unsafe and noisy actions",
+      "area": "AUTO",
+      "level": "Standard",
+      "text": "Actions that unlock, open, heat, notify repeatedly, or affect security MUST have explicit preconditions and rate limits where appropriate.",
+      "source": "handbook/03-automations.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-AUTO-004",
+      "title": "Make retries bounded",
+      "area": "AUTO",
+      "level": "Standard",
+      "text": "Retries MUST have a limit, delay, and observable failure outcome. Infinite retry loops are forbidden.",
+      "source": "handbook/03-automations.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-AUTO-005",
+      "title": "Preserve user intent",
+      "area": "AUTO",
+      "level": "Principle",
+      "text": "Manual intervention SHOULD win for a documented period or until a clear reset condition. An automation must not immediately undo an occupant's action.",
+      "source": "handbook/03-automations.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-AUTO-006",
+      "title": "Use traceable structure",
+      "area": "AUTO",
+      "level": "Guideline",
+      "text": "Give triggers IDs, use descriptive aliases for branches and actions, and keep traces useful enough to explain why a decision occurred.",
+      "source": "handbook/03-automations.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-UX-001",
+      "title": "Design around tasks",
+      "area": "UX",
+      "level": "Principle",
+      "text": "A dashboard SHOULD prioritise what an occupant needs to understand or do, not expose every available entity.",
+      "source": "handbook/04-dashboards-and-ux.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-UX-002",
+      "title": "Show state before control",
+      "area": "UX",
+      "level": "Standard",
+      "text": "Controls MUST communicate the current state, pending transitions, unavailable states, and important consequences.",
+      "source": "handbook/04-dashboards-and-ux.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-UX-003",
+      "title": "Keep common actions close",
+      "area": "UX",
+      "level": "Guideline",
+      "text": "Frequent actions SHOULD require minimal navigation. Diagnostic and rare controls belong in secondary views.",
+      "source": "handbook/04-dashboards-and-ux.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-UX-004",
+      "title": "Use consistent visual language",
+      "area": "UX",
+      "level": "Standard",
+      "text": "The same colour, icon, label, and interaction pattern MUST mean the same thing across dashboards.",
+      "source": "handbook/04-dashboards-and-ux.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-UX-005",
+      "title": "Build for the actual displays",
+      "area": "UX",
+      "level": "Standard",
+      "text": "Views MUST be checked at their intended phone, tablet, desktop, or wall-panel sizes. Do not rely on editor preview alone.",
+      "source": "handbook/04-dashboards-and-ux.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-UX-006",
+      "title": "Use the design system",
+      "area": "UX",
+      "level": "Standard",
+      "text": "Dashboard changes MUST use the tokens, components, state treatments, and layouts in `handbook/09-visual-design-system.md`; local one-off styling requires a documented reason.",
+      "source": "handbook/04-dashboards-and-ux.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-UX-007",
+      "title": "Reserve colour for meaning",
+      "area": "UX",
+      "level": "Standard",
+      "text": "Colour MUST communicate state, severity, or a deliberate accent. Decorative colour must not compete with warnings, active controls, or unavailable states.",
+      "source": "handbook/04-dashboards-and-ux.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-UX-008",
+      "title": "Keep interaction behaviour consistent",
+      "area": "UX",
+      "level": "Standard",
+      "text": "Equivalent controls MUST use the same tap, hold, and more-info behaviour. Consequential actions require confirmation or an interaction that makes accidental activation unlikely.",
+      "source": "handbook/04-dashboards-and-ux.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-UX-009",
+      "title": "Prefer progressive disclosure",
+      "area": "UX",
+      "level": "Guideline",
+      "text": "Primary views SHOULD show current state and frequent actions; detail, history, settings, and diagnostics should be revealed through subviews or more-info rather than shown permanently.",
+      "source": "handbook/04-dashboards-and-ux.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-UX-010",
+      "title": "Make exceptional states explicit",
+      "area": "UX",
+      "level": "Standard",
+      "text": "Unknown, unavailable, stale, warning, and critical states MUST be visually distinguishable without relying on colour alone and must not masquerade as a normal off state.",
+      "source": "handbook/04-dashboards-and-ux.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-SEC-001",
+      "title": "Never commit secrets",
+      "area": "SEC",
+      "level": "Standard",
+      "text": "Passwords, tokens, private keys, webhook identifiers, precise sensitive locations, and recoverable credentials MUST NOT enter version control.",
+      "source": "handbook/05-security-and-secrets.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-SEC-002",
+      "title": "Grant least privilege",
+      "area": "SEC",
+      "level": "Standard",
+      "text": "Accounts, tokens, add-ons, integrations, and network paths MUST receive only the access needed for their function.",
+      "source": "handbook/05-security-and-secrets.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-SEC-003",
+      "title": "Treat external input as untrusted",
+      "area": "SEC",
+      "level": "Standard",
+      "text": "Webhook data, MQTT payloads, voice text, calendar content, and AI output MUST be validated before they can trigger consequential actions.",
+      "source": "handbook/05-security-and-secrets.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-SEC-004",
+      "title": "Separate networks by trust",
+      "area": "SEC",
+      "level": "Guideline",
+      "text": "IoT devices SHOULD be isolated where practical, with explicit routes to required services and no assumed internet access.",
+      "source": "handbook/05-security-and-secrets.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-SEC-005",
+      "title": "Review exposure",
+      "area": "SEC",
+      "level": "Standard",
+      "text": "Entities exposed to voice assistants, remote access, or third-party services MUST be intentionally selected and periodically reviewed.",
+      "source": "handbook/05-security-and-secrets.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-REL-001",
+      "title": "Detect stale and unavailable data",
+      "area": "REL",
+      "level": "Standard",
+      "text": "Important decisions MUST distinguish valid readings from `unknown`, `unavailable`, implausible, or stale values.",
+      "source": "handbook/06-reliability-and-observability.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-REL-002",
+      "title": "Make failure visible",
+      "area": "REL",
+      "level": "Standard",
+      "text": "Failures affecting essential or expected behaviour MUST surface through a proportionate persistent notification, dashboard status, log, or alert.",
+      "source": "handbook/06-reliability-and-observability.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-REL-003",
+      "title": "Avoid alert fatigue",
+      "area": "REL",
+      "level": "Standard",
+      "text": "Notifications SHOULD be actionable, deduplicated, severity-appropriate, and clear about what happened and what the occupant should do.",
+      "source": "handbook/06-reliability-and-observability.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-REL-004",
+      "title": "Observe dependencies",
+      "area": "REL",
+      "level": "Guideline",
+      "text": "Critical integrations, batteries, coordinators, storage, backups, and remote endpoints SHOULD have health indicators and documented thresholds.",
+      "source": "handbook/06-reliability-and-observability.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-REL-005",
+      "title": "Restore safely",
+      "area": "REL",
+      "level": "Standard",
+      "text": "After restart or reconnection, logic MUST re-evaluate current reality rather than blindly replaying stale actions.",
+      "source": "handbook/06-reliability-and-observability.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-TEST-001",
+      "title": "Validate before deployment",
+      "area": "TEST",
+      "level": "Standard",
+      "text": "Configuration MUST pass Home Assistant configuration validation and repository checks before production use.",
+      "source": "handbook/07-testing-and-deployment.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-TEST-002",
+      "title": "Test boundaries and failure paths",
+      "area": "TEST",
+      "level": "Standard",
+      "text": "Tests or documented verification MUST cover unavailable inputs, threshold edges, restart behaviour, concurrent triggers, and manual overrides where relevant.",
+      "source": "handbook/07-testing-and-deployment.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-TEST-003",
+      "title": "Make changes reversible",
+      "area": "TEST",
+      "level": "Standard",
+      "text": "Changes SHOULD be small enough to review and revert. Risky changes require a rollback path before deployment.",
+      "source": "handbook/07-testing-and-deployment.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-TEST-004",
+      "title": "Separate development from production",
+      "area": "TEST",
+      "level": "Guideline",
+      "text": "Experimental logic SHOULD be isolated and disabled by default or tested against non-critical entities before controlling the live home.",
+      "source": "handbook/07-testing-and-deployment.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-TEST-005",
+      "title": "Verify the outcome",
+      "area": "TEST",
+      "level": "Standard",
+      "text": "A successful reload is not proof of correct behaviour. Verify resulting state, traces, logs, notifications, and physical outcome as applicable.",
+      "source": "handbook/07-testing-and-deployment.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-DOC-001",
+      "title": "Document operational intent",
+      "area": "DOC",
+      "level": "Standard",
+      "text": "Documentation MUST explain purpose, dependencies, expected behaviour, fallback, and verification for important systems.",
+      "source": "handbook/08-documentation-and-ai.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-DOC-002",
+      "title": "Keep the handbook authoritative",
+      "area": "DOC",
+      "level": "Standard",
+      "text": "Assistant-specific instruction files MUST be generated from handbook rules. Conflicts are resolved in favour of the handbook.",
+      "source": "handbook/08-documentation-and-ai.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-AI-001",
+      "title": "Inspect before editing",
+      "area": "AI",
+      "level": "Standard",
+      "text": "An AI assistant MUST inspect relevant files, conventions, dependencies, and current state before proposing or applying changes.",
+      "source": "handbook/08-documentation-and-ai.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-AI-002",
+      "title": "Never invent entity IDs",
+      "area": "AI",
+      "level": "Standard",
+      "text": "An assistant MUST obtain entity, device, area, service, and integration identifiers from the actual system or user-provided configuration.",
+      "source": "handbook/08-documentation-and-ai.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-AI-003",
+      "title": "State assumptions and risk",
+      "area": "AI",
+      "level": "Standard",
+      "text": "When facts cannot be verified, an assistant MUST identify assumptions. Consequential or destructive actions require explicit scope and a recovery path.",
+      "source": "handbook/08-documentation-and-ai.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-AI-004",
+      "title": "Preserve unrelated work",
+      "area": "AI",
+      "level": "Standard",
+      "text": "An assistant MUST keep changes focused and must not overwrite, reformat, or remove unrelated user changes.",
+      "source": "handbook/08-documentation-and-ai.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-DESIGN-001",
+      "title": "Centralise visual tokens",
+      "area": "DESIGN",
+      "level": "Standard",
+      "text": "Colours, spacing, radii, typography, and reusable card styling MUST be defined centrally through the theme, dashboard profile, or reusable templates rather than repeated as card-local literals.",
+      "source": "handbook/09-visual-design-system.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-DESIGN-002",
+      "title": "Prefer native components",
+      "area": "DESIGN",
+      "level": "Guideline",
+      "text": "Native Home Assistant cards and features SHOULD be preferred. Every custom frontend dependency must have a named benefit, documented installation source, fallback impact, and maintenance owner.",
+      "source": "handbook/09-visual-design-system.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-DESIGN-003",
+      "title": "Follow standard view hierarchy",
+      "area": "DESIGN",
+      "level": "Standard",
+      "text": "Overview, room, security, and system-status views MUST follow the information hierarchy in this design system unless the consuming repository documents a user-specific reason to differ.",
+      "source": "handbook/09-visual-design-system.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-DESIGN-004",
+      "title": "Keep density purposeful",
+      "area": "DESIGN",
+      "level": "Standard",
+      "text": "Dashboards MUST avoid both entity-dump density and decorative empty space. Each visible item needs a task, status, or navigation purpose appropriate to that view.",
+      "source": "handbook/09-visual-design-system.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-DESIGN-005",
+      "title": "Preserve accessibility",
+      "area": "DESIGN",
+      "level": "Standard",
+      "text": "Dashboards MUST retain readable contrast, 44 by 44 pixel touch targets, text or icon reinforcement for meaningful colour, and understandable labels for icon-only actions.",
+      "source": "handbook/09-visual-design-system.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-DESIGN-006",
+      "title": "Define interaction contracts",
+      "area": "DESIGN",
+      "level": "Standard",
+      "text": "Reusable components MUST document their displayed state and tap, hold, double-tap, confirmation, and navigation behaviour; undefined gestures should do nothing rather than surprise the user.",
+      "source": "handbook/09-visual-design-system.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-REVIEW-001",
+      "title": "Gather evidence before judging",
+      "area": "REVIEW",
+      "level": "Standard",
+      "text": "An audit MUST cite the actual repository path and configuration object for every violation; assumptions and unavailable runtime evidence must be labelled explicitly.",
+      "source": "handbook/10-review-and-audit.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-REVIEW-002",
+      "title": "Separate audit from implementation",
+      "area": "REVIEW",
+      "level": "Standard",
+      "text": "Reviewing a system MUST NOT silently authorise edits. Findings, proposed remediation, and applied changes are separate stages unless the user explicitly combines them.",
+      "source": "handbook/10-review-and-audit.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-REVIEW-003",
+      "title": "Report by rule ID",
+      "area": "REVIEW",
+      "level": "Standard",
+      "text": "Every compliance finding MUST reference an applicable handbook rule ID, severity, evidence, impact, recommendation, validation, and rollback consideration.",
+      "source": "handbook/10-review-and-audit.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-REVIEW-004",
+      "title": "Remediate in reversible stages",
+      "area": "REVIEW",
+      "level": "Standard",
+      "text": "Remediation plans MUST prioritise safety and correctness, preserve working behaviour, limit each stage to a reviewable concern, and define success and rollback before implementation.",
+      "source": "handbook/10-review-and-audit.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-REVIEW-005",
+      "title": "Preserve user-specific intent",
+      "area": "REVIEW",
+      "level": "Principle",
+      "text": "An agent MUST treat documented accessibility needs, household routines, display constraints, and deliberate exceptions as design inputs rather than normalising them away.",
+      "source": "handbook/10-review-and-audit.md",
+      "rationale": null,
+      "verification": null
+    }
+  ]
+}
