@@ -1,0 +1,17 @@
+# Local tooling
+.venv/
+node_modules/
+__pycache__/
+*.pyc
+
+# Editors and operating systems
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local Home Assistant data
+secrets.yaml
+.storage/
+home-assistant_v2.db*
+home-assistant.log*
