@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "entries": [
+    {
+      "source": "previous rule or substantive instruction",
+      "capability": "what the instruction protects or enables",
+      "status": "preserved-equivalently",
+      "destination": ".cursor/rules/local/example.mdc",
+      "evidence": "how normal agent discovery was verified"
+    }
+  ]
+}

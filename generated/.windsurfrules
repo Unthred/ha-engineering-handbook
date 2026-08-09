@@ -39,6 +39,10 @@ Follow these rules for all Home Assistant engineering work.
 
 **Guideline.** Dependencies between packages, helpers, scripts, dashboards, and external systems SHOULD be documented close to the controlling logic.
 
+## HA-ARCH-006 — Preserve registry metadata
+
+**Standard.** Changes to entities, devices, automations, scripts, areas, or labels MUST preserve intentional area and label assignments unless the approved change explicitly updates that classification.
+
 ## HA-YAML-001 — Name by purpose
 
 **Standard.** IDs and aliases MUST describe intent, not merely location or implementation. Prefer `bedroom_blackout_close` to `blind_automation_2`.
@@ -123,6 +127,18 @@ Follow these rules for all Home Assistant engineering work.
 
 **Standard.** Unknown, unavailable, stale, warning, and critical states MUST be visually distinguishable without relying on colour alone and must not masquerade as a normal off state.
 
+## HA-UX-011 — Prefer surgical dashboard edits
+
+**Standard.** An existing dashboard MUST be changed by the smallest reliable merge. An assistant MUST NOT replace a complete view, section, or card collection when the requested outcome can be achieved by editing the affected objects.
+
+## HA-UX-012 — Preserve storage-mode properties
+
+**Standard.** Dashboard edits MUST preserve `grid_options`, layout metadata, and unknown storage-mode properties unless their removal is an explicit part of the approved change. A serializer's inability to interpret a property is not permission to discard it.
+
+## HA-UX-013 — Avoid duplicate navigation
+
+**Standard.** An assistant MUST inspect existing dashboard, view, kiosk, and browser navigation before adding back, home, or menu controls. Equivalent navigation MUST NOT be duplicated.
+
 ## HA-SEC-001 — Never commit secrets
 
 **Standard.** Passwords, tokens, private keys, webhook identifiers, precise sensitive locations, and recoverable credentials MUST NOT enter version control.
@@ -183,6 +199,10 @@ Follow these rules for all Home Assistant engineering work.
 
 **Standard.** A successful reload is not proof of correct behaviour. Verify resulting state, traces, logs, notifications, and physical outcome as applicable.
 
+## HA-TEST-006 — Use the narrowest safe reload
+
+**Standard.** Deployment MUST use the narrowest supported reload or restart that applies the change. A full Home Assistant Core restart requires a documented reason, impact check, and post-restart verification when a domain or integration reload would suffice.
+
 ## HA-DOC-001 — Document operational intent
 
 **Standard.** Documentation MUST explain purpose, dependencies, expected behaviour, fallback, and verification for important systems.
@@ -206,6 +226,10 @@ Follow these rules for all Home Assistant engineering work.
 ## HA-AI-004 — Preserve unrelated work
 
 **Standard.** An assistant MUST keep changes focused and must not overwrite, reformat, or remove unrelated user changes.
+
+## HA-AI-005 — Check references after structural changes
+
+**Standard.** After moving, renaming, replacing, or removing an instruction, skill, script, file, entity, or reusable dashboard object, an assistant MUST search for and validate inbound references, discovery pointers, and documented invocation paths.
 
 ## HA-DESIGN-001 — Centralise visual tokens
 
@@ -250,3 +274,55 @@ Follow these rules for all Home Assistant engineering work.
 ## HA-REVIEW-005 — Preserve user-specific intent
 
 **Principle.** An agent MUST treat documented accessibility needs, household routines, display constraints, and deliberate exceptions as design inputs rather than normalising them away.
+
+## HA-MIGRATE-001 — Back up active instructions
+
+**Standard.** Before an agent changes repository or workspace instructions, it MUST create a restorable backup with original relative paths, filenames, and a manifest. The backup MUST exclude secret values and MUST NOT overwrite an earlier backup.
+
+## HA-MIGRATE-002 — Inventory capabilities, not filenames
+
+**Standard.** A migration MUST inventory every substantive capability, restriction, workflow, safety control, skill, script dependency, and authority boundary in the previous active instruction chain. Moving or renaming a file is not evidence that its behaviour was preserved.
+
+## HA-MIGRATE-003 — Keep shared and local authority separate
+
+**Standard.** Generated handbook rules MUST provide shared engineering standards. Repository-specific operational knowledge MUST live in a clearly identified local overlay whose authority and conflict policy are documented.
+
+## HA-MIGRATE-004 — Preserve secrets-manager workflows
+
+**Standard.** If a project uses an external secrets manager, migration MUST preserve the discoverable workflow for authentication, lookup, creation, update, rotation, naming, and safe handling without copying secret values into instructions, repositories, logs, reports, or chat output.
+
+## HA-MIGRATE-005 — Preserve operational access
+
+**Standard.** Migration MUST preserve documented production access, deployment, validation, reload, restart, rollback, infrastructure, container, and repository-boundary procedures unless an authorised decision explicitly retires or replaces them.
+
+## HA-MIGRATE-006 — Prove discovery from every workspace root
+
+**Standard.** Every required rule and local capability MUST be demonstrably discoverable when the agent is opened from each supported workspace root. A parent-workspace rule, symlink, pointer, or README mention is insufficient unless the normal agent-loading path is verified.
+
+## HA-MIGRATE-007 — Produce a preservation matrix
+
+**Standard.** Before removing or superseding old instructions, the migration MUST map each substantive instruction to preserved verbatim, preserved equivalently, intentionally superseded by named handbook rule IDs, weakened, missing, or undiscoverable.
+
+## HA-MIGRATE-008 — Block unresolved gaps
+
+**Standard.** A migration MUST NOT be committed while any instruction is weakened, missing, undiscoverable, ambiguously conflicting, or dependent on an unverified loading path. The stricter rule governs security, production safety, access control, deployment, and destructive actions.
+
+## HA-MIGRATE-009 — Validate skills and supporting assets
+
+**Standard.** Migration MUST verify that required skills, helper scripts, templates, documentation, symlink targets, and referenced files still exist and remain invocable through their documented paths.
+
+## HA-MIGRATE-010 — Verify generated instruction integrity
+
+**Standard.** Installed generated instructions MUST match the output produced from the recorded handbook revision. Generated files MUST NOT be edited to hold repository-local policy.
+
+## HA-MIGRATE-011 — Preserve unrelated workspace state
+
+**Standard.** Rule installation MUST preserve unrelated tracked and untracked work, MUST NOT expose credentials, and MUST report the exact changed files and repository status before approval.
+
+## HA-MIGRATE-012 — Separate installation from system changes
+
+**Standard.** Installing or migrating agent instructions MUST NOT implicitly authorise an audit, configuration edit, deployment, commit, push, or pull request. Each later stage requires its own explicit scope or approval.
+
+## HA-MIGRATE-013 — Make installation self-verifying
+
+**Standard.** An installed handbook MUST provide a repeatable, non-interactive verification command which exits non-zero when generated instructions drift, required roots or overlays are absent, capabilities lack owners, preservation gaps remain, supporting assets break, or tracked secret-bearing files are detected. A migration MUST pass both the handbook verifier and any repository-local verifier before commit.

@@ -35,3 +35,9 @@ When facts cannot be verified, an assistant MUST identify assumptions. Consequen
 **Level:** Standard
 
 An assistant MUST keep changes focused and must not overwrite, reformat, or remove unrelated user changes.
+
+## HA-AI-005 — Check references after structural changes
+
+**Level:** Standard
+
+After moving, renaming, replacing, or removing an instruction, skill, script, file, entity, or reusable dashboard object, an assistant MUST search for and validate inbound references, discovery pointers, and documented invocation paths.

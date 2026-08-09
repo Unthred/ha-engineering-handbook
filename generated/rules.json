@@ -92,6 +92,16 @@
       "verification": null
     },
     {
+      "id": "HA-ARCH-006",
+      "title": "Preserve registry metadata",
+      "area": "ARCH",
+      "level": "Standard",
+      "text": "Changes to entities, devices, automations, scripts, areas, or labels MUST preserve intentional area and label assignments unless the approved change explicitly updates that classification.",
+      "source": "handbook/01-architecture.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
       "id": "HA-YAML-001",
       "title": "Name by purpose",
       "area": "YAML",
@@ -302,6 +312,36 @@
       "verification": null
     },
     {
+      "id": "HA-UX-011",
+      "title": "Prefer surgical dashboard edits",
+      "area": "UX",
+      "level": "Standard",
+      "text": "An existing dashboard MUST be changed by the smallest reliable merge. An assistant MUST NOT replace a complete view, section, or card collection when the requested outcome can be achieved by editing the affected objects.",
+      "source": "handbook/04-dashboards-and-ux.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-UX-012",
+      "title": "Preserve storage-mode properties",
+      "area": "UX",
+      "level": "Standard",
+      "text": "Dashboard edits MUST preserve `grid_options`, layout metadata, and unknown storage-mode properties unless their removal is an explicit part of the approved change. A serializer's inability to interpret a property is not permission to discard it.",
+      "source": "handbook/04-dashboards-and-ux.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-UX-013",
+      "title": "Avoid duplicate navigation",
+      "area": "UX",
+      "level": "Standard",
+      "text": "An assistant MUST inspect existing dashboard, view, kiosk, and browser navigation before adding back, home, or menu controls. Equivalent navigation MUST NOT be duplicated.",
+      "source": "handbook/04-dashboards-and-ux.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
       "id": "HA-SEC-001",
       "title": "Never commit secrets",
       "area": "SEC",
@@ -452,6 +492,16 @@
       "verification": null
     },
     {
+      "id": "HA-TEST-006",
+      "title": "Use the narrowest safe reload",
+      "area": "TEST",
+      "level": "Standard",
+      "text": "Deployment MUST use the narrowest supported reload or restart that applies the change. A full Home Assistant Core restart requires a documented reason, impact check, and post-restart verification when a domain or integration reload would suffice.",
+      "source": "handbook/07-testing-and-deployment.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
       "id": "HA-DOC-001",
       "title": "Document operational intent",
       "area": "DOC",
@@ -507,6 +557,16 @@
       "area": "AI",
       "level": "Standard",
       "text": "An assistant MUST keep changes focused and must not overwrite, reformat, or remove unrelated user changes.",
+      "source": "handbook/08-documentation-and-ai.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-AI-005",
+      "title": "Check references after structural changes",
+      "area": "AI",
+      "level": "Standard",
+      "text": "After moving, renaming, replacing, or removing an instruction, skill, script, file, entity, or reusable dashboard object, an assistant MUST search for and validate inbound references, discovery pointers, and documented invocation paths.",
       "source": "handbook/08-documentation-and-ai.md",
       "rationale": null,
       "verification": null
@@ -618,6 +678,136 @@
       "level": "Principle",
       "text": "An agent MUST treat documented accessibility needs, household routines, display constraints, and deliberate exceptions as design inputs rather than normalising them away.",
       "source": "handbook/10-review-and-audit.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-MIGRATE-001",
+      "title": "Back up active instructions",
+      "area": "MIGRATE",
+      "level": "Standard",
+      "text": "Before an agent changes repository or workspace instructions, it MUST create a restorable backup with original relative paths, filenames, and a manifest. The backup MUST exclude secret values and MUST NOT overwrite an earlier backup.",
+      "source": "handbook/11-agent-rule-migration.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-MIGRATE-002",
+      "title": "Inventory capabilities, not filenames",
+      "area": "MIGRATE",
+      "level": "Standard",
+      "text": "A migration MUST inventory every substantive capability, restriction, workflow, safety control, skill, script dependency, and authority boundary in the previous active instruction chain. Moving or renaming a file is not evidence that its behaviour was preserved.",
+      "source": "handbook/11-agent-rule-migration.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-MIGRATE-003",
+      "title": "Keep shared and local authority separate",
+      "area": "MIGRATE",
+      "level": "Standard",
+      "text": "Generated handbook rules MUST provide shared engineering standards. Repository-specific operational knowledge MUST live in a clearly identified local overlay whose authority and conflict policy are documented.",
+      "source": "handbook/11-agent-rule-migration.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-MIGRATE-004",
+      "title": "Preserve secrets-manager workflows",
+      "area": "MIGRATE",
+      "level": "Standard",
+      "text": "If a project uses an external secrets manager, migration MUST preserve the discoverable workflow for authentication, lookup, creation, update, rotation, naming, and safe handling without copying secret values into instructions, repositories, logs, reports, or chat output.",
+      "source": "handbook/11-agent-rule-migration.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-MIGRATE-005",
+      "title": "Preserve operational access",
+      "area": "MIGRATE",
+      "level": "Standard",
+      "text": "Migration MUST preserve documented production access, deployment, validation, reload, restart, rollback, infrastructure, container, and repository-boundary procedures unless an authorised decision explicitly retires or replaces them.",
+      "source": "handbook/11-agent-rule-migration.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-MIGRATE-006",
+      "title": "Prove discovery from every workspace root",
+      "area": "MIGRATE",
+      "level": "Standard",
+      "text": "Every required rule and local capability MUST be demonstrably discoverable when the agent is opened from each supported workspace root. A parent-workspace rule, symlink, pointer, or README mention is insufficient unless the normal agent-loading path is verified.",
+      "source": "handbook/11-agent-rule-migration.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-MIGRATE-007",
+      "title": "Produce a preservation matrix",
+      "area": "MIGRATE",
+      "level": "Standard",
+      "text": "Before removing or superseding old instructions, the migration MUST map each substantive instruction to preserved verbatim, preserved equivalently, intentionally superseded by named handbook rule IDs, weakened, missing, or undiscoverable.",
+      "source": "handbook/11-agent-rule-migration.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-MIGRATE-008",
+      "title": "Block unresolved gaps",
+      "area": "MIGRATE",
+      "level": "Standard",
+      "text": "A migration MUST NOT be committed while any instruction is weakened, missing, undiscoverable, ambiguously conflicting, or dependent on an unverified loading path. The stricter rule governs security, production safety, access control, deployment, and destructive actions.",
+      "source": "handbook/11-agent-rule-migration.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-MIGRATE-009",
+      "title": "Validate skills and supporting assets",
+      "area": "MIGRATE",
+      "level": "Standard",
+      "text": "Migration MUST verify that required skills, helper scripts, templates, documentation, symlink targets, and referenced files still exist and remain invocable through their documented paths.",
+      "source": "handbook/11-agent-rule-migration.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-MIGRATE-010",
+      "title": "Verify generated instruction integrity",
+      "area": "MIGRATE",
+      "level": "Standard",
+      "text": "Installed generated instructions MUST match the output produced from the recorded handbook revision. Generated files MUST NOT be edited to hold repository-local policy.",
+      "source": "handbook/11-agent-rule-migration.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-MIGRATE-011",
+      "title": "Preserve unrelated workspace state",
+      "area": "MIGRATE",
+      "level": "Standard",
+      "text": "Rule installation MUST preserve unrelated tracked and untracked work, MUST NOT expose credentials, and MUST report the exact changed files and repository status before approval.",
+      "source": "handbook/11-agent-rule-migration.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-MIGRATE-012",
+      "title": "Separate installation from system changes",
+      "area": "MIGRATE",
+      "level": "Standard",
+      "text": "Installing or migrating agent instructions MUST NOT implicitly authorise an audit, configuration edit, deployment, commit, push, or pull request. Each later stage requires its own explicit scope or approval.",
+      "source": "handbook/11-agent-rule-migration.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-MIGRATE-013",
+      "title": "Make installation self-verifying",
+      "area": "MIGRATE",
+      "level": "Standard",
+      "text": "An installed handbook MUST provide a repeatable, non-interactive verification command which exits non-zero when generated instructions drift, required roots or overlays are absent, capabilities lack owners, preservation gaps remain, supporting assets break, or tracked secret-bearing files are detected. A migration MUST pass both the handbook verifier and any repository-local verifier before commit.",
+      "source": "handbook/11-agent-rule-migration.md",
       "rationale": null,
       "verification": null
     }

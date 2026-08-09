@@ -29,3 +29,9 @@ Experimental logic SHOULD be isolated and disabled by default or tested against 
 **Level:** Standard
 
 A successful reload is not proof of correct behaviour. Verify resulting state, traces, logs, notifications, and physical outcome as applicable.
+
+## HA-TEST-006 — Use the narrowest safe reload
+
+**Level:** Standard
+
+Deployment MUST use the narrowest supported reload or restart that applies the change. A full Home Assistant Core restart requires a documented reason, impact check, and post-restart verification when a domain or integration reload would suffice.
