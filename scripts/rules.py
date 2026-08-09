@@ -165,6 +165,18 @@ def verify_install(target: Path) -> bool:
     revision = manifest.get("handbook_revision")
     if not isinstance(revision, str) or not re.fullmatch(r"[0-9a-f]{40}", revision):
         errors.append("handbook_revision must be a full 40-character Git commit SHA")
+    else:
+        try:
+            current_revision = subprocess.run(
+                ["git", "-C", str(ROOT), "rev-parse", "HEAD"], check=True,
+                text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            ).stdout.strip()
+            if revision != current_revision:
+                errors.append(
+                    f"handbook_revision {revision} does not match verifier checkout {current_revision}"
+                )
+        except (OSError, subprocess.CalledProcessError):
+            errors.append("handbook verifier must run from a readable Git checkout")
 
     installed = manifest.get("installed_generated_files")
     if not isinstance(installed, list) or not installed:

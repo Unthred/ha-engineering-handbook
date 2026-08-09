@@ -54,9 +54,13 @@ class InstallVerificationTests(unittest.TestCase):
         matrix = target / ".cursor/handbook/preservation-matrix.json"
         matrix.parent.mkdir(parents=True)
         matrix.write_text(json.dumps({"entries": [{"status": "preserved-equivalently"}]}), encoding="utf-8")
+        revision = subprocess.run(
+            ["git", "-C", str(HANDBOOK.parent), "rev-parse", "HEAD"],
+            check=True, text=True, stdout=subprocess.PIPE,
+        ).stdout.strip()
         manifest = {
             "schema_version": 1,
-            "handbook_revision": "0" * 40,
+            "handbook_revision": revision,
             "installed_generated_files": [{
                 "source": ".cursor/rules/home-assistant-engineering.mdc",
                 "destination": ".cursor/rules/home-assistant-engineering.mdc",
@@ -82,6 +86,15 @@ class InstallVerificationTests(unittest.TestCase):
             target = self.make_target(directory)
             matrix = target / ".cursor/handbook/preservation-matrix.json"
             matrix.write_text(json.dumps({"entries": [{"status": "missing"}]}), encoding="utf-8")
+            self.assertFalse(verify_install(target))
+
+    def test_rejects_different_handbook_revision(self):
+        with tempfile.TemporaryDirectory() as directory:
+            target = self.make_target(directory)
+            manifest_path = target / ".ha-handbook-install.json"
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            manifest["handbook_revision"] = "0" * 40
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
             self.assertFalse(verify_install(target))
 
 
