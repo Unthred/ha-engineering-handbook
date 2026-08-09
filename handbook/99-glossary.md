@@ -12,4 +12,12 @@
 
 **Normative rule** — A rule with a stable `HA-<AREA>-NNN` identifier and declared level.
 
+**Active implementation task** — The single in-flight change lifecycle an assistant
+is executing in a workspace, spanning investigation through closeout—not merely
+the act of editing files.
+
+**Parked task** — An implementation deliberately paused with a complete formal
+parking record so it can be resumed safely without guessing; parking is not
+authorization to resume.
+
 **Source of truth** — The authoritative location from which derivative configuration or documentation is produced.

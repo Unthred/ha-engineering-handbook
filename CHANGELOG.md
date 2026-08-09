@@ -6,6 +6,9 @@ All notable handbook changes will be recorded here.
 
 ### Added
 
+- One-active-implementation work-in-progress discipline (`HA-AI-006`): finish,
+  close, or formally park before starting another implementation
+- ADR-0003: work-in-progress discipline for assistants
 - Production-validation-before-merge lifecycle for operational configuration
   (`HA-TEST-007`–`HA-TEST-013`)
 - Storage-mode / UI-managed dashboard live-first rule (`HA-UX-014`)
