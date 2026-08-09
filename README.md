@@ -18,7 +18,7 @@ The handbook is the source of truth. Rules for Cursor, Claude, Copilot, Windsurf
 - `generated/` — generated assistant-specific rules; do not edit manually
 - `.github/` — contribution templates and automated checks
 
-The visual baseline and audit workflow live in `handbook/09-visual-design-system.md` and `handbook/10-review-and-audit.md`. Controlled installation into an existing agent workspace is defined by `handbook/11-agent-rule-migration.md`; it requires a preservation matrix and a discoverable repository-local overlay. Start a repository-specific rollout by copying `examples/dashboard-profile.yaml` and use `examples/audit-report-template.md` for a rules-based review.
+The visual baseline and audit workflow live in `handbook/09-visual-design-system.md` and `handbook/10-review-and-audit.md`. Controlled installation into an existing agent workspace is defined by `handbook/11-agent-rule-migration.md`; it requires a preservation matrix and a discoverable repository-local overlay. Testing, candidate deployment, and prove-before-merge gates live in `handbook/07-testing-and-deployment.md`. Start a repository-specific rollout by copying `examples/dashboard-profile.yaml` and use `examples/audit-report-template.md` for a rules-based review.
 
 After installation, copy and complete `examples/agent-install-manifest.json`,
 then verify the consuming repository with `python scripts/rules.py verify-install

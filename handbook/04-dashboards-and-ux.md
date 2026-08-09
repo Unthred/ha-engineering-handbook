@@ -77,3 +77,18 @@ Dashboard edits MUST preserve `grid_options`, layout metadata, and unknown stora
 **Level:** Standard
 
 An assistant MUST inspect existing dashboard, view, kiosk, and browser navigation before adding back, home, or menu controls. Equivalent navigation MUST NOT be duplicated.
+
+## HA-UX-014 — Treat storage-mode dashboards as live-first
+
+**Level:** Standard
+
+Storage-mode Lovelace and other UI-managed dashboard state live on the Home
+Assistant instance. Repository JSON exports are mirrors for review and backup,
+not the runtime source, unless the installation has explicitly adopted a
+YAML-mode dashboard.
+
+An assistant MUST NOT assume that editing `dashboards/*.json` (or similar
+exports) updates the live UI. Live repairs follow `HA-TEST-010`: backup the
+live object, apply a surgical UI change, prove behaviour, then refresh the
+repository mirror and verify semantic parity. Direct edits to `.storage` files
+are forbidden.

@@ -342,6 +342,16 @@
       "verification": null
     },
     {
+      "id": "HA-UX-014",
+      "title": "Treat storage-mode dashboards as live-first",
+      "area": "UX",
+      "level": "Standard",
+      "text": "Storage-mode Lovelace and other UI-managed dashboard state live on the Home\nAssistant instance. Repository JSON exports are mirrors for review and backup,\nnot the runtime source, unless the installation has explicitly adopted a\nYAML-mode dashboard.\n\nAn assistant MUST NOT assume that editing `dashboards/*.json` (or similar\nexports) updates the live UI. Live repairs follow `HA-TEST-010`: backup the\nlive object, apply a surgical UI change, prove behaviour, then refresh the\nrepository mirror and verify semantic parity. Direct edits to `.storage` files\nare forbidden.",
+      "source": "handbook/04-dashboards-and-ux.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
       "id": "HA-SEC-001",
       "title": "Never commit secrets",
       "area": "SEC",
@@ -446,7 +456,7 @@
       "title": "Validate before deployment",
       "area": "TEST",
       "level": "Standard",
-      "text": "Configuration MUST pass Home Assistant configuration validation and repository checks before production use.",
+      "text": "A candidate MUST pass Home Assistant configuration validation and applicable\nrepository checks before it is deployed to production. Static validation alone\nMUST NOT be treated as permission to merge operational configuration into the\nintegration branch.",
       "source": "handbook/07-testing-and-deployment.md",
       "rationale": null,
       "verification": null
@@ -456,7 +466,7 @@
       "title": "Test boundaries and failure paths",
       "area": "TEST",
       "level": "Standard",
-      "text": "Tests or documented verification MUST cover unavailable inputs, threshold edges, restart behaviour, concurrent triggers, and manual overrides where relevant.",
+      "text": "Tests or documented verification MUST cover unavailable inputs, threshold edges,\nrestart behaviour, concurrent triggers, and manual overrides where relevant.",
       "source": "handbook/07-testing-and-deployment.md",
       "rationale": null,
       "verification": null
@@ -466,17 +476,17 @@
       "title": "Make changes reversible",
       "area": "TEST",
       "level": "Standard",
-      "text": "Changes SHOULD be small enough to review and revert. Risky changes require a rollback path before deployment.",
+      "text": "Changes SHOULD be small enough to review and revert. Risky changes require a\ndocumented rollback path before candidate deployment, including the exact\nrollback baseline commit and the files in scope.",
       "source": "handbook/07-testing-and-deployment.md",
       "rationale": null,
       "verification": null
     },
     {
       "id": "HA-TEST-004",
-      "title": "Separate development from production",
+      "title": "Prefer isolation when a safe non-production path exists",
       "area": "TEST",
       "level": "Guideline",
-      "text": "Experimental logic SHOULD be isolated and disabled by default or tested against non-critical entities before controlling the live home.",
+      "text": "When an installation provides an equivalent non-production Home Assistant\nenvironment, experimental logic SHOULD be isolated there or limited to\nnon-critical entities before it controls the live home.\n\nWhen an installation has **no** equivalent staging or non-production Home\nAssistant (an installation-specific operating constraint, not a general\nrecommendation for every project), production validation is intentional and\nMUST follow `HA-TEST-007` through `HA-TEST-012`: exact-commit based, bounded,\nreversible, selectively deployed, minimally reloaded, evidenced by entity\nstate, and physically confirmed when software state cannot prove real-world\nbehaviour.\n\nAbsence of staging MUST NOT be treated as permission to merge unproven\noperational configuration, to broaden deployment scope, or to debug through\nuncommitted edits on the production host.",
       "source": "handbook/07-testing-and-deployment.md",
       "rationale": null,
       "verification": null
@@ -486,7 +496,7 @@
       "title": "Verify the outcome",
       "area": "TEST",
       "level": "Standard",
-      "text": "A successful reload is not proof of correct behaviour. Verify resulting state, traces, logs, notifications, and physical outcome as applicable.",
+      "text": "A successful reload is not proof of correct behaviour. Verify resulting entity\nstate, traces, logs, notifications, and physical outcome as applicable. Do not\ntreat a successful service-call HTTP response as behavioural proof.",
       "source": "handbook/07-testing-and-deployment.md",
       "rationale": null,
       "verification": null
@@ -496,7 +506,77 @@
       "title": "Use the narrowest safe reload",
       "area": "TEST",
       "level": "Standard",
-      "text": "Deployment MUST use the narrowest supported reload or restart that applies the change. A full Home Assistant Core restart requires a documented reason, impact check, and post-restart verification when a domain or integration reload would suffice.",
+      "text": "Deployment MUST use the narrowest supported reload or restart that applies the\nchange. A full Home Assistant Core restart requires a documented reason, impact\ncheck, explicit approval, and post-restart verification when a domain or\nintegration reload would suffice.",
+      "source": "handbook/07-testing-and-deployment.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-TEST-007",
+      "title": "Prove operational candidates before merge",
+      "area": "TEST",
+      "level": "Standard",
+      "text": "Operational Home Assistant configuration that affects runtime behaviour MUST NOT\nbe merged into the installation's integration branch (commonly `develop`) until\nthe exact candidate commit has been deployed and behaviourally proven in the\nrequired real environment, or an accepted exception under `HA-TEST-013` applies\nand is stated in the change record.\n\nThe integration branch MUST be understood as containing configuration that has\nbeen proven where proof is required — not merely configuration that passed\nstatic validation.",
+      "source": "handbook/07-testing-and-deployment.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-TEST-008",
+      "title": "Deploy an immutable candidate commit",
+      "area": "TEST",
+      "level": "Standard",
+      "text": "A production candidate deployment of repository-managed configuration MUST\nidentify and deploy an exact Git commit. The deployment record MUST include:\n\n- exact candidate commit\n- exact rollback baseline commit\n- files in scope\n- deployment mechanism used\n- pre-deployment production fingerprints for in-scope files\n- post-copy byte-level or semantic verification against the candidate\n- minimum reload plan\n- expected physical effects\n- behavioural test procedure\n- rollback procedure\n- final repository/production parity result after merge (when merging)\n\nDebugging MUST NOT proceed through uncommitted edits to production-managed YAML\nor other Git-owned operational files on the production host. Corrections MUST be\nmade on the feature branch, re-validated, and redeployed as a new or amended\ncandidate commit with approval.",
+      "source": "handbook/07-testing-and-deployment.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-TEST-009",
+      "title": "Keep candidate deployment selective",
+      "area": "TEST",
+      "level": "Standard",
+      "text": "A candidate deployment MUST copy only the in-scope files from the recorded\ncandidate commit (or an equivalent selective mechanism that cannot introduce\nunrelated content).\n\nIf the normal deployment tool would deploy unrelated content — for example a\nfull-tree `rsync --delete` of an entire checkout, or a branch that is not the\ncandidate — the agent MUST stop and report the conflict, or use an\nalready-approved selective mechanism. It MUST NOT silently broaden deployment\nscope, overwrite secrets, or modify `.storage` as part of a YAML candidate\ndeploy.",
+      "source": "handbook/07-testing-and-deployment.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-TEST-010",
+      "title": "Prove UI-managed state before recording it in Git",
+      "area": "TEST",
+      "level": "Standard",
+      "text": "For storage-mode dashboards and other live UI-managed objects:\n\n1. Inspect and back up the exact live object.\n2. Make the smallest supported surgical production change (`HA-UX-011`,\n   `HA-UX-012`).\n3. Do not edit `.storage` files directly.\n4. Test the resulting live controls and physical behaviour.\n5. Export or otherwise reproduce the proven live state in the repository.\n6. Verify semantic parity between live state and the repository mirror.\n7. Commit and merge the proven representation.\n\nEditing an exported dashboard JSON file in the repository does **not** update\nthe live storage-mode dashboard. Repository mirrors MUST NOT be imported over\nlive Lovelace unless that import is an explicitly approved operation with its\nown backup and rollback plan.",
+      "source": "handbook/07-testing-and-deployment.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-TEST-011",
+      "title": "Confirm physical outcomes when state is insufficient",
+      "area": "TEST",
+      "level": "Standard",
+      "text": "When entity state, traces, or logs cannot prove the real-world outcome (for\nexample visible light level, sound, motion, or appliance behaviour), the agent\nMUST obtain user confirmation of the physical result before treating the\ncandidate as proven. Physical tests MUST be bounded, reversible where\npractical, and limited to the devices in scope.",
+      "source": "handbook/07-testing-and-deployment.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-TEST-012",
+      "title": "Verify parity after merge",
+      "area": "TEST",
+      "level": "Standard",
+      "text": "After merging a proven operational candidate, the agent MUST verify that the\nintegration branch contains the proven change and that production still matches\nthe in-scope proven content (byte or semantic parity). Merge MUST NOT silently\ntrigger an additional production deploy unless that deploy is separately\napproved.",
+      "source": "handbook/07-testing-and-deployment.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-TEST-013",
+      "title": "Scoped exceptions to production proof",
+      "area": "TEST",
+      "level": "Standard",
+      "text": "The production-proof-before-merge requirement (`HA-TEST-007`) MAY be skipped\nonly for changes that do not depend on Home Assistant runtime behaviour or\nphysical hardware, such as:\n\n- documentation-only changes\n- CI or tooling-only changes\n- non-operational templates or examples\n- tests that cannot affect production behaviour\n\nThe change record MUST state which exception applies and why. Ambiguous cases\nMUST follow the production-proof path or ask the human.",
       "source": "handbook/07-testing-and-deployment.md",
       "rationale": null,
       "verification": null
