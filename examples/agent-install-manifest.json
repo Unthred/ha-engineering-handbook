@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "handbook_revision": "0000000000000000000000000000000000000000",
+  "installed_generated_files": [
+    {
+      "source": ".cursor/rules/home-assistant-engineering.mdc",
+      "destination": ".cursor/rules/home-assistant-engineering.mdc"
+    }
+  ],
+  "workspace_roots": [
+    "."
+  ],
+  "local_overlays": [
+    ".cursor/rules/local"
+  ],
+  "required_capabilities": [
+    {
+      "name": "secrets management",
+      "owner": "local overlay",
+      "instruction": ".cursor/rules/local/secrets-management.mdc"
+    }
+  ],
+  "preservation_matrix": ".cursor/handbook/preservation-matrix.json",
+  "required_assets": [
+    ".cursor/skills"
+  ]
+}

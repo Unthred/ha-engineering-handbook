@@ -322,3 +322,7 @@ Follow these rules for all Home Assistant engineering work.
 ## HA-MIGRATE-012 — Separate installation from system changes
 
 **Standard.** Installing or migrating agent instructions MUST NOT implicitly authorise an audit, configuration edit, deployment, commit, push, or pull request. Each later stage requires its own explicit scope or approval.
+
+## HA-MIGRATE-013 — Make installation self-verifying
+
+**Standard.** An installed handbook MUST provide a repeatable, non-interactive verification command which exits non-zero when generated instructions drift, required roots or overlays are absent, capabilities lack owners, preservation gaps remain, supporting assets break, or tracked secret-bearing files are detected. A migration MUST pass both the handbook verifier and any repository-local verifier before commit.

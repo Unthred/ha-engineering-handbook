@@ -16,6 +16,20 @@ Before changing active instructions:
 6. Validate generated-file integrity, discovery, references, skills, scripts, and repository status.
 7. Keep the migration uncommitted until no unresolved preservation gap remains.
 
+Copy `examples/agent-install-manifest.json` to `.ha-handbook-install.json` in
+the consuming repository and record the real handbook commit, installed file
+mappings, workspace roots, local overlays, required capabilities, preservation
+matrix, and supporting assets. Then run:
+
+```bash
+python /path/to/ha-engineering-handbook/scripts/rules.py verify-install --target /path/to/project
+```
+
+Projects SHOULD provide a repository-local wrapper (for example,
+`scripts/verify-agent-rules`) which runs this generic check and any additional
+environment-specific checks. Both checks belong in CI. The manifest contains
+paths and ownership metadata only; credentials and secret values are forbidden.
+
 The preservation matrix classifies each substantive instruction as: preserved verbatim; preserved equivalently; intentionally superseded by named handbook rules; weakened; missing; or present but undiscoverable. The final three classifications block approval.
 
 ## HA-MIGRATE-001 — Back up active instructions
@@ -89,3 +103,9 @@ Rule installation MUST preserve unrelated tracked and untracked work, MUST NOT e
 **Level:** Standard
 
 Installing or migrating agent instructions MUST NOT implicitly authorise an audit, configuration edit, deployment, commit, push, or pull request. Each later stage requires its own explicit scope or approval.
+
+## HA-MIGRATE-013 — Make installation self-verifying
+
+**Level:** Standard
+
+An installed handbook MUST provide a repeatable, non-interactive verification command which exits non-zero when generated instructions drift, required roots or overlays are absent, capabilities lack owners, preservation gaps remain, supporting assets break, or tracked secret-bearing files are detected. A migration MUST pass both the handbook verifier and any repository-local verifier before commit.
