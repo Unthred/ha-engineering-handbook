@@ -29,3 +29,9 @@ Critical flows MUST define what happens when a sensor is unavailable, data is st
 **Level:** Guideline
 
 Dependencies between packages, helpers, scripts, dashboards, and external systems SHOULD be documented close to the controlling logic.
+
+## HA-ARCH-006 — Preserve registry metadata
+
+**Level:** Standard
+
+Changes to entities, devices, automations, scripts, areas, or labels MUST preserve intentional area and label assignments unless the approved change explicitly updates that classification.

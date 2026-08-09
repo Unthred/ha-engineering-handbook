@@ -11,6 +11,9 @@ The chapters progress from durable principles to concrete engineering practice.
 7. [Reliability and observability](06-reliability-and-observability.md)
 8. [Testing and deployment](07-testing-and-deployment.md)
 9. [Documentation and AI assistants](08-documentation-and-ai.md)
-10. [Glossary](99-glossary.md)
+10. [Visual design system](09-visual-design-system.md)
+11. [Review and audit framework](10-review-and-audit.md)
+12. [Agent rule installation and migration](11-agent-rule-migration.md)
+13. [Glossary](99-glossary.md)
 
 Rules are normative only when they have a stable `HA-<AREA>-NNN` identifier.

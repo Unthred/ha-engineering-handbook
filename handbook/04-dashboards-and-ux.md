@@ -59,3 +59,21 @@ Primary views SHOULD show current state and frequent actions; detail, history, s
 **Level:** Standard
 
 Unknown, unavailable, stale, warning, and critical states MUST be visually distinguishable without relying on colour alone and must not masquerade as a normal off state.
+
+## HA-UX-011 — Prefer surgical dashboard edits
+
+**Level:** Standard
+
+An existing dashboard MUST be changed by the smallest reliable merge. An assistant MUST NOT replace a complete view, section, or card collection when the requested outcome can be achieved by editing the affected objects.
+
+## HA-UX-012 — Preserve storage-mode properties
+
+**Level:** Standard
+
+Dashboard edits MUST preserve `grid_options`, layout metadata, and unknown storage-mode properties unless their removal is an explicit part of the approved change. A serializer's inability to interpret a property is not permission to discard it.
+
+## HA-UX-013 — Avoid duplicate navigation
+
+**Level:** Standard
+
+An assistant MUST inspect existing dashboard, view, kiosk, and browser navigation before adding back, home, or menu controls. Equivalent navigation MUST NOT be duplicated.
