@@ -262,15 +262,24 @@ integration reload would suffice.
 
 ## HA-TEST-007 — Prove operational candidates before merge
 
-**Standard.** Operational Home Assistant configuration that affects runtime behaviour MUST NOT
-be merged into the installation's integration branch (commonly `develop`) until
-the exact candidate commit has been deployed and behaviourally proven in the
-required real environment, or an accepted exception under `HA-TEST-013` applies
-and is stated in the change record.
+**Standard.** In a production-first Home Assistant repository, implementation changes that
+affect Home Assistant runtime behaviour MUST NOT be merged into the branch that
+represents production-proven state (commonly `develop` in
+`Unthred/HomeAssistant`) until the candidate has been deployed to the real
+Home Assistant instance and validated there.
+
+Automated tests, configuration checks, review approval, and green CI are
+necessary and MUST NOT be treated as substitutes for production validation.
+
+If production deployment is not authorised, the pull request MUST remain open
+or draft and unmerged. A repository-first workflow (merge before deploy) is
+permitted only when the owner **explicitly** authorises that exception; it MUST
+NOT be inferred from phrases such as “implement,” “create a PR,” “merge
+normally,” or “do not deploy.”
 
 The integration branch MUST be understood as containing configuration that has
 been proven where proof is required — not merely configuration that passed
-static validation.
+static validation or CI.
 
 ## HA-TEST-008 — Deploy an immutable candidate commit
 
@@ -289,10 +298,18 @@ identify and deploy an exact Git commit. The deployment record MUST include:
 - rollback procedure
 - final repository/production parity result after merge (when merging)
 
-Debugging MUST NOT proceed through uncommitted edits to production-managed YAML
-or other Git-owned operational files on the production host. Corrections MUST be
-made on the feature branch, re-validated, and redeployed as a new or amended
-candidate commit with approval.
+Preferred correction path during an authorised candidate validation session:
+
+1. Diagnose against the live deployed implementation.
+2. Apply the smallest safe live correction and prove it on production.
+3. Reproduce that exact proven correction on the candidate branch (or a
+   reconciliation branch from current `develop`).
+4. Confirm branch content matches the proven production files (hash or
+   semantic parity).
+5. Only then merge.
+
+Open-ended debugging MUST NOT leave production-managed YAML permanently
+divergent from Git. Unreconciled live edits are incomplete work.
 
 ## HA-TEST-009 — Keep candidate deployment selective
 
@@ -333,6 +350,11 @@ MUST obtain user confirmation of the physical result before treating the
 candidate as proven. Physical tests MUST be bounded, reversible where
 practical, and limited to the devices in scope.
 
+Natural validations that require bedtime, weather progression, or other
+physical/time events MAY remain explicitly pending after safe deployment and
+immediate production checks pass — but the immediate checks MUST pass before
+merge. A task MUST NOT be called production-proven merely because it merged.
+
 ## HA-TEST-012 — Verify parity after merge
 
 **Standard.** After merging a proven operational candidate, the agent MUST verify that the
@@ -349,8 +371,14 @@ physical hardware, such as:
 
 - documentation-only changes
 - CI or tooling-only changes
+- agent-rule / handbook install updates that cannot affect Home Assistant
+  runtime
 - non-operational templates or examples
 - tests that cannot affect production behaviour
+
+Runtime configuration, dashboards, automations, scripts, templates,
+integrations, and hardware-facing behaviour REQUIRE production-first
+validation.
 
 The change record MUST state which exception applies and why. Ambiguous cases
 MUST follow the production-proof path or ask the human.
@@ -364,6 +392,27 @@ other dashboards, documentation, tests/validators, and production verification �
 and mark each as changed or verified unchanged. Automated parity checks for the
 canonical inventory MUST pass before merge. Validators MUST NOT operate physical
 devices or send notifications.
+
+## HA-TEST-015 — Refuse merge-before-deploy prompt conflicts
+
+**Standard.** If instructions simultaneously require merging operational Home Assistant
+configuration into the production-proven branch and forbid or withhold
+production deployment, the assistant MUST STOP and report the workflow conflict
+rather than merging. Generic instructions to “merge normally,” “open a PR and
+merge when green,” or “CI is enough” MUST NOT override `HA-TEST-007`.
+
+Before merging operational configuration, record evidence of:
+
+1. deployment authorisation (or an explicit owner exception under
+   `HA-TEST-013`);
+2. backup or rollback readiness;
+3. deployed candidate identity/hash;
+4. immediate production validation results;
+5. pending natural validations (if any);
+6. production-to-branch reconciliation (hashes or semantic parity);
+7. owner-authorised exception text, if applicable.
+
+Absence of that gate evidence means the PR MUST stay unmerged.
 
 ## HA-DOC-001 — Document operational intent
 

@@ -98,5 +98,34 @@ class InstallVerificationTests(unittest.TestCase):
             self.assertFalse(verify_install(target))
 
 
+class ProductionProofGateTests(unittest.TestCase):
+    def test_ha_test_015_blocks_merge_without_deploy_prompt(self):
+        chapter = (HANDBOOK / "07-testing-and-deployment.md").read_text(encoding="utf-8")
+        self.assertIn("## HA-TEST-015 — Refuse merge-before-deploy prompt conflicts", chapter)
+        self.assertIn("MUST STOP and report the workflow conflict", chapter)
+        self.assertIn("merge normally", chapter)
+        self.assertIn("do not deploy", chapter)
+        self.assertIn("deployment authorisation", chapter)
+        # Strengthened HA-TEST-007 language that would have blocked #248/#250
+        self.assertIn("green CI", chapter)
+        self.assertIn("inferred from phrases", chapter)
+        self.assertIn("production-proven state", chapter)
+
+    def test_generated_cursor_and_claude_include_ha_test_015(self):
+        subprocess.run(
+            ["python", "scripts/rules.py", "generate"],
+            cwd=HANDBOOK.parent,
+            check=True,
+        )
+        cursor = (
+            GENERATED / ".cursor/rules/home-assistant-engineering.mdc"
+        ).read_text(encoding="utf-8")
+        claude = (GENERATED / "CLAUDE.md").read_text(encoding="utf-8")
+        for blob in (cursor, claude):
+            self.assertIn("HA-TEST-015", blob)
+            self.assertIn("MUST STOP and report the workflow conflict", blob)
+            self.assertIn("green CI", blob)
+
+
 if __name__ == "__main__":
     unittest.main()

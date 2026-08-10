@@ -536,17 +536,17 @@
       "title": "Prove operational candidates before merge",
       "area": "TEST",
       "level": "Standard",
-      "text": "Operational Home Assistant configuration that affects runtime behaviour MUST NOT\nbe merged into the installation's integration branch (commonly `develop`) until\nthe exact candidate commit has been deployed and behaviourally proven in the\nrequired real environment, or an accepted exception under `HA-TEST-013` applies\nand is stated in the change record.\n\nThe integration branch MUST be understood as containing configuration that has\nbeen proven where proof is required — not merely configuration that passed\nstatic validation.",
+      "text": "In a production-first Home Assistant repository, implementation changes that\naffect Home Assistant runtime behaviour MUST NOT be merged into the branch that\nrepresents production-proven state (commonly `develop` in\n`Unthred/HomeAssistant`) until the candidate has been deployed to the real\nHome Assistant instance and validated there.\n\nAutomated tests, configuration checks, review approval, and green CI are\nnecessary and MUST NOT be treated as substitutes for production validation.\n\nIf production deployment is not authorised, the pull request MUST remain open\nor draft and unmerged. A repository-first workflow (merge before deploy) is\npermitted only when the owner **explicitly** authorises that exception; it MUST\nNOT be inferred from phrases such as “implement,” “create a PR,” “merge\nnormally,” or “do not deploy.”\n\nThe integration branch MUST be understood as containing configuration that has\nbeen proven where proof is required — not merely configuration that passed\nstatic validation or CI.",
       "source": "handbook/07-testing-and-deployment.md",
-      "rationale": null,
-      "verification": null
+      "rationale": "Merging runtime configuration before live proof made #249/#251 land on",
+      "verification": "Change records for operational PRs include deployment authorisation,"
     },
     {
       "id": "HA-TEST-008",
       "title": "Deploy an immutable candidate commit",
       "area": "TEST",
       "level": "Standard",
-      "text": "A production candidate deployment of repository-managed configuration MUST\nidentify and deploy an exact Git commit. The deployment record MUST include:\n\n- exact candidate commit\n- exact rollback baseline commit\n- files in scope\n- deployment mechanism used\n- pre-deployment production fingerprints for in-scope files\n- post-copy byte-level or semantic verification against the candidate\n- minimum reload plan\n- expected physical effects\n- behavioural test procedure\n- rollback procedure\n- final repository/production parity result after merge (when merging)\n\nDebugging MUST NOT proceed through uncommitted edits to production-managed YAML\nor other Git-owned operational files on the production host. Corrections MUST be\nmade on the feature branch, re-validated, and redeployed as a new or amended\ncandidate commit with approval.",
+      "text": "A production candidate deployment of repository-managed configuration MUST\nidentify and deploy an exact Git commit. The deployment record MUST include:\n\n- exact candidate commit\n- exact rollback baseline commit\n- files in scope\n- deployment mechanism used\n- pre-deployment production fingerprints for in-scope files\n- post-copy byte-level or semantic verification against the candidate\n- minimum reload plan\n- expected physical effects\n- behavioural test procedure\n- rollback procedure\n- final repository/production parity result after merge (when merging)\n\nPreferred correction path during an authorised candidate validation session:\n\n1. Diagnose against the live deployed implementation.\n2. Apply the smallest safe live correction and prove it on production.\n3. Reproduce that exact proven correction on the candidate branch (or a\n   reconciliation branch from current `develop`).\n4. Confirm branch content matches the proven production files (hash or\n   semantic parity).\n5. Only then merge.\n\nOpen-ended debugging MUST NOT leave production-managed YAML permanently\ndivergent from Git. Unreconciled live edits are incomplete work.",
       "source": "handbook/07-testing-and-deployment.md",
       "rationale": null,
       "verification": null
@@ -576,7 +576,7 @@
       "title": "Confirm physical outcomes when state is insufficient",
       "area": "TEST",
       "level": "Standard",
-      "text": "When entity state, traces, or logs cannot prove the real-world outcome (for\nexample visible light level, sound, motion, or appliance behaviour), the agent\nMUST obtain user confirmation of the physical result before treating the\ncandidate as proven. Physical tests MUST be bounded, reversible where\npractical, and limited to the devices in scope.",
+      "text": "When entity state, traces, or logs cannot prove the real-world outcome (for\nexample visible light level, sound, motion, or appliance behaviour), the agent\nMUST obtain user confirmation of the physical result before treating the\ncandidate as proven. Physical tests MUST be bounded, reversible where\npractical, and limited to the devices in scope.\n\nNatural validations that require bedtime, weather progression, or other\nphysical/time events MAY remain explicitly pending after safe deployment and\nimmediate production checks pass — but the immediate checks MUST pass before\nmerge. A task MUST NOT be called production-proven merely because it merged.",
       "source": "handbook/07-testing-and-deployment.md",
       "rationale": null,
       "verification": null
@@ -596,7 +596,7 @@
       "title": "Scoped exceptions to production proof",
       "area": "TEST",
       "level": "Standard",
-      "text": "The production-proof-before-merge requirement (`HA-TEST-007`) MAY be skipped\nonly for changes that do not depend on Home Assistant runtime behaviour or\nphysical hardware, such as:\n\n- documentation-only changes\n- CI or tooling-only changes\n- non-operational templates or examples\n- tests that cannot affect production behaviour\n\nThe change record MUST state which exception applies and why. Ambiguous cases\nMUST follow the production-proof path or ask the human.",
+      "text": "The production-proof-before-merge requirement (`HA-TEST-007`) MAY be skipped\nonly for changes that do not depend on Home Assistant runtime behaviour or\nphysical hardware, such as:\n\n- documentation-only changes\n- CI or tooling-only changes\n- agent-rule / handbook install updates that cannot affect Home Assistant\n  runtime\n- non-operational templates or examples\n- tests that cannot affect production behaviour\n\nRuntime configuration, dashboards, automations, scripts, templates,\nintegrations, and hardware-facing behaviour REQUIRE production-first\nvalidation.\n\nThe change record MUST state which exception applies and why. Ambiguous cases\nMUST follow the production-proof path or ask the human.",
       "source": "handbook/07-testing-and-deployment.md",
       "rationale": null,
       "verification": null
@@ -610,6 +610,16 @@
       "source": "handbook/07-testing-and-deployment.md",
       "rationale": null,
       "verification": null
+    },
+    {
+      "id": "HA-TEST-015",
+      "title": "Refuse merge-before-deploy prompt conflicts",
+      "area": "TEST",
+      "level": "Standard",
+      "text": "If instructions simultaneously require merging operational Home Assistant\nconfiguration into the production-proven branch and forbid or withhold\nproduction deployment, the assistant MUST STOP and report the workflow conflict\nrather than merging. Generic instructions to “merge normally,” “open a PR and\nmerge when green,” or “CI is enough” MUST NOT override `HA-TEST-007`.\n\nBefore merging operational configuration, record evidence of:\n\n1. deployment authorisation (or an explicit owner exception under\n   `HA-TEST-013`);\n2. backup or rollback readiness;\n3. deployed candidate identity/hash;\n4. immediate production validation results;\n5. pending natural validations (if any);\n6. production-to-branch reconciliation (hashes or semantic parity);\n7. owner-authorised exception text, if applicable.\n\nAbsence of that gate evidence means the PR MUST stay unmerged.",
+      "source": "handbook/07-testing-and-deployment.md",
+      "rationale": "The #248/#250 sequence (“implement → PR → merge → do not deploy”)",
+      "verification": "A hypothetical prompt that says both “merge into develop” and “do"
     },
     {
       "id": "HA-DOC-001",
