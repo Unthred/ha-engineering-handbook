@@ -102,6 +102,16 @@
       "verification": null
     },
     {
+      "id": "HA-ARCH-007",
+      "title": "Own multi-surface device inventories",
+      "area": "ARCH",
+      "level": "Standard",
+      "text": "When a device class (for example cameras) appears across integrations, packages,\ndashboards, notification policy, and tests, the repository MUST maintain one\ncanonical inventory that declares identity, classification, capabilities, and\nnotification policy. Downstream surfaces MUST derive from or be parity-checked\nagainst that inventory. Hand-maintained duplicate lists without automated\nparity checks are forbidden for new work.",
+      "source": "handbook/01-architecture.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
       "id": "HA-YAML-001",
       "title": "Name by purpose",
       "area": "YAML",
@@ -352,6 +362,16 @@
       "verification": null
     },
     {
+      "id": "HA-UX-015",
+      "title": "Keep settings UIs aligned with device capability",
+      "area": "UX",
+      "level": "Standard",
+      "text": "Operational settings views for a device class MUST present consistent\nuser-facing controls for every inventoried device. Detection capability and\nnotification preference MUST be shown as distinct concepts. Disabled or retired\nnotification paths MUST NOT appear as working toggles. Issue numbers and\ninternal automation names MUST NOT replace the established primary control\nlabel. Missing devices, stale labels, or capability chips that contradict the\ncanonical inventory are defects.",
+      "source": "handbook/04-dashboards-and-ux.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
       "id": "HA-SEC-001",
       "title": "Never commit secrets",
       "area": "SEC",
@@ -577,6 +597,16 @@
       "area": "TEST",
       "level": "Standard",
       "text": "The production-proof-before-merge requirement (`HA-TEST-007`) MAY be skipped\nonly for changes that do not depend on Home Assistant runtime behaviour or\nphysical hardware, such as:\n\n- documentation-only changes\n- CI or tooling-only changes\n- non-operational templates or examples\n- tests that cannot affect production behaviour\n\nThe change record MUST state which exception applies and why. Ambiguous cases\nMUST follow the production-proof path or ask the human.",
+      "source": "handbook/07-testing-and-deployment.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-TEST-014",
+      "title": "Require a change matrix for multi-surface device work",
+      "area": "TEST",
+      "level": "Standard",
+      "text": "Issues and pull requests that add or change cameras (or similarly multi-surface\ndevices) MUST include a change matrix listing each affected surface — inventory,\nintegration/config, entities/helpers, automations/scripts, settings UI,\nother dashboards, documentation, tests/validators, and production verification —\nand mark each as changed or verified unchanged. Automated parity checks for the\ncanonical inventory MUST pass before merge. Validators MUST NOT operate physical\ndevices or send notifications.",
       "source": "handbook/07-testing-and-deployment.md",
       "rationale": null,
       "verification": null

@@ -92,3 +92,15 @@ exports) updates the live UI. Live repairs follow `HA-TEST-010`: backup the
 live object, apply a surgical UI change, prove behaviour, then refresh the
 repository mirror and verify semantic parity. Direct edits to `.storage` files
 are forbidden.
+
+## HA-UX-015 — Keep settings UIs aligned with device capability
+
+**Level:** Standard
+
+Operational settings views for a device class MUST present consistent
+user-facing controls for every inventoried device. Detection capability and
+notification preference MUST be shown as distinct concepts. Disabled or retired
+notification paths MUST NOT appear as working toggles. Issue numbers and
+internal automation names MUST NOT replace the established primary control
+label. Missing devices, stale labels, or capability chips that contradict the
+canonical inventory are defects.

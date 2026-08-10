@@ -198,3 +198,15 @@ physical hardware, such as:
 
 The change record MUST state which exception applies and why. Ambiguous cases
 MUST follow the production-proof path or ask the human.
+
+## HA-TEST-014 — Require a change matrix for multi-surface device work
+
+**Level:** Standard
+
+Issues and pull requests that add or change cameras (or similarly multi-surface
+devices) MUST include a change matrix listing each affected surface — inventory,
+integration/config, entities/helpers, automations/scripts, settings UI,
+other dashboards, documentation, tests/validators, and production verification —
+and mark each as changed or verified unchanged. Automated parity checks for the
+canonical inventory MUST pass before merge. Validators MUST NOT operate physical
+devices or send notifications.

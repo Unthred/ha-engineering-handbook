@@ -35,3 +35,14 @@ Dependencies between packages, helpers, scripts, dashboards, and external system
 **Level:** Standard
 
 Changes to entities, devices, automations, scripts, areas, or labels MUST preserve intentional area and label assignments unless the approved change explicitly updates that classification.
+
+## HA-ARCH-007 — Own multi-surface device inventories
+
+**Level:** Standard
+
+When a device class (for example cameras) appears across integrations, packages,
+dashboards, notification policy, and tests, the repository MUST maintain one
+canonical inventory that declares identity, classification, capabilities, and
+notification policy. Downstream surfaces MUST derive from or be parity-checked
+against that inventory. Hand-maintained duplicate lists without automated
+parity checks are forbidden for new work.

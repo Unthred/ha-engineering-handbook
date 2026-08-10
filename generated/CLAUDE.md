@@ -43,6 +43,15 @@ Follow these project instructions for all Home Assistant work.
 
 **Standard.** Changes to entities, devices, automations, scripts, areas, or labels MUST preserve intentional area and label assignments unless the approved change explicitly updates that classification.
 
+## HA-ARCH-007 — Own multi-surface device inventories
+
+**Standard.** When a device class (for example cameras) appears across integrations, packages,
+dashboards, notification policy, and tests, the repository MUST maintain one
+canonical inventory that declares identity, classification, capabilities, and
+notification policy. Downstream surfaces MUST derive from or be parity-checked
+against that inventory. Hand-maintained duplicate lists without automated
+parity checks are forbidden for new work.
+
 ## HA-YAML-001 — Name by purpose
 
 **Standard.** IDs and aliases MUST describe intent, not merely location or implementation. Prefer `bedroom_blackout_close` to `blind_automation_2`.
@@ -151,6 +160,16 @@ exports) updates the live UI. Live repairs follow `HA-TEST-010`: backup the
 live object, apply a surgical UI change, prove behaviour, then refresh the
 repository mirror and verify semantic parity. Direct edits to `.storage` files
 are forbidden.
+
+## HA-UX-015 — Keep settings UIs aligned with device capability
+
+**Standard.** Operational settings views for a device class MUST present consistent
+user-facing controls for every inventoried device. Detection capability and
+notification preference MUST be shown as distinct concepts. Disabled or retired
+notification paths MUST NOT appear as working toggles. Issue numbers and
+internal automation names MUST NOT replace the established primary control
+label. Missing devices, stale labels, or capability chips that contradict the
+canonical inventory are defects.
 
 ## HA-SEC-001 — Never commit secrets
 
@@ -335,6 +354,16 @@ physical hardware, such as:
 
 The change record MUST state which exception applies and why. Ambiguous cases
 MUST follow the production-proof path or ask the human.
+
+## HA-TEST-014 — Require a change matrix for multi-surface device work
+
+**Standard.** Issues and pull requests that add or change cameras (or similarly multi-surface
+devices) MUST include a change matrix listing each affected surface — inventory,
+integration/config, entities/helpers, automations/scripts, settings UI,
+other dashboards, documentation, tests/validators, and production verification —
+and mark each as changed or verified unchanged. Automated parity checks for the
+canonical inventory MUST pass before merge. Validators MUST NOT operate physical
+devices or send notifications.
 
 ## HA-DOC-001 — Document operational intent
 
