@@ -219,5 +219,81 @@ class ResponsiveDashboardContractTests(unittest.TestCase):
         self.assertIn("mushroom-title-card", profile)
 
 
+class ActionablePhoneNotificationTests(unittest.TestCase):
+    BAD_CCTV = (
+        "Desired indoor CCTV state: disabled. "
+        "One or more switches failed to follow. Action needed."
+    )
+    GOOD_CCTV = (
+        "Indoor CCTV failed to disable:\n"
+        "- Kitchen Camera Motion remained on; expected off.\n"
+        "- Under-bed Camera Detect is unavailable; expected off.\n"
+        "Two retries failed. Check power or connectivity for the listed cameras."
+    )
+
+    def test_ha_rel_006_and_review_006_present(self):
+        reliability = (HANDBOOK / "06-reliability-and-observability.md").read_text(
+            encoding="utf-8"
+        )
+        review = (HANDBOOK / "10-review-and-audit.md").read_text(encoding="utf-8")
+        self.assertIn(
+            "## HA-REL-006 — Make phone failure Notifications actionable",
+            reliability,
+        )
+        self.assertIn(
+            "MUST contain enough information to understand and act on the failure",
+            reliability,
+        )
+        self.assertIn("one or more", reliability.lower())
+        self.assertIn("action needed", reliability.lower())
+        self.assertIn("suppress the failure notification", reliability.lower())
+        self.assertIn("## HA-REVIEW-006 — Accept only actionable phone Notifications", review)
+        self.assertIn("away from home", review.lower())
+        self.assertIn("HA-REL-006", review)
+
+    def test_rel_003_cross_references_rel_006(self):
+        reliability = (HANDBOOK / "06-reliability-and-observability.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("HA-REL-006", reliability.split("## HA-REL-003", 1)[1].split("## HA-REL-004", 1)[0])
+
+    def test_vague_bad_example_is_caught(self):
+        from scripts.notify_actionability import scan_failure_notification
+
+        findings = scan_failure_notification(self.BAD_CCTV, treat_as_failure=True)
+        codes = {f.code for f in findings}
+        self.assertIn("vague_multi_target", codes)
+        self.assertTrue({"missing_expected", "missing_actual"} & codes)
+
+    def test_good_example_passes(self):
+        from scripts.notify_actionability import assert_actionable_or_raise
+
+        assert_actionable_or_raise(self.GOOD_CCTV)
+
+    def test_generated_outputs_include_actionable_notify_rules(self):
+        subprocess.run(
+            ["python", "scripts/rules.py", "generate"],
+            cwd=HANDBOOK.parent,
+            check=True,
+        )
+        catalog = json.loads((GENERATED / "rules.json").read_text(encoding="utf-8"))
+        ids = {rule["id"] for rule in catalog["rules"]}
+        self.assertIn("HA-REL-006", ids)
+        self.assertIn("HA-REVIEW-006", ids)
+        rel = next(r for r in catalog["rules"] if r["id"] == "HA-REL-006")
+        self.assertIn("friendly names", rel["text"].lower())
+        self.assertIn("one or more", rel["text"].lower())
+
+        cursor = (
+            GENERATED / ".cursor/rules/home-assistant-engineering.mdc"
+        ).read_text(encoding="utf-8")
+        claude = (GENERATED / "CLAUDE.md").read_text(encoding="utf-8")
+        for blob in (cursor, claude):
+            self.assertIn("HA-REL-006", blob)
+            self.assertIn("HA-REVIEW-006", blob)
+            self.assertIn("away from home", blob.lower())
+            self.assertIn("Kitchen Camera Motion", blob)
+
+
 if __name__ == "__main__":
     unittest.main()

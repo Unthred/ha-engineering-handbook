@@ -104,3 +104,24 @@ Remediation plans MUST prioritise safety and correctness, preserve working behav
 **Level:** Principle
 
 An agent MUST treat documented accessibility needs, household routines, display constraints, and deliberate exceptions as design inputs rather than normalising them away.
+
+## HA-REVIEW-006 — Accept only actionable phone Notifications
+
+**Level:** Standard
+
+Before accepting any new phone Notification (especially a failure alert), the implementer MUST answer:
+
+> If the occupant receives this away from home, does it tell them exactly what happened and what they can do about it?
+
+A “no,” or reliance on logs, entity IDs alone, or vague multi-target wording (“one or more,” “some devices,” “action needed” when specifics are known), is a defect under `HA-REL-006`. Reviewers MUST reject or remediate such Notifications before merge.
+
+### Phone Notification audit checks
+
+| Check | Fail when |
+| --- | --- |
+| Operation named | Message does not say what failed |
+| Failed targets listed | Multi-target failure uses “one or more” / “some” when exact failures are known |
+| Expected vs actual | Missing expected or observed result for named targets |
+| Retries / recovery | Retries happened but outcome omitted, or success-after-retry still phones a failure |
+| Next action | No concrete occupant action or useful diagnostic destination |
+| Deep link | Appropriate Companion destination exists but is omitted without reason |

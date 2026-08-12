@@ -279,7 +279,7 @@ rules in `HA-DESIGN-009`.
 
 ## HA-REL-003 — Avoid alert fatigue
 
-**Standard.** Notifications SHOULD be actionable, deduplicated, severity-appropriate, and clear about what happened and what the occupant should do.
+**Standard.** Notifications SHOULD be actionable, deduplicated, severity-appropriate, and clear about what happened and what the occupant should do. Phone failure Notifications MUST also satisfy `HA-REL-006`.
 
 ## HA-REL-004 — Observe dependencies
 
@@ -288,6 +288,46 @@ rules in `HA-DESIGN-009`.
 ## HA-REL-005 — Restore safely
 
 **Standard.** After restart or reconnection, logic MUST re-evaluate current reality rather than blindly replaying stale actions.
+
+## HA-REL-006 — Make phone failure Notifications actionable
+
+**Standard.** A Notification sent to the user’s phone MUST contain enough information to understand and act on the failure without searching logs or guessing which device failed.
+
+Where applicable, every failure Notification MUST include:
+
+- what operation failed
+- which exact devices or entities failed, using human-readable friendly names (raw entity IDs only as secondary diagnostic detail when no friendly name exists)
+- expected state or result
+- actual state or observed result
+- known failure reason (for example unavailable, unknown, timeout, service error, or wrong state)
+- recovery or retries already attempted and their outcome
+- the concrete action the occupant should take
+- a relevant Companion-app deep link when an appropriate destination exists
+
+For operations involving multiple targets:
+
+- calculate and report **only** the failed subset
+- NEVER use vague wording such as “one or more,” “some devices,” or “action needed” when exact failure information is available
+- use correct singular and plural wording
+- if details cannot be determined, say what evidence is unavailable and provide the most useful diagnostic destination
+- suppress the failure Notification when verification or retry shows that all targets ultimately reached the desired state (record recovery as log-only or a non-phone status surface only when genuinely useful)
+
+Successful status announcements (for example “monitoring on”) remain separate from failure Notifications and MUST NOT inherit failure-message requirements.
+
+### Examples (CCTV-style multi-target apply)
+
+**Bad:**
+
+> Desired indoor CCTV state: disabled. One or more switches failed to follow. Action needed.
+
+**Good:**
+
+> Indoor CCTV failed to disable:
+>
+> - Kitchen Camera Motion remained on; expected off.
+> - Under-bed Camera Detect is unavailable; expected off.
+>
+> Two retries failed. Check power or connectivity for the listed cameras.
 
 ## HA-TEST-001 — Validate before deployment
 
@@ -770,6 +810,25 @@ clipping, tiny text, large empty gaps, or an avoidable orphaned final pill.
 ## HA-REVIEW-005 — Preserve user-specific intent
 
 **Principle.** An agent MUST treat documented accessibility needs, household routines, display constraints, and deliberate exceptions as design inputs rather than normalising them away.
+
+## HA-REVIEW-006 — Accept only actionable phone Notifications
+
+**Standard.** Before accepting any new phone Notification (especially a failure alert), the implementer MUST answer:
+
+> If the occupant receives this away from home, does it tell them exactly what happened and what they can do about it?
+
+A “no,” or reliance on logs, entity IDs alone, or vague multi-target wording (“one or more,” “some devices,” “action needed” when specifics are known), is a defect under `HA-REL-006`. Reviewers MUST reject or remediate such Notifications before merge.
+
+### Phone Notification audit checks
+
+| Check | Fail when |
+| --- | --- |
+| Operation named | Message does not say what failed |
+| Failed targets listed | Multi-target failure uses “one or more” / “some” when exact failures are known |
+| Expected vs actual | Missing expected or observed result for named targets |
+| Retries / recovery | Retries happened but outcome omitted, or success-after-retry still phones a failure |
+| Next action | No concrete occupant action or useful diagnostic destination |
+| Deep link | Appropriate Companion destination exists but is omitted without reason |
 
 ## HA-MIGRATE-001 — Back up active instructions
 
