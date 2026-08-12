@@ -264,10 +264,10 @@ class DisruptiveAutomationCorroborationTests(unittest.TestCase):
     def test_ha_auto_007_present(self):
         chapter = (HANDBOOK / "03-automations.md").read_text(encoding="utf-8")
         self.assertIn("## HA-AUTO-007 — Corroborate before disruptive home actions", chapter)
-        self.assertIn("corroborated evidence", chapter)
-        self.assertIn("hard veto", chapter)
-        self.assertIn("Re-validate", chapter)
-        self.assertIn("not** by shutting down a room", chapter)
+        self.assertIn("confirmation / grace window", chapter)
+        self.assertIn("deliberate human interaction", chapter)
+        self.assertIn("automatic device transitions", chapter)
+        self.assertIn("room context", chapter)
         self.assertIn("HA-AUTO-007", chapter.split("## HA-AUTO-003", 1)[1].split("## HA-AUTO-004", 1)[0])
 
     def test_generated_outputs_include_ha_auto_007(self):
@@ -283,7 +283,8 @@ class DisruptiveAutomationCorroborationTests(unittest.TestCase):
             GENERATED / ".cursor/rules/home-assistant-engineering.mdc"
         ).read_text(encoding="utf-8")
         self.assertIn("HA-AUTO-007", cursor)
-        self.assertIn("corroborated evidence", cursor)
+        self.assertIn("deliberate human interaction", cursor)
+        self.assertIn("room context", cursor)
 
 
 if __name__ == "__main__":

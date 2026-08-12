@@ -46,36 +46,60 @@ Give triggers IDs, use descriptive aliases for branches and actions, and keep tr
 
 Automations or scripts that automatically shut down rooms, power off media
 equipment, change house mode to Night/Away, arm alarms, or otherwise disrupt
-occupied living spaces MUST NOT act on a single transient sensor reading.
+occupied living spaces MUST NOT act on a single transient inferred-state
+reading (for example one high sleep-confidence sample).
+
+Inferred human states such as **asleep**, **absent**, or **inactive** MUST NOT
+directly trigger disruptive actions without corroboration appropriate to the
+outcome, a cancellation opportunity where practical, and final revalidation.
 
 They MUST:
 
-1. Require **corroborated evidence** appropriate to the outcome (for example
-   sustained sleep confidence plus room evidence), not a brief spike.
+1. Treat probabilistic sensors as **candidate** evidence only. Prefer a
+   confirming sample or equivalent debounce that respects the sensor’s real
+   update cadence — do not invent certainty with an arbitrary long `for`
+   duration on a stale sticky reading.
 2. **Fail safe** when required inputs are `unknown`, `unavailable`, stale, or
    mutually contradictory — skip the disruptive action.
-3. **Debounce** flaky signals with a sustained `for` duration or equivalent.
-4. Treat active viewing or recent occupied activity in the affected area as a
-   **hard veto** (for example TV/Shield/receiver playback or a powered living-
-   room viewing session must block sleep-triggered living-room shutdown).
-5. **Re-validate** every safety condition immediately before each destructive
+3. Where the occupant may be present and using the space, offer a **short
+   confirmation / grace window** with a clear warning when a practical display
+   channel exists, so deliberate human interaction can cancel before shutdown.
+4. Distinguish **deliberate human interaction** (remote command, manual volume,
+   UI/`user_id` context, wall-switch events, intentional Assist, companion
+   actions) from **automatic device transitions** (programme end, idle,
+   screensaver, autoplay, CEC, automation-generated changes). Only deliberate
+   interaction cancels a pending sleep-style confirmation; automatic media
+   transitions MUST NOT.
+5. Understand that **active playback or powered media may be room context**
+   (where to warn / what to shut down) without being permanent proof of awake
+   or asleep. Whether active use is a hard veto or merely context depends on
+   the automation’s purpose and MUST be documented.
+6. **Re-validate** every safety condition immediately before each destructive
    step, not only at first trigger.
-6. **Cancel** pending delayed shutdowns when contradictory awake activity
-   resumes.
-7. Use an explicit concurrency mode (`single` unless a documented reason for
-   another mode exists) so overlapping runs cannot stack destructive actions.
-8. Avoid latching “already processed” helpers until a genuine disruptive
-   sequence begins or completes as designed.
-9. When skipping because the occupant appears awake, **log the reason only** —
-   do not send a phone notification for a successful veto.
-10. Validate behaviour with traces, template evaluation, or controlled helper
-    tests — **not** by shutting down a room the occupant is actively using.
+7. **Cancel** pending delayed shutdowns when deliberate awake evidence appears
+   or confidence falls / goes stale.
+8. Use an explicit concurrency mode (`single` unless a documented reason for
+   another mode exists) so overlapping runs cannot stack destructive actions;
+   at most one confirmation countdown at a time.
+9. Avoid latching “already processed” helpers until a genuine disruptive
+   sequence begins or completes as designed. Cancellation MUST NOT set that
+   latch.
+10. When skipping or cancelling because the occupant appears awake, **log the
+    reason only** — do not send a phone notification merely for cancellation.
+11. If a required warning cannot be delivered during confirmation-based
+    rollout, fail safe (cancel / skip) rather than silently powering off.
+12. Validate behaviour with traces, template evaluation, or controlled helper
+    tests — **not** by shutting down a room the occupant is actively using
+    during development.
 
-**Why:** A false sleep or presence signal must not black out a room while
-someone is awake and using it. Disruptive automation without corroboration is
-a reliability defect, not an acceptable edge case.
+**Why:** A false sleep or presence signal must not black out a room without
+giving a present occupant a chance to cancel through ordinary interaction.
+Mistaking autoplay or screensaver for “awake” (or treating any playback as
+permanent veto) both defeat the purpose of sleep wind-down.
 
-**Verify:** Review of disruptive automations shows sustained triggers, viewing/
-activity vetoes, last-moment rechecks, cancel-on-awake behaviour, and
-documented non-destructive test evidence. Sample invalid design (act on one
-confidence sample while media is playing) is rejected in review.
+**Verify:** Review shows corroborating/debounce logic matched to sensor
+cadence, deliberate-vs-automatic cancel rules, grace/warning where practical,
+last-moment rechecks, and non-destructive test evidence. Sample invalid
+designs (act on one confidence sample with no confirmation; cancel because
+media went idle; treat playing media as permanent veto when the goal is
+falling-asleep-on-the-sofa) are rejected in review.
