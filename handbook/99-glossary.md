@@ -21,3 +21,25 @@ parking record so it can be resumed safely without guessing; parking is not
 authorization to resume.
 
 **Source of truth** — The authoritative location from which derivative configuration or documentation is produced.
+
+**Dashboard profile** — Repository-owned YAML that records responsive layout
+policy, viewport validation widths, Sections packing choices, visual
+confirmation requirements, and content-hygiene expectations. It is not loaded
+by Home Assistant at runtime.
+
+**Responsive acceptance matrix** — The set of viewport widths and required
+outcomes used to accept a dashboard layout (`HA-TEST-016`). Handbook defaults
+may be overridden by the dashboard profile.
+
+**Structural layout gap** — An avoidable empty region caused by section
+placement, spans, or packing—not purposeful separation or a documented maximum
+content width (`HA-DESIGN-007`).
+
+**Dense section placement** — Home Assistant Sections option that packs shorter
+sections into leftover horizontal space; helpful for reclaiming empty columns,
+harmful when it confuses reading order (`HA-DESIGN-008`).
+
+**Page header pattern** — Preferred operational page identity: a centred
+characterful title, optional compact subtitle, and a centred wrapping row of
+page-relevant status pills (`HA-UX-019`, `HA-DESIGN-009`). Profile
+`page_header.mode` may be `preferred`, `required`, `optional`, or `disabled`.

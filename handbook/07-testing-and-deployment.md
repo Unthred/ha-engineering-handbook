@@ -28,6 +28,8 @@ scripts, and other Git-owned files that Home Assistant loads):
 For **UI / storage-managed** configuration (storage-mode Lovelace and other
 live UI-owned objects), follow `HA-UX-014` and `HA-TEST-010`: change live state
 surgically, prove behaviour, then export the proven representation into Git.
+Material dashboard layout or presentation changes also require visual
+breakpoint verification in normal view (`HA-TEST-016`, `HA-UX-016`–`HA-UX-018`).
 
 ## HA-TEST-001 — Validate before deployment
 
@@ -277,3 +279,39 @@ overrode the weaker reading of production-first rules.
 **Verify:** A hypothetical prompt that says both “merge into develop” and “do
 not deploy” for a new package is refused; docs-only PRs still may merge under
 `HA-TEST-013`.
+
+## HA-TEST-016 — Visual breakpoint verification
+
+**Level:** Standard
+
+Material dashboard layout or presentation changes MUST be visually verified in
+**normal dashboard mode** against the consuming repository's responsive
+acceptance matrix (defaults in `handbook/09-visual-design-system.md` and
+`examples/dashboard-profile.yaml`). “Checked desktop” without evidence is not
+sufficient.
+
+The validation report MUST state:
+
+- the actual viewport widths checked;
+- whether normal dashboard mode was used (not editor-only);
+- layout and reading order at each width;
+- any clipping, overflow, excessive gaps, or awkward spans;
+- whether conditional states were tested;
+- who performed visual confirmation.
+
+Editor preview, valid JSON/YAML, a successful Lovelace save, and inspection of
+storage data are **not** proof of acceptable visual output. If the agent cannot
+inspect the authenticated Home Assistant frontend, it MUST obtain human visual
+confirmation before merging any material dashboard layout or presentation
+change.
+
+Automated linting and rule generation MAY enforce that the responsive contract
+exists and propagates; they MUST NOT be treated as substitutes for visual
+acceptance.
+
+**Why:** Agents equated configuration validity with visual quality, shipping
+desktop holes and editor-only checks.
+
+**Verify:** Change records for material dashboard PRs list matrix widths,
+normal-view confirmation, gap/clipping notes, conditional-state checks, and
+named visual confirmer when the agent lacked frontend access.

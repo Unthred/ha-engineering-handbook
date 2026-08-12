@@ -6,6 +6,18 @@ All notable handbook changes will be recorded here.
 
 ### Added
 
+- Responsive dashboard visual contract: `HA-UX-016` (mobile-first progressive
+  enhancement), `HA-UX-017` (deliberate responsive space use), `HA-UX-018`
+  (operational UI content hygiene), `HA-DESIGN-007` (structural layout-gap
+  prevention), `HA-DESIGN-008` (section span and packing behaviour),
+  `HA-TEST-016` (visual breakpoint verification)
+- Preferred page-header pattern: `HA-UX-019` (characterful title + status
+  pills), `HA-DESIGN-009` (header composition and pill behaviour); profile
+  `page_header.mode` (`preferred` | `required` | `optional` | `disabled`)
+- ADR-0004: enforceable responsive dashboard visual contract
+- Dashboard profile v2 example + `schemas/dashboard-profile.schema.json`
+- Audit template responsive acceptance table and pass/fail examples
+- Example native/Mushroom-shaped page-header snippet (non-normative)
 - `HA-TEST-015` — refuse merge-before-deploy prompt conflicts; require recorded
   pre-merge production-proof gate evidence
 - One-active-implementation work-in-progress discipline (`HA-AI-006`): finish,
@@ -18,6 +30,10 @@ All notable handbook changes will be recorded here.
 
 ### Changed
 
+- `HA-UX-005` — require profile matrix validation; phone/desktop each insufficient alone
+- `HA-DESIGN-004` — purposeless empty space; cross-ref structural gap and packing rules
+- Visual design system — default responsive matrix and Home Assistant Sections mechanics
+- Review framework — mandatory responsive and content-hygiene inspection
 - `HA-TEST-007` — explicit production-first wording: green CI is not production
   proof; “merge normally” / “do not deploy” cannot authorise merge-before-deploy
 - `HA-TEST-008` — allow minimal live correction during authorised validation,
