@@ -86,7 +86,11 @@ parity checks are forbidden for new work.
 
 ## HA-AUTO-003 — Guard unsafe and noisy actions
 
-**Standard.** Actions that unlock, open, heat, notify repeatedly, or affect security MUST have explicit preconditions and rate limits where appropriate.
+**Standard.** Actions that unlock, open, heat, notify repeatedly, affect security, or
+disrupt occupied living spaces (room shutdown, media power-off, Night/Away
+mode, alarm arming) MUST have explicit preconditions and rate limits where
+appropriate. Disruptive shutdown and sleep paths MUST also satisfy
+`HA-AUTO-007`.
 
 ## HA-AUTO-004 — Make retries bounded
 
@@ -99,6 +103,56 @@ parity checks are forbidden for new work.
 ## HA-AUTO-006 — Use traceable structure
 
 **Guideline.** Give triggers IDs, use descriptive aliases for branches and actions, and keep traces useful enough to explain why a decision occurred.
+
+## HA-AUTO-007 — Corroborate before disruptive home actions
+
+**Standard.** Automations or scripts that automatically shut down rooms, power off media
+equipment, change house mode to Night/Away, arm alarms, or otherwise disrupt
+occupied living spaces MUST NOT act on a single transient inferred-state
+reading (for example one high sleep-confidence sample).
+
+Inferred human states such as **asleep**, **absent**, or **inactive** MUST NOT
+directly trigger disruptive actions without corroboration appropriate to the
+outcome, a cancellation opportunity where practical, and final revalidation.
+
+They MUST:
+
+1. Treat probabilistic sensors as **candidate** evidence only. Prefer a
+   confirming sample or equivalent debounce that respects the sensor’s real
+   update cadence — do not invent certainty with an arbitrary long `for`
+   duration on a stale sticky reading.
+2. **Fail safe** when required inputs are `unknown`, `unavailable`, stale, or
+   mutually contradictory — skip the disruptive action.
+3. Where the occupant may be present and using the space, offer a **short
+   confirmation / grace window** with a clear warning when a practical display
+   channel exists, so deliberate human interaction can cancel before shutdown.
+4. Distinguish **deliberate human interaction** (remote command, manual volume,
+   UI/`user_id` context, wall-switch events, intentional Assist, companion
+   actions) from **automatic device transitions** (programme end, idle,
+   screensaver, autoplay, CEC, automation-generated changes). Only deliberate
+   interaction cancels a pending sleep-style confirmation; automatic media
+   transitions MUST NOT.
+5. Understand that **active playback or powered media may be room context**
+   (where to warn / what to shut down) without being permanent proof of awake
+   or asleep. Whether active use is a hard veto or merely context depends on
+   the automation’s purpose and MUST be documented.
+6. **Re-validate** every safety condition immediately before each destructive
+   step, not only at first trigger.
+7. **Cancel** pending delayed shutdowns when deliberate awake evidence appears
+   or confidence falls / goes stale.
+8. Use an explicit concurrency mode (`single` unless a documented reason for
+   another mode exists) so overlapping runs cannot stack destructive actions;
+   at most one confirmation countdown at a time.
+9. Avoid latching “already processed” helpers until a genuine disruptive
+   sequence begins or completes as designed. Cancellation MUST NOT set that
+   latch.
+10. When skipping or cancelling because the occupant appears awake, **log the
+    reason only** — do not send a phone notification merely for cancellation.
+11. If a required warning cannot be delivered during confirmation-based
+    rollout, fail safe (cancel / skip) rather than silently powering off.
+12. Validate behaviour with traces, template evaluation, or controlled helper
+    tests — **not** by shutting down a room the occupant is actively using
+    during development.
 
 ## HA-UX-001 — Design around tasks
 
@@ -576,6 +630,8 @@ applicable:
 - requested implementation and success criteria
 - tests and verification (including production or physical proof when
   authorized and required)
+- required pull-request CI for the exact head SHA green, or an evidenced
+  external blocker recorded (`HA-AI-007`)
 - repository state and changelog / durable documentation
 - issue status (completed, duplicate, superseded, or separately recorded
   follow-up)
@@ -690,6 +746,90 @@ separate worktree.
 **Invalid handoff:** “Mostly done, will finish later,” with open issues, an
 unmerged PR, and no parking record, while starting unrelated implementation in
 the same workspace.
+
+## HA-AI-007 — Own pull-request CI through green or evidenced blocker
+
+**Standard.** **Scope:** This standard applies to **every repository** that installs this
+handbook. It is not Home Assistant-specific. A consuming project MAY add a
+local overlay that names its required check IDs or `gh` helpers; that overlay
+MUST NOT weaken, replace, or substitute for this rule. Installing only a
+project-local CI-ownership note without the generated handbook rule is
+**not** compliance.
+
+An agent that creates or updates a pull request MUST retain ownership of
+required checks for the **exact pushed head SHA** through a **terminal
+result**: success for every required check, or a clearly evidenced external
+blocker reported with URLs and inspected evidence. Ownership includes
+monitoring, failure inspection, repair of failures caused by the agent’s
+changes, re-push, and re-check of the new head.
+
+### Forbidden handoff (the defect this rule forbids)
+
+The unacceptable behaviour is **not** merely that CI failed. It is that the
+agent pushed a pull request, failed to retain ownership of its checks, and
+handed the work back while the latest head was **failing** or **unverified**.
+
+The following are forbidden as completed handoffs after an agent push:
+
+- “CI should pass,” “checks started,” “pending at last check,” or equivalent
+- reporting an older SHA’s green result while a newer head remains unmonitored
+- leaving required checks red or pending and asking the human to watch them
+- treating a local parse, config reload, or workflow trigger as CI completion
+
+### After every push
+
+1. Record the pushed commit SHA.
+2. Confirm the pull-request head matches that SHA.
+3. Wait for required checks to appear for that SHA (not a superseded run).
+4. Monitor those checks to a terminal state (success, failure, cancelled, or
+   timed-out).
+5. If a GitHub Actions check fails:
+   - retrieve the job log and annotations with `gh` (for example `gh pr checks`,
+     `gh run view`, and failed-job logs)
+   - identify the failing command and root cause
+   - implement the smallest correct fix (or prove the failure is unrelated /
+     external)
+   - run the closest local equivalent where practical
+   - push the correction
+   - restart monitoring against the **new** head SHA
+6. If a check stays pending for an unusually long time, inspect the workflow or
+   run instead of silently abandoning it.
+7. If a check is cancelled or superseded, follow the newest head SHA.
+8. If an external check fails, report its URL and evidence; do not pretend its
+   logs were inspected.
+9. Never merge unless the human separately authorises merging.
+
+### Boundaries
+
+- Do not blindly re-run a deterministic failing workflow without changing
+  anything. One re-run is acceptable only when evidence indicates infrastructure
+  or transient failure.
+- Do not modify application behaviour merely to appease a broken test; determine
+  which is wrong.
+- Do not weaken, skip, or disable checks to make the pull request green.
+- Do not add broad exclusions or `continue-on-error` to hide failures.
+- Never expose secrets from Actions logs.
+- If a failure appears unrelated to the pull-request diff, prove that by
+  checking the base branch or a previous successful run before changing
+  unrelated code.
+- After three materially different attempted fixes without success, stop,
+  preserve evidence, and report the blocker rather than looping indefinitely.
+
+### Completion report (mandatory)
+
+When handing work back after a pull-request update, the agent MUST include:
+
+- pull-request URL
+- final head SHA
+- every required check and its terminal result for **that** SHA
+- failing commands and root causes encountered
+- fixes made
+- local verification performed
+- links to any remaining failed or externally blocked checks
+
+If required checks are still pending, the agent’s work is still in progress.
+Pushing code, a local parse, a Home Assistant reload, or triggering a workflow
+is not completion.
 
 ## HA-DESIGN-001 — Centralise visual tokens
 
