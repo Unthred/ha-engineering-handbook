@@ -91,15 +91,25 @@ They MUST:
 12. Validate behaviour with traces, template evaluation, or controlled helper
     tests — **not** by shutting down a room the occupant is actively using
     during development.
+13. When a disruptive automation also owns **external side effects** (phone /
+    watch Notifications, critical notification channels, sirens, alarm audio,
+    emergency/security notify pools, camera security responses, or delayed
+    cleanup against real devices), development and capture/restore tests MUST
+    use a **structural test-mode / production-incident gate** (`HA-TEST-017`).
+    Panel state alone (for example “alarm remained disarmed”) is **not** proof
+    that those channels were unreachable.
 
 **Why:** A false sleep or presence signal must not black out a room without
 giving a present occupant a chance to cancel through ordinary interaction.
 Mistaking autoplay or screensaver for “awake” (or treating any playback as
-permanent veto) both defeat the purpose of sleep wind-down.
+permanent veto) both defeat the purpose of sleep wind-down. Separately, a
+“harmless” light capture/restore that still shares production notify/siren
+scripts can wake a watch even when the alarm panel stays disarmed.
 
 **Verify:** Review shows corroborating/debounce logic matched to sensor
 cadence, deliberate-vs-automatic cancel rules, grace/warning where practical,
 last-moment rechecks, and non-destructive test evidence. Sample invalid
 designs (act on one confidence sample with no confirmation; cancel because
 media went idle; treat playing media as permanent veto when the goal is
-falling-asleep-on-the-sofa) are rejected in review.
+falling-asleep-on-the-sofa; prove harmlessness from panel state while still
+calling `notify.mobile_app_*` / siren scripts) are rejected in review.

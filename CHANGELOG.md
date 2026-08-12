@@ -6,10 +6,15 @@ All notable handbook changes will be recorded here.
 
 ### Added
 
+- Disruptive test isolation: `HA-TEST-017` (structural test-mode /
+  production-incident gate; deny-by-default external alerts/sirens; prove the
+  call graph; user approval before real-world alert tests; duplicate
+  Notification discipline). Cross-linked from `HA-AUTO-007`.
 - Disruptive automation corroboration: `HA-AUTO-007` (inferred-state actions
   need confirming evidence, confirmation/grace with deliberate-interaction
   cancel, automatic media transitions must not cancel, playback may be room
-  context not permanent veto; fail-safe; non-destructive tests);
+  context not permanent veto; fail-safe; non-destructive tests;
+  external side-effect isolation pointer to `HA-TEST-017`);
   `HA-AUTO-003` cross-link
 - Responsive dashboard visual contract: `HA-UX-016` (mobile-first progressive
   enhancement), `HA-UX-017` (deliberate responsive space use), `HA-UX-018`

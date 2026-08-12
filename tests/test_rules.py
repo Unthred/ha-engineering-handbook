@@ -246,5 +246,33 @@ class DisruptiveAutomationCorroborationTests(unittest.TestCase):
         self.assertIn("room context", cursor)
 
 
+class DisruptiveTestIsolationTests(unittest.TestCase):
+    def test_ha_test_017_present(self):
+        chapter = (HANDBOOK / "07-testing-and-deployment.md").read_text(encoding="utf-8")
+        self.assertIn("## HA-TEST-017 — Structurally isolate disruptive test execution", chapter)
+        self.assertIn("Deny by default", chapter)
+        self.assertIn("production incident", chapter)
+        self.assertIn("call graph", chapter)
+
+    def test_ha_auto_007_points_at_test_017(self):
+        chapter = (HANDBOOK / "03-automations.md").read_text(encoding="utf-8")
+        self.assertIn("HA-TEST-017", chapter.split("## HA-AUTO-007", 1)[1])
+
+    def test_generated_outputs_include_ha_test_017(self):
+        subprocess.run(
+            ["python", "scripts/rules.py", "generate"],
+            cwd=HANDBOOK.parent,
+            check=True,
+        )
+        catalog = json.loads((GENERATED / "rules.json").read_text(encoding="utf-8"))
+        ids = {rule["id"] for rule in catalog["rules"]}
+        self.assertIn("HA-TEST-017", ids)
+        cursor = (
+            GENERATED / ".cursor/rules/home-assistant-engineering.mdc"
+        ).read_text(encoding="utf-8")
+        self.assertIn("HA-TEST-017", cursor)
+        self.assertIn("Deny by default", cursor)
+
+
 if __name__ == "__main__":
     unittest.main()

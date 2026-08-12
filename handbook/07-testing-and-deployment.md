@@ -315,3 +315,53 @@ desktop holes and editor-only checks.
 **Verify:** Change records for material dashboard PRs list matrix widths,
 normal-view confirmation, gap/clipping notes, conditional-state checks, and
 named visual confirmer when the agent lacked frontend access.
+
+## HA-TEST-017 — Structurally isolate disruptive test execution
+
+**Level:** Standard
+
+Automations and scripts that can produce **real-world alerts or security
+responses** (phone/watch Notifications, critical/`alarm_stream` channels,
+sirens, alarm speech, emergency/security notify pools, camera security
+responses, delayed device cleanup) MUST NOT share those side-effect call
+paths with development, capture/restore, smoke, or “harmless” light tests
+unless an explicit **production incident context** is set by the real incident
+entry path.
+
+They MUST:
+
+1. **Deny by default.** External alert, siren, speech, and security-response
+   actions require an explicit production-incident flag/context. Absence or
+   ambiguity of that context MUST fail closed.
+2. Provide a **structural test-mode** (not a comment or honour-system branch)
+   so capture/restore and Dev tests cannot arm Alarmo, cannot invoke phone or
+   Wear OS Notifications, cannot use critical notification channels, cannot
+   start sirens/alarm audio, cannot call emergency/security pools, cannot
+   activate external camera/security responses, and cannot schedule delayed
+   cleanup against real devices.
+3. Route side effects through **guarded scripts/services** that enforce the
+   production gate centrally. Scattered `if test` conditions that a future
+   edit can bypass are insufficient.
+4. Allow tests to affect only an **explicitly selected harmless subset** (for
+   example one light group) and use HA-side notifications or logs clearly
+   labelled `TEST` for diagnostics.
+5. Prove isolation with the **actual call graph** (traces, captured service
+   calls, template evaluation, mocked notify scripts) — not assumptions from
+   alarm-panel state remaining disarmed.
+6. Obtain **user approval** before any test that may still produce a
+   real-world alert after the above controls.
+7. For real incidents: generate at most one phone Notification per meaningful
+   event unless escalation is deliberate; use stable tags/notification IDs;
+   avoid separately targeting Wear OS when the phone already mirrors; retries
+   MUST NOT create additional user alerts unless the outcome materially
+   changes; record incident/notification context for duplicate correlation.
+
+**Why:** A capture/restore “logic test” that still called
+`notify.mobile_app_*` with `channel: alarm_stream` produced two Wear OS alarm
+alerts while Alarmo stayed disarmed. Panel state was not the risk surface —
+the shared notify path was.
+
+**Verify:** Review shows a production-incident gate on every external
+alert/siren/security path, test scripts that cannot set that gate, and
+evidence that the same Dev/capture/restore exercise yields zero
+`notify.mobile_app_*` / siren / alarm-audio service calls.
