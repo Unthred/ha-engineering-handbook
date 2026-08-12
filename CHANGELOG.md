@@ -6,6 +6,11 @@ All notable handbook changes will be recorded here.
 
 ### Added
 
+- Domain reload safety: `HA-TEST-018` (reloads/startup are potentially
+  state-changing; ignore transitional unavailable/unknown/Empty; debounce +
+  revalidate; fail closed in lighting/profile scripts; inspect consumers
+  before `template.reload`; stop on unexpected physical effects). Driven by
+  the 2026-08-12 house lighting incident.
 - Disruptive test isolation: `HA-TEST-017` (structural test-mode /
   production-incident gate; deny-by-default external alerts/sirens; prove the
   call graph; user approval before real-world alert tests; duplicate

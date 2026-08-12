@@ -98,6 +98,11 @@ They MUST:
     use a **structural test-mode / production-incident gate** (`HA-TEST-017`).
     Panel state alone (for example “alarm remained disarmed”) is **not** proof
     that those channels were unreachable.
+14. When disruptive lighting/profile application is driven by template sensors,
+    treat domain reloads and startup recovery as transitional (`HA-TEST-018`):
+    do not act on `unavailable`/`unknown`/Empty, debounce valid changes, and
+    fail closed in action scripts so an `else turn_off` cannot fire on invalid
+    inputs.
 
 **Why:** A false sleep or presence signal must not black out a room without
 giving a present occupant a chance to cancel through ordinary interaction.

@@ -315,5 +315,30 @@ class DisruptiveTestIsolationTests(unittest.TestCase):
         self.assertIn("Deny by default", cursor)
 
 
+class DomainReloadSafetyTests(unittest.TestCase):
+    def test_ha_test_018_present(self):
+        chapter = (HANDBOOK / "07-testing-and-deployment.md").read_text(encoding="utf-8")
+        self.assertIn("## HA-TEST-018 — Treat domain reloads as potentially state-changing", chapter)
+        self.assertIn("Ignore invalid transitions", chapter)
+        self.assertIn("Fail closed in action scripts", chapter)
+        self.assertIn("Inspect consumers before reload", chapter)
+        self.assertIn("template.reload", chapter)
+
+    def test_generated_outputs_include_ha_test_018(self):
+        subprocess.run(
+            ["python", "scripts/rules.py", "generate"],
+            cwd=HANDBOOK.parent,
+            check=True,
+        )
+        catalog = json.loads((GENERATED / "rules.json").read_text(encoding="utf-8"))
+        ids = {rule["id"] for rule in catalog["rules"]}
+        self.assertIn("HA-TEST-018", ids)
+        cursor = (
+            GENERATED / ".cursor/rules/home-assistant-engineering.mdc"
+        ).read_text(encoding="utf-8")
+        self.assertIn("HA-TEST-018", cursor)
+        self.assertIn("potentially state-changing", cursor)
+
+
 if __name__ == "__main__":
     unittest.main()
