@@ -315,3 +315,106 @@ desktop holes and editor-only checks.
 **Verify:** Change records for material dashboard PRs list matrix widths,
 normal-view confirmation, gap/clipping notes, conditional-state checks, and
 named visual confirmer when the agent lacked frontend access.
+
+## HA-TEST-017 — Structurally isolate disruptive test execution
+
+**Level:** Standard
+
+Automations and scripts that can produce **real-world alerts or security
+responses** (phone/watch Notifications, critical/`alarm_stream` channels,
+sirens, alarm speech, emergency/security notify pools, camera security
+responses, delayed device cleanup) MUST NOT share those side-effect call
+paths with development, capture/restore, smoke, or “harmless” light tests
+unless an explicit **production incident context** is set by the real incident
+entry path.
+
+They MUST:
+
+1. **Deny by default.** External alert, siren, speech, and security-response
+   actions require an explicit production-incident flag/context. Absence or
+   ambiguity of that context MUST fail closed.
+2. Provide a **structural test-mode** (not a comment or honour-system branch)
+   so capture/restore and Dev tests cannot arm Alarmo, cannot invoke phone or
+   Wear OS Notifications, cannot use critical notification channels, cannot
+   start sirens/alarm audio, cannot call emergency/security pools, cannot
+   activate external camera/security responses, and cannot schedule delayed
+   cleanup against real devices.
+3. Route side effects through **guarded scripts/services** that enforce the
+   production gate centrally. Scattered `if test` conditions that a future
+   edit can bypass are insufficient.
+4. Allow tests to affect only an **explicitly selected harmless subset** (for
+   example one light group) and use HA-side notifications or logs clearly
+   labelled `TEST` for diagnostics.
+5. Prove isolation with the **actual call graph** (traces, captured service
+   calls, template evaluation, mocked notify scripts) — not assumptions from
+   alarm-panel state remaining disarmed.
+6. Obtain **user approval** before any test that may still produce a
+   real-world alert after the above controls.
+7. For real incidents: generate at most one phone Notification per meaningful
+   event unless escalation is deliberate; use stable tags/notification IDs;
+   avoid separately targeting Wear OS when the phone already mirrors; retries
+   MUST NOT create additional user alerts unless the outcome materially
+   changes; record incident/notification context for duplicate correlation.
+
+**Why:** A capture/restore “logic test” that still called
+`notify.mobile_app_*` with `channel: alarm_stream` produced two Wear OS alarm
+alerts while Alarmo stayed disarmed. Panel state was not the risk surface —
+the shared notify path was.
+
+**Verify:** Review shows a production-incident gate on every external
+alert/siren/security path, test scripts that cannot set that gate, and
+evidence that the same Dev/capture/restore exercise yields zero
+`notify.mobile_app_*` / siren / alarm-audio service calls.
+
+## HA-TEST-018 — Treat domain reloads as potentially state-changing
+
+**Level:** Standard
+
+A Home Assistant **domain reload** (`template.reload`, `script.reload`,
+`automation.reload`, integration reload) or Core startup MUST be treated as a
+**potentially state-changing operation**, not as a no-op configuration apply.
+
+Template and other computed entities commonly pass through `unavailable`,
+`unknown`, empty, or sentinel values (for example `Empty`) during reload and
+startup before recovering. Automations that drive **physical** outcomes
+(lights, covers, media power, climate setpoints, camera detection switches,
+scene application, house-mode scripts) MUST NOT treat those transitional
+states as real-world changes.
+
+They MUST:
+
+1. **Ignore invalid transitions.** Do not act when the previous or new state
+   is `unknown`, `unavailable`, `none`, empty, or another documented
+   non-operational sentinel. A recovery from unavailable to the previous
+   valid value MUST NOT by itself be actionable.
+2. **Debounce and revalidate.** Require the new state to remain valid and
+   stable for a short documented duration, then re-read source sensors
+   immediately before any light/`turn_off`/`turn_on`/profile apply call.
+3. **Fail closed in action scripts.** Broad lighting/profile scripts MUST
+   abort when required inputs are invalid — they MUST NOT fall through an
+   `else` branch that turns devices off merely because `state == On` failed.
+4. **Inspect consumers before reload.** Before an agent runs a domain reload,
+   it MUST identify automations/scripts triggered by entities that reload will
+   rewrite, determine whether recovery transitions can cause physical effects,
+   temporarily suppress or confirm those consumers are safely guarded, reload,
+   verify stable valid states, then restore any temporary suppression only
+   after that verification.
+5. **Stop on unexpected physical effects.** If a reload or deploy produces
+   unexpected real-world changes, the agent MUST stop immediately, contain
+   (disable the responsible automatic paths), and obtain approval before
+   further deploy/reload/restore work.
+6. **Scope does not imply safety.** Deploying an unrelated file does **not**
+   make a broad domain reload safe. Production-first validation does **not**
+   override these reload-safety constraints.
+
+**Why:** On 2026-08-12 a routine `template.reload` after an unrelated package
+deploy briefly set `sensor.is_dark_outside` / night-mode profile sensors to
+`unavailable`/`Empty`. An unguarded automation ran `determine_lighting_states`;
+child scripts treated non-`On` as “not dark” and turned off much of the house
+while the occupant was home.
+
+**Verify:** Automations that call lighting/profile scripts from template
+sensors include `not_from`/`not_to` (or equivalent) plus debounce; scripts
+abort on invalid inputs; unit tests cover reload sequences with zero simulated
+physical calls; agent deploy notes list consumer inspection when
+`template.reload` is planned.

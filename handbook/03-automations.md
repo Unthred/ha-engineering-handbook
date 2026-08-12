@@ -12,11 +12,22 @@ Every automation MUST make clear whether it responds to an edge, a sustained sta
 
 Choose `single`, `restart`, `queued`, or `parallel` based on concurrency semantics; do not accept the default accidentally.
 
+For physical controls (wall switches, buttons, remotes):
+
+- Prefer **per-device or per-room** automations/scripts so unrelated rooms are not serialised by one house-wide queue.
+- Use **bounded** `queued` (`max`) when commands must not be silently discarded; overflow MUST be observable (default warning log or equivalent). Unbounded queues are forbidden.
+- Use **`restart`** (or an explicit cancel path) when a newer gesture should **supersede** obsolete work (for example single deferred for double-click discrimination, or cancelling a stale fade). Do not use `queued` when that would merely guarantee execution of an obsolete automatic action after a newer human command.
+- Document which gestures supersede versus enqueue.
+
 ## HA-AUTO-003 — Guard unsafe and noisy actions
 
 **Level:** Standard
 
-Actions that unlock, open, heat, notify repeatedly, or affect security MUST have explicit preconditions and rate limits where appropriate.
+Actions that unlock, open, heat, notify repeatedly, affect security, or
+disrupt occupied living spaces (room shutdown, media power-off, Night/Away
+mode, alarm arming) MUST have explicit preconditions and rate limits where
+appropriate. Disruptive shutdown and sleep paths MUST also satisfy
+`HA-AUTO-007`.
 
 ## HA-AUTO-004 — Make retries bounded
 
@@ -30,8 +41,95 @@ Retries MUST have a limit, delay, and observable failure outcome. Infinite retry
 
 Manual intervention SHOULD win for a documented period or until a clear reset condition. An automation must not immediately undo an occupant's action.
 
+For lighting and similar actuators:
+
+- A deliberate physical command (for example double-click requesting 100% brightness) is an **explicit user override** and MUST take precedence over automatic profile/default brightness for a documented lifetime (commonly until that light turns off, or another clear reset — not a permanent latch that blocks legitimate later automation).
+- Separate **colour intent** from **brightness intent**. Applying an appropriate time-of-day colour MUST NOT implicitly force default brightness when the user requested an explicit level.
+- Prefer one consolidated final-state service call when the platform allows it, to avoid visible stepping through intermediate remembered/profile/override values.
+- Automation-generated state changes MUST NOT be treated as new human input for override semantics.
+- Synthetic ordering tests SHOULD cover single-then-double device streams and profile reactions before physical validation.
+
 ## HA-AUTO-006 — Use traceable structure
 
 **Level:** Guideline
 
 Give triggers IDs, use descriptive aliases for branches and actions, and keep traces useful enough to explain why a decision occurred.
+
+## HA-AUTO-007 — Corroborate before disruptive home actions
+
+**Level:** Standard
+
+Automations or scripts that automatically shut down rooms, power off media
+equipment, change house mode to Night/Away, arm alarms, or otherwise disrupt
+occupied living spaces MUST NOT act on a single transient inferred-state
+reading (for example one high sleep-confidence sample).
+
+Inferred human states such as **asleep**, **absent**, or **inactive** MUST NOT
+directly trigger disruptive actions without corroboration appropriate to the
+outcome, a cancellation opportunity where practical, and final revalidation.
+
+They MUST:
+
+1. Treat probabilistic sensors as **candidate** evidence only. Prefer a
+   confirming sample or equivalent debounce that respects the sensor’s real
+   update cadence — do not invent certainty with an arbitrary long `for`
+   duration on a stale sticky reading.
+2. **Fail safe** when required inputs are `unknown`, `unavailable`, stale, or
+   mutually contradictory — skip the disruptive action.
+3. Where the occupant may be present and using the space, offer a **short
+   confirmation / grace window** with a clear warning when a practical display
+   channel exists, so deliberate human interaction can cancel before shutdown.
+4. Distinguish **deliberate human interaction** (remote command, manual volume,
+   UI/`user_id` context, wall-switch events, intentional Assist, companion
+   actions) from **automatic device transitions** (programme end, idle,
+   screensaver, autoplay, CEC, automation-generated changes). Only deliberate
+   interaction cancels a pending sleep-style confirmation; automatic media
+   transitions MUST NOT.
+5. Understand that **active playback or powered media may be room context**
+   (where to warn / what to shut down) without being permanent proof of awake
+   or asleep. Whether active use is a hard veto or merely context depends on
+   the automation’s purpose and MUST be documented.
+6. **Re-validate** every safety condition immediately before each destructive
+   step, not only at first trigger.
+7. **Cancel** pending delayed shutdowns when deliberate awake evidence appears
+   or confidence falls / goes stale.
+8. Use an explicit concurrency mode (`single` unless a documented reason for
+   another mode exists) so overlapping runs cannot stack destructive actions;
+   at most one confirmation countdown at a time.
+9. Avoid latching “already processed” helpers until a genuine disruptive
+   sequence begins or completes as designed. Cancellation MUST NOT set that
+   latch.
+10. When skipping or cancelling because the occupant appears awake, **log the
+    reason only** — do not send a phone notification merely for cancellation.
+11. If a required warning cannot be delivered during confirmation-based
+    rollout, fail safe (cancel / skip) rather than silently powering off.
+12. Validate behaviour with traces, template evaluation, or controlled helper
+    tests — **not** by shutting down a room the occupant is actively using
+    during development.
+13. When a disruptive automation also owns **external side effects** (phone /
+    watch Notifications, critical notification channels, sirens, alarm audio,
+    emergency/security notify pools, camera security responses, or delayed
+    cleanup against real devices), development and capture/restore tests MUST
+    use a **structural test-mode / production-incident gate** (`HA-TEST-017`).
+    Panel state alone (for example “alarm remained disarmed”) is **not** proof
+    that those channels were unreachable.
+14. When disruptive lighting/profile application is driven by template sensors,
+    treat domain reloads and startup recovery as transitional (`HA-TEST-018`):
+    do not act on `unavailable`/`unknown`/Empty, debounce valid changes, and
+    fail closed in action scripts so an `else turn_off` cannot fire on invalid
+    inputs.
+
+**Why:** A false sleep or presence signal must not black out a room without
+giving a present occupant a chance to cancel through ordinary interaction.
+Mistaking autoplay or screensaver for “awake” (or treating any playback as
+permanent veto) both defeat the purpose of sleep wind-down. Separately, a
+“harmless” light capture/restore that still shares production notify/siren
+scripts can wake a watch even when the alarm panel stays disarmed.
+
+**Verify:** Review shows corroborating/debounce logic matched to sensor
+cadence, deliberate-vs-automatic cancel rules, grace/warning where practical,
+last-moment rechecks, and non-destructive test evidence. Sample invalid
+designs (act on one confidence sample with no confirmation; cancel because
+media went idle; treat playing media as permanent veto when the goal is
+falling-asleep-on-the-sofa; prove harmlessness from panel state while still
+calling `notify.mobile_app_*` / siren scripts) are rejected in review.

@@ -219,5 +219,126 @@ class ResponsiveDashboardContractTests(unittest.TestCase):
         self.assertIn("mushroom-title-card", profile)
 
 
+class AgentCiOwnershipTests(unittest.TestCase):
+    def test_ha_ai_007_present_with_mandatory_workflow(self):
+        chapter = (HANDBOOK / "08-documentation-and-ai.md").read_text(encoding="utf-8")
+        self.assertIn("## HA-AI-007 — Own pull-request CI through green or evidenced blocker", chapter)
+        self.assertIn("exact pushed head SHA", chapter)
+        self.assertIn("Forbidden handoff", chapter)
+        self.assertIn("failing** or **unverified", chapter)
+        self.assertIn("every repository", chapter)
+        self.assertIn("project-local CI-ownership note without the generated handbook rule", chapter)
+        self.assertIn("CI should pass", chapter)
+        self.assertIn("pending at last check", chapter)
+        self.assertIn("three materially different attempted fixes", chapter)
+        self.assertIn("Never merge unless the human separately authorises merging", chapter)
+        # Cross-link from HA-AI-006 definition of done
+        self.assertIn("HA-AI-007", chapter.split("## HA-AI-006", 1)[1].split("## HA-AI-007", 1)[0])
+
+    def test_generated_outputs_include_ha_ai_007(self):
+        subprocess.run(
+            ["python", "scripts/rules.py", "generate"],
+            cwd=HANDBOOK.parent,
+            check=True,
+        )
+        catalog = json.loads((GENERATED / "rules.json").read_text(encoding="utf-8"))
+        ids = {rule["id"] for rule in catalog["rules"]}
+        self.assertIn("HA-AI-007", ids)
+        rule = next(r for r in catalog["rules"] if r["id"] == "HA-AI-007")
+        self.assertIn("exact pushed head SHA", rule["text"])
+        self.assertIn("Forbidden handoff", rule["text"])
+        self.assertIn("every repository", rule["text"])
+
+        cursor = (
+            GENERATED / ".cursor/rules/home-assistant-engineering.mdc"
+        ).read_text(encoding="utf-8")
+        claude = (GENERATED / "CLAUDE.md").read_text(encoding="utf-8")
+        for blob in (cursor, claude):
+            self.assertIn("HA-AI-007", blob)
+            self.assertIn("CI should pass", blob)
+            self.assertIn("Forbidden handoff", blob)
+            self.assertIn("gh pr checks", blob)
+
+
+class DisruptiveAutomationCorroborationTests(unittest.TestCase):
+    def test_ha_auto_007_present(self):
+        chapter = (HANDBOOK / "03-automations.md").read_text(encoding="utf-8")
+        self.assertIn("## HA-AUTO-007 — Corroborate before disruptive home actions", chapter)
+        self.assertIn("confirmation / grace window", chapter)
+        self.assertIn("deliberate human interaction", chapter)
+        self.assertIn("automatic device transitions", chapter)
+        self.assertIn("room context", chapter)
+        self.assertIn("HA-AUTO-007", chapter.split("## HA-AUTO-003", 1)[1].split("## HA-AUTO-004", 1)[0])
+
+    def test_generated_outputs_include_ha_auto_007(self):
+        subprocess.run(
+            ["python", "scripts/rules.py", "generate"],
+            cwd=HANDBOOK.parent,
+            check=True,
+        )
+        catalog = json.loads((GENERATED / "rules.json").read_text(encoding="utf-8"))
+        ids = {rule["id"] for rule in catalog["rules"]}
+        self.assertIn("HA-AUTO-007", ids)
+        cursor = (
+            GENERATED / ".cursor/rules/home-assistant-engineering.mdc"
+        ).read_text(encoding="utf-8")
+        self.assertIn("HA-AUTO-007", cursor)
+        self.assertIn("deliberate human interaction", cursor)
+        self.assertIn("room context", cursor)
+
+
+class DisruptiveTestIsolationTests(unittest.TestCase):
+    def test_ha_test_017_present(self):
+        chapter = (HANDBOOK / "07-testing-and-deployment.md").read_text(encoding="utf-8")
+        self.assertIn("## HA-TEST-017 — Structurally isolate disruptive test execution", chapter)
+        self.assertIn("Deny by default", chapter)
+        self.assertIn("production incident", chapter)
+        self.assertIn("call graph", chapter)
+
+    def test_ha_auto_007_points_at_test_017(self):
+        chapter = (HANDBOOK / "03-automations.md").read_text(encoding="utf-8")
+        self.assertIn("HA-TEST-017", chapter.split("## HA-AUTO-007", 1)[1])
+
+    def test_generated_outputs_include_ha_test_017(self):
+        subprocess.run(
+            ["python", "scripts/rules.py", "generate"],
+            cwd=HANDBOOK.parent,
+            check=True,
+        )
+        catalog = json.loads((GENERATED / "rules.json").read_text(encoding="utf-8"))
+        ids = {rule["id"] for rule in catalog["rules"]}
+        self.assertIn("HA-TEST-017", ids)
+        cursor = (
+            GENERATED / ".cursor/rules/home-assistant-engineering.mdc"
+        ).read_text(encoding="utf-8")
+        self.assertIn("HA-TEST-017", cursor)
+        self.assertIn("Deny by default", cursor)
+
+
+class DomainReloadSafetyTests(unittest.TestCase):
+    def test_ha_test_018_present(self):
+        chapter = (HANDBOOK / "07-testing-and-deployment.md").read_text(encoding="utf-8")
+        self.assertIn("## HA-TEST-018 — Treat domain reloads as potentially state-changing", chapter)
+        self.assertIn("Ignore invalid transitions", chapter)
+        self.assertIn("Fail closed in action scripts", chapter)
+        self.assertIn("Inspect consumers before reload", chapter)
+        self.assertIn("template.reload", chapter)
+
+    def test_generated_outputs_include_ha_test_018(self):
+        subprocess.run(
+            ["python", "scripts/rules.py", "generate"],
+            cwd=HANDBOOK.parent,
+            check=True,
+        )
+        catalog = json.loads((GENERATED / "rules.json").read_text(encoding="utf-8"))
+        ids = {rule["id"] for rule in catalog["rules"]}
+        self.assertIn("HA-TEST-018", ids)
+        cursor = (
+            GENERATED / ".cursor/rules/home-assistant-engineering.mdc"
+        ).read_text(encoding="utf-8")
+        self.assertIn("HA-TEST-018", cursor)
+        self.assertIn("potentially state-changing", cursor)
+
+
 if __name__ == "__main__":
     unittest.main()

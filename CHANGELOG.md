@@ -6,6 +6,25 @@ All notable handbook changes will be recorded here.
 
 ### Added
 
+- Domain reload safety: `HA-TEST-018` (reloads/startup are potentially
+  state-changing; ignore transitional unavailable/unknown/Empty; debounce +
+  revalidate; fail closed in lighting/profile scripts; inspect consumers
+  before `template.reload`; stop on unexpected physical effects). Driven by
+  the 2026-08-12 house lighting incident.
+- Disruptive test isolation: `HA-TEST-017` (structural test-mode /
+  production-incident gate; deny-by-default external alerts/sirens; prove the
+  call graph; user approval before real-world alert tests; duplicate
+  Notification discipline). Cross-linked from `HA-AUTO-007`.
+- Disruptive automation corroboration: `HA-AUTO-007` (inferred-state actions
+  need confirming evidence, confirmation/grace with deliberate-interaction
+  cancel, automatic media transitions must not cancel, playback may be room
+  context not permanent veto; fail-safe; non-destructive tests;
+  external side-effect isolation pointer to `HA-TEST-017`);
+  `HA-AUTO-003` cross-link
+- Agent CI ownership through green: `HA-AI-007` (every managed install; monitor
+  exact head SHA through terminal success or evidenced blocker; forbid handoff
+  while latest head is failing or unverified; local overlay alone is not
+  compliance)
 - Responsive dashboard visual contract: `HA-UX-016` (mobile-first progressive
   enhancement), `HA-UX-017` (deliberate responsive space use), `HA-UX-018`
   (operational UI content hygiene), `HA-DESIGN-007` (structural layout-gap

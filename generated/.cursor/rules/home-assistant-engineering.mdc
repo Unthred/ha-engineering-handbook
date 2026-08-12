@@ -84,9 +84,20 @@ parity checks are forbidden for new work.
 
 **Standard.** Choose `single`, `restart`, `queued`, or `parallel` based on concurrency semantics; do not accept the default accidentally.
 
+For physical controls (wall switches, buttons, remotes):
+
+- Prefer **per-device or per-room** automations/scripts so unrelated rooms are not serialised by one house-wide queue.
+- Use **bounded** `queued` (`max`) when commands must not be silently discarded; overflow MUST be observable (default warning log or equivalent). Unbounded queues are forbidden.
+- Use **`restart`** (or an explicit cancel path) when a newer gesture should **supersede** obsolete work (for example single deferred for double-click discrimination, or cancelling a stale fade). Do not use `queued` when that would merely guarantee execution of an obsolete automatic action after a newer human command.
+- Document which gestures supersede versus enqueue.
+
 ## HA-AUTO-003 — Guard unsafe and noisy actions
 
-**Standard.** Actions that unlock, open, heat, notify repeatedly, or affect security MUST have explicit preconditions and rate limits where appropriate.
+**Standard.** Actions that unlock, open, heat, notify repeatedly, affect security, or
+disrupt occupied living spaces (room shutdown, media power-off, Night/Away
+mode, alarm arming) MUST have explicit preconditions and rate limits where
+appropriate. Disruptive shutdown and sleep paths MUST also satisfy
+`HA-AUTO-007`.
 
 ## HA-AUTO-004 — Make retries bounded
 
@@ -96,9 +107,79 @@ parity checks are forbidden for new work.
 
 **Principle.** Manual intervention SHOULD win for a documented period or until a clear reset condition. An automation must not immediately undo an occupant's action.
 
+For lighting and similar actuators:
+
+- A deliberate physical command (for example double-click requesting 100% brightness) is an **explicit user override** and MUST take precedence over automatic profile/default brightness for a documented lifetime (commonly until that light turns off, or another clear reset — not a permanent latch that blocks legitimate later automation).
+- Separate **colour intent** from **brightness intent**. Applying an appropriate time-of-day colour MUST NOT implicitly force default brightness when the user requested an explicit level.
+- Prefer one consolidated final-state service call when the platform allows it, to avoid visible stepping through intermediate remembered/profile/override values.
+- Automation-generated state changes MUST NOT be treated as new human input for override semantics.
+- Synthetic ordering tests SHOULD cover single-then-double device streams and profile reactions before physical validation.
+
 ## HA-AUTO-006 — Use traceable structure
 
 **Guideline.** Give triggers IDs, use descriptive aliases for branches and actions, and keep traces useful enough to explain why a decision occurred.
+
+## HA-AUTO-007 — Corroborate before disruptive home actions
+
+**Standard.** Automations or scripts that automatically shut down rooms, power off media
+equipment, change house mode to Night/Away, arm alarms, or otherwise disrupt
+occupied living spaces MUST NOT act on a single transient inferred-state
+reading (for example one high sleep-confidence sample).
+
+Inferred human states such as **asleep**, **absent**, or **inactive** MUST NOT
+directly trigger disruptive actions without corroboration appropriate to the
+outcome, a cancellation opportunity where practical, and final revalidation.
+
+They MUST:
+
+1. Treat probabilistic sensors as **candidate** evidence only. Prefer a
+   confirming sample or equivalent debounce that respects the sensor’s real
+   update cadence — do not invent certainty with an arbitrary long `for`
+   duration on a stale sticky reading.
+2. **Fail safe** when required inputs are `unknown`, `unavailable`, stale, or
+   mutually contradictory — skip the disruptive action.
+3. Where the occupant may be present and using the space, offer a **short
+   confirmation / grace window** with a clear warning when a practical display
+   channel exists, so deliberate human interaction can cancel before shutdown.
+4. Distinguish **deliberate human interaction** (remote command, manual volume,
+   UI/`user_id` context, wall-switch events, intentional Assist, companion
+   actions) from **automatic device transitions** (programme end, idle,
+   screensaver, autoplay, CEC, automation-generated changes). Only deliberate
+   interaction cancels a pending sleep-style confirmation; automatic media
+   transitions MUST NOT.
+5. Understand that **active playback or powered media may be room context**
+   (where to warn / what to shut down) without being permanent proof of awake
+   or asleep. Whether active use is a hard veto or merely context depends on
+   the automation’s purpose and MUST be documented.
+6. **Re-validate** every safety condition immediately before each destructive
+   step, not only at first trigger.
+7. **Cancel** pending delayed shutdowns when deliberate awake evidence appears
+   or confidence falls / goes stale.
+8. Use an explicit concurrency mode (`single` unless a documented reason for
+   another mode exists) so overlapping runs cannot stack destructive actions;
+   at most one confirmation countdown at a time.
+9. Avoid latching “already processed” helpers until a genuine disruptive
+   sequence begins or completes as designed. Cancellation MUST NOT set that
+   latch.
+10. When skipping or cancelling because the occupant appears awake, **log the
+    reason only** — do not send a phone notification merely for cancellation.
+11. If a required warning cannot be delivered during confirmation-based
+    rollout, fail safe (cancel / skip) rather than silently powering off.
+12. Validate behaviour with traces, template evaluation, or controlled helper
+    tests — **not** by shutting down a room the occupant is actively using
+    during development.
+13. When a disruptive automation also owns **external side effects** (phone /
+    watch Notifications, critical notification channels, sirens, alarm audio,
+    emergency/security notify pools, camera security responses, or delayed
+    cleanup against real devices), development and capture/restore tests MUST
+    use a **structural test-mode / production-incident gate** (`HA-TEST-017`).
+    Panel state alone (for example “alarm remained disarmed”) is **not** proof
+    that those channels were unreachable.
+14. When disruptive lighting/profile application is driven by template sensors,
+    treat domain reloads and startup recovery as transitional (`HA-TEST-018`):
+    do not act on `unavailable`/`unknown`/Empty, debounce valid changes, and
+    fail closed in action scripts so an `else turn_off` cannot fire on invalid
+    inputs.
 
 ## HA-UX-001 — Design around tasks
 
@@ -523,6 +604,83 @@ Automated linting and rule generation MAY enforce that the responsive contract
 exists and propagates; they MUST NOT be treated as substitutes for visual
 acceptance.
 
+## HA-TEST-017 — Structurally isolate disruptive test execution
+
+**Standard.** Automations and scripts that can produce **real-world alerts or security
+responses** (phone/watch Notifications, critical/`alarm_stream` channels,
+sirens, alarm speech, emergency/security notify pools, camera security
+responses, delayed device cleanup) MUST NOT share those side-effect call
+paths with development, capture/restore, smoke, or “harmless” light tests
+unless an explicit **production incident context** is set by the real incident
+entry path.
+
+They MUST:
+
+1. **Deny by default.** External alert, siren, speech, and security-response
+   actions require an explicit production-incident flag/context. Absence or
+   ambiguity of that context MUST fail closed.
+2. Provide a **structural test-mode** (not a comment or honour-system branch)
+   so capture/restore and Dev tests cannot arm Alarmo, cannot invoke phone or
+   Wear OS Notifications, cannot use critical notification channels, cannot
+   start sirens/alarm audio, cannot call emergency/security pools, cannot
+   activate external camera/security responses, and cannot schedule delayed
+   cleanup against real devices.
+3. Route side effects through **guarded scripts/services** that enforce the
+   production gate centrally. Scattered `if test` conditions that a future
+   edit can bypass are insufficient.
+4. Allow tests to affect only an **explicitly selected harmless subset** (for
+   example one light group) and use HA-side notifications or logs clearly
+   labelled `TEST` for diagnostics.
+5. Prove isolation with the **actual call graph** (traces, captured service
+   calls, template evaluation, mocked notify scripts) — not assumptions from
+   alarm-panel state remaining disarmed.
+6. Obtain **user approval** before any test that may still produce a
+   real-world alert after the above controls.
+7. For real incidents: generate at most one phone Notification per meaningful
+   event unless escalation is deliberate; use stable tags/notification IDs;
+   avoid separately targeting Wear OS when the phone already mirrors; retries
+   MUST NOT create additional user alerts unless the outcome materially
+   changes; record incident/notification context for duplicate correlation.
+
+## HA-TEST-018 — Treat domain reloads as potentially state-changing
+
+**Standard.** A Home Assistant **domain reload** (`template.reload`, `script.reload`,
+`automation.reload`, integration reload) or Core startup MUST be treated as a
+**potentially state-changing operation**, not as a no-op configuration apply.
+
+Template and other computed entities commonly pass through `unavailable`,
+`unknown`, empty, or sentinel values (for example `Empty`) during reload and
+startup before recovering. Automations that drive **physical** outcomes
+(lights, covers, media power, climate setpoints, camera detection switches,
+scene application, house-mode scripts) MUST NOT treat those transitional
+states as real-world changes.
+
+They MUST:
+
+1. **Ignore invalid transitions.** Do not act when the previous or new state
+   is `unknown`, `unavailable`, `none`, empty, or another documented
+   non-operational sentinel. A recovery from unavailable to the previous
+   valid value MUST NOT by itself be actionable.
+2. **Debounce and revalidate.** Require the new state to remain valid and
+   stable for a short documented duration, then re-read source sensors
+   immediately before any light/`turn_off`/`turn_on`/profile apply call.
+3. **Fail closed in action scripts.** Broad lighting/profile scripts MUST
+   abort when required inputs are invalid — they MUST NOT fall through an
+   `else` branch that turns devices off merely because `state == On` failed.
+4. **Inspect consumers before reload.** Before an agent runs a domain reload,
+   it MUST identify automations/scripts triggered by entities that reload will
+   rewrite, determine whether recovery transitions can cause physical effects,
+   temporarily suppress or confirm those consumers are safely guarded, reload,
+   verify stable valid states, then restore any temporary suppression only
+   after that verification.
+5. **Stop on unexpected physical effects.** If a reload or deploy produces
+   unexpected real-world changes, the agent MUST stop immediately, contain
+   (disable the responsible automatic paths), and obtain approval before
+   further deploy/reload/restore work.
+6. **Scope does not imply safety.** Deploying an unrelated file does **not**
+   make a broad domain reload safe. Production-first validation does **not**
+   override these reload-safety constraints.
+
 ## HA-DOC-001 — Document operational intent
 
 **Standard.** Documentation MUST explain purpose, dependencies, expected behaviour, fallback, and verification for important systems.
@@ -576,6 +734,8 @@ applicable:
 - requested implementation and success criteria
 - tests and verification (including production or physical proof when
   authorized and required)
+- required pull-request CI for the exact head SHA green, or an evidenced
+  external blocker recorded (`HA-AI-007`)
 - repository state and changelog / durable documentation
 - issue status (completed, duplicate, superseded, or separately recorded
   follow-up)
@@ -690,6 +850,90 @@ separate worktree.
 **Invalid handoff:** “Mostly done, will finish later,” with open issues, an
 unmerged PR, and no parking record, while starting unrelated implementation in
 the same workspace.
+
+## HA-AI-007 — Own pull-request CI through green or evidenced blocker
+
+**Standard.** **Scope:** This standard applies to **every repository** that installs this
+handbook. It is not Home Assistant-specific. A consuming project MAY add a
+local overlay that names its required check IDs or `gh` helpers; that overlay
+MUST NOT weaken, replace, or substitute for this rule. Installing only a
+project-local CI-ownership note without the generated handbook rule is
+**not** compliance.
+
+An agent that creates or updates a pull request MUST retain ownership of
+required checks for the **exact pushed head SHA** through a **terminal
+result**: success for every required check, or a clearly evidenced external
+blocker reported with URLs and inspected evidence. Ownership includes
+monitoring, failure inspection, repair of failures caused by the agent’s
+changes, re-push, and re-check of the new head.
+
+### Forbidden handoff (the defect this rule forbids)
+
+The unacceptable behaviour is **not** merely that CI failed. It is that the
+agent pushed a pull request, failed to retain ownership of its checks, and
+handed the work back while the latest head was **failing** or **unverified**.
+
+The following are forbidden as completed handoffs after an agent push:
+
+- “CI should pass,” “checks started,” “pending at last check,” or equivalent
+- reporting an older SHA’s green result while a newer head remains unmonitored
+- leaving required checks red or pending and asking the human to watch them
+- treating a local parse, config reload, or workflow trigger as CI completion
+
+### After every push
+
+1. Record the pushed commit SHA.
+2. Confirm the pull-request head matches that SHA.
+3. Wait for required checks to appear for that SHA (not a superseded run).
+4. Monitor those checks to a terminal state (success, failure, cancelled, or
+   timed-out).
+5. If a GitHub Actions check fails:
+   - retrieve the job log and annotations with `gh` (for example `gh pr checks`,
+     `gh run view`, and failed-job logs)
+   - identify the failing command and root cause
+   - implement the smallest correct fix (or prove the failure is unrelated /
+     external)
+   - run the closest local equivalent where practical
+   - push the correction
+   - restart monitoring against the **new** head SHA
+6. If a check stays pending for an unusually long time, inspect the workflow or
+   run instead of silently abandoning it.
+7. If a check is cancelled or superseded, follow the newest head SHA.
+8. If an external check fails, report its URL and evidence; do not pretend its
+   logs were inspected.
+9. Never merge unless the human separately authorises merging.
+
+### Boundaries
+
+- Do not blindly re-run a deterministic failing workflow without changing
+  anything. One re-run is acceptable only when evidence indicates infrastructure
+  or transient failure.
+- Do not modify application behaviour merely to appease a broken test; determine
+  which is wrong.
+- Do not weaken, skip, or disable checks to make the pull request green.
+- Do not add broad exclusions or `continue-on-error` to hide failures.
+- Never expose secrets from Actions logs.
+- If a failure appears unrelated to the pull-request diff, prove that by
+  checking the base branch or a previous successful run before changing
+  unrelated code.
+- After three materially different attempted fixes without success, stop,
+  preserve evidence, and report the blocker rather than looping indefinitely.
+
+### Completion report (mandatory)
+
+When handing work back after a pull-request update, the agent MUST include:
+
+- pull-request URL
+- final head SHA
+- every required check and its terminal result for **that** SHA
+- failing commands and root causes encountered
+- fixes made
+- local verification performed
+- links to any remaining failed or externally blocked checks
+
+If required checks are still pending, the agent’s work is still in progress.
+Pushing code, a local parse, a Home Assistant reload, or triggering a workflow
+is not completion.
 
 ## HA-DESIGN-001 — Centralise visual tokens
 
