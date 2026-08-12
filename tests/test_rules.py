@@ -219,5 +219,39 @@ class ResponsiveDashboardContractTests(unittest.TestCase):
         self.assertIn("mushroom-title-card", profile)
 
 
+class AgentCiOwnershipTests(unittest.TestCase):
+    def test_ha_ai_007_present_with_mandatory_workflow(self):
+        chapter = (HANDBOOK / "08-documentation-and-ai.md").read_text(encoding="utf-8")
+        self.assertIn("## HA-AI-007 — Own pull-request CI through green or evidenced blocker", chapter)
+        self.assertIn("exact pushed head SHA", chapter)
+        self.assertIn("CI should pass", chapter)
+        self.assertIn("pending at last check", chapter)
+        self.assertIn("three materially different attempted fixes", chapter)
+        self.assertIn("Never merge unless the human separately authorises merging", chapter)
+        # Cross-link from HA-AI-006 definition of done
+        self.assertIn("HA-AI-007", chapter.split("## HA-AI-006", 1)[1].split("## HA-AI-007", 1)[0])
+
+    def test_generated_outputs_include_ha_ai_007(self):
+        subprocess.run(
+            ["python", "scripts/rules.py", "generate"],
+            cwd=HANDBOOK.parent,
+            check=True,
+        )
+        catalog = json.loads((GENERATED / "rules.json").read_text(encoding="utf-8"))
+        ids = {rule["id"] for rule in catalog["rules"]}
+        self.assertIn("HA-AI-007", ids)
+        rule = next(r for r in catalog["rules"] if r["id"] == "HA-AI-007")
+        self.assertIn("exact pushed head SHA", rule["text"])
+
+        cursor = (
+            GENERATED / ".cursor/rules/home-assistant-engineering.mdc"
+        ).read_text(encoding="utf-8")
+        claude = (GENERATED / "CLAUDE.md").read_text(encoding="utf-8")
+        for blob in (cursor, claude):
+            self.assertIn("HA-AI-007", blob)
+            self.assertIn("CI should pass", blob)
+            self.assertIn("gh pr checks", blob)
+
+
 if __name__ == "__main__":
     unittest.main()
