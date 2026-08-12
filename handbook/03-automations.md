@@ -12,6 +12,13 @@ Every automation MUST make clear whether it responds to an edge, a sustained sta
 
 Choose `single`, `restart`, `queued`, or `parallel` based on concurrency semantics; do not accept the default accidentally.
 
+For physical controls (wall switches, buttons, remotes):
+
+- Prefer **per-device or per-room** automations/scripts so unrelated rooms are not serialised by one house-wide queue.
+- Use **bounded** `queued` (`max`) when commands must not be silently discarded; overflow MUST be observable (default warning log or equivalent). Unbounded queues are forbidden.
+- Use **`restart`** (or an explicit cancel path) when a newer gesture should **supersede** obsolete work (for example single deferred for double-click discrimination, or cancelling a stale fade). Do not use `queued` when that would merely guarantee execution of an obsolete automatic action after a newer human command.
+- Document which gestures supersede versus enqueue.
+
 ## HA-AUTO-003 — Guard unsafe and noisy actions
 
 **Level:** Standard
@@ -33,6 +40,14 @@ Retries MUST have a limit, delay, and observable failure outcome. Infinite retry
 **Level:** Principle
 
 Manual intervention SHOULD win for a documented period or until a clear reset condition. An automation must not immediately undo an occupant's action.
+
+For lighting and similar actuators:
+
+- A deliberate physical command (for example double-click requesting 100% brightness) is an **explicit user override** and MUST take precedence over automatic profile/default brightness for a documented lifetime (commonly until that light turns off, or another clear reset — not a permanent latch that blocks legitimate later automation).
+- Separate **colour intent** from **brightness intent**. Applying an appropriate time-of-day colour MUST NOT implicitly force default brightness when the user requested an explicit level.
+- Prefer one consolidated final-state service call when the platform allows it, to avoid visible stepping through intermediate remembered/profile/override values.
+- Automation-generated state changes MUST NOT be treated as new human input for override semantics.
+- Synthetic ordering tests SHOULD cover single-then-double device streams and profile reactions before physical validation.
 
 ## HA-AUTO-006 — Use traceable structure
 
