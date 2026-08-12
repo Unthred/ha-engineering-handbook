@@ -6,6 +6,13 @@ All notable handbook changes will be recorded here.
 
 ### Added
 
+- Actionable phone failure Notifications: `HA-REL-006` (required content for
+  multi-target failures; suppress after successful retry) and `HA-REVIEW-006`
+  (away-from-home acceptance question)
+- `scripts/notify_actionability.py` — lint helpers for vague multi-target
+  failure wording (`one or more`, `action needed`, …)
+- Glossary terms: Phone Notification, Failure Notification
+- Audit template phone Notification checklist and fail example
 - Responsive dashboard visual contract: `HA-UX-016` (mobile-first progressive
   enhancement), `HA-UX-017` (deliberate responsive space use), `HA-UX-018`
   (operational UI content hygiene), `HA-DESIGN-007` (structural layout-gap

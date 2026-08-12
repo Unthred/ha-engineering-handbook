@@ -59,6 +59,15 @@ Complete for every audited dashboard view. “Responsive: yes” without this ta
 
 **Missing preferred header (fail):** Rule `HA-UX-019`; profile prefers header but view has none.
 
+**Vague phone failure Notification (fail):** Rule `HA-REL-006` / `HA-REVIEW-006`; evidence message text “One or more switches failed… Action needed.” with no named targets, expected vs actual, or next step.
+
+## Phone Notification checklist (when auditing alerts)
+
+- [ ] Away-from-home question answered yes (`HA-REVIEW-006`)
+- [ ] Operation, failed targets (friendly names), expected vs actual, reason, retries, next action present where applicable (`HA-REL-006`)
+- [ ] Multi-target failures list only the failed subset; no “one or more” / “some devices” / bare “action needed” when specifics are known
+- [ ] Successful retry suppresses the failure phone Notification
+
 **Decorative pills (fail):** Rule `HA-DESIGN-009`; pills exist only for symmetry or include entity IDs.
 
 ## Staged remediation plan

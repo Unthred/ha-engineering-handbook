@@ -486,7 +486,7 @@
       "title": "Avoid alert fatigue",
       "area": "REL",
       "level": "Standard",
-      "text": "Notifications SHOULD be actionable, deduplicated, severity-appropriate, and clear about what happened and what the occupant should do.",
+      "text": "Notifications SHOULD be actionable, deduplicated, severity-appropriate, and clear about what happened and what the occupant should do. Phone failure Notifications MUST also satisfy `HA-REL-006`.",
       "source": "handbook/06-reliability-and-observability.md",
       "rationale": null,
       "verification": null
@@ -510,6 +510,16 @@
       "source": "handbook/06-reliability-and-observability.md",
       "rationale": null,
       "verification": null
+    },
+    {
+      "id": "HA-REL-006",
+      "title": "Make phone failure Notifications actionable",
+      "area": "REL",
+      "level": "Standard",
+      "text": "A Notification sent to the user’s phone MUST contain enough information to understand and act on the failure without searching logs or guessing which device failed.\n\nWhere applicable, every failure Notification MUST include:\n\n- what operation failed\n- which exact devices or entities failed, using human-readable friendly names (raw entity IDs only as secondary diagnostic detail when no friendly name exists)\n- expected state or result\n- actual state or observed result\n- known failure reason (for example unavailable, unknown, timeout, service error, or wrong state)\n- recovery or retries already attempted and their outcome\n- the concrete action the occupant should take\n- a relevant Companion-app deep link when an appropriate destination exists\n\nFor operations involving multiple targets:\n\n- calculate and report **only** the failed subset\n- NEVER use vague wording such as “one or more,” “some devices,” or “action needed” when exact failure information is available\n- use correct singular and plural wording\n- if details cannot be determined, say what evidence is unavailable and provide the most useful diagnostic destination\n- suppress the failure Notification when verification or retry shows that all targets ultimately reached the desired state (record recovery as log-only or a non-phone status surface only when genuinely useful)\n\nSuccessful status announcements (for example “monitoring on”) remain separate from failure Notifications and MUST NOT inherit failure-message requirements.\n\n### Examples (CCTV-style multi-target apply)\n\n**Bad:**\n\n> Desired indoor CCTV state: disabled. One or more switches failed to follow. Action needed.\n\n**Good:**\n\n> Indoor CCTV failed to disable:\n>\n> - Kitchen Camera Motion remained on; expected off.\n> - Under-bed Camera Detect is unavailable; expected off.\n>\n> Two retries failed. Check power or connectivity for the listed cameras.",
+      "source": "handbook/06-reliability-and-observability.md",
+      "rationale": "Away-from-home phone alerts are useless when they force log diving or guessing. Vague multi-target wording hides which controls need attention.",
+      "verification": "Before accepting any new phone Notification, answer: “If the occupant receives this away from home, does it tell them exactly what happened and what they can do about it?” (`HA-REVIEW-006`). Exercise failure and recovery paths; confirm suppressed Notifications after successful retry."
     },
     {
       "id": "HA-TEST-001",
@@ -887,6 +897,16 @@
       "area": "REVIEW",
       "level": "Principle",
       "text": "An agent MUST treat documented accessibility needs, household routines, display constraints, and deliberate exceptions as design inputs rather than normalising them away.",
+      "source": "handbook/10-review-and-audit.md",
+      "rationale": null,
+      "verification": null
+    },
+    {
+      "id": "HA-REVIEW-006",
+      "title": "Accept only actionable phone Notifications",
+      "area": "REVIEW",
+      "level": "Standard",
+      "text": "Before accepting any new phone Notification (especially a failure alert), the implementer MUST answer:\n\n> If the occupant receives this away from home, does it tell them exactly what happened and what they can do about it?\n\nA “no,” or reliance on logs, entity IDs alone, or vague multi-target wording (“one or more,” “some devices,” “action needed” when specifics are known), is a defect under `HA-REL-006`. Reviewers MUST reject or remediate such Notifications before merge.\n\n### Phone Notification audit checks\n\n| Check | Fail when |\n| --- | --- |\n| Operation named | Message does not say what failed |\n| Failed targets listed | Multi-target failure uses “one or more” / “some” when exact failures are known |\n| Expected vs actual | Missing expected or observed result for named targets |\n| Retries / recovery | Retries happened but outcome omitted, or success-after-retry still phones a failure |\n| Next action | No concrete occupant action or useful diagnostic destination |\n| Deep link | Appropriate Companion destination exists but is omitted without reason |",
       "source": "handbook/10-review-and-audit.md",
       "rationale": null,
       "verification": null

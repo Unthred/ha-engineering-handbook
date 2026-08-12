@@ -43,3 +43,12 @@ harmful when it confuses reading order (`HA-DESIGN-008`).
 characterful title, optional compact subtitle, and a centred wrapping row of
 page-relevant status pills (`HA-UX-019`, `HA-DESIGN-009`). Profile
 `page_header.mode` may be `preferred`, `required`, `optional`, or `disabled`.
+
+**Phone Notification** — A push message delivered to a mobile Companion app
+(or equivalent). Distinct from an in-Home-Assistant persistent / “side”
+notification. Failure phone Notifications MUST meet `HA-REL-006`.
+
+**Failure Notification** — A phone Notification that reports an unsuccessful
+operation or unmet desired state. It must name what failed and what to do next;
+vague multi-target wording is forbidden when exact failures are known
+(`HA-REL-006`, `HA-REVIEW-006`).
