@@ -186,7 +186,7 @@
       "title": "Guard unsafe and noisy actions",
       "area": "AUTO",
       "level": "Standard",
-      "text": "Actions that unlock, open, heat, notify repeatedly, or affect security MUST have explicit preconditions and rate limits where appropriate.",
+      "text": "Actions that unlock, open, heat, notify repeatedly, affect security, or\ndisrupt occupied living spaces (room shutdown, media power-off, Night/Away\nmode, alarm arming) MUST have explicit preconditions and rate limits where\nappropriate. Disruptive shutdown and sleep paths MUST also satisfy\n`HA-AUTO-007`.",
       "source": "handbook/03-automations.md",
       "rationale": null,
       "verification": null
@@ -220,6 +220,16 @@
       "source": "handbook/03-automations.md",
       "rationale": null,
       "verification": null
+    },
+    {
+      "id": "HA-AUTO-007",
+      "title": "Corroborate before disruptive home actions",
+      "area": "AUTO",
+      "level": "Standard",
+      "text": "Automations or scripts that automatically shut down rooms, power off media\nequipment, change house mode to Night/Away, arm alarms, or otherwise disrupt\noccupied living spaces MUST NOT act on a single transient sensor reading.\n\nThey MUST:\n\n1. Require **corroborated evidence** appropriate to the outcome (for example\n   sustained sleep confidence plus room evidence), not a brief spike.\n2. **Fail safe** when required inputs are `unknown`, `unavailable`, stale, or\n   mutually contradictory — skip the disruptive action.\n3. **Debounce** flaky signals with a sustained `for` duration or equivalent.\n4. Treat active viewing or recent occupied activity in the affected area as a\n   **hard veto** (for example TV/Shield/receiver playback or a powered living-\n   room viewing session must block sleep-triggered living-room shutdown).\n5. **Re-validate** every safety condition immediately before each destructive\n   step, not only at first trigger.\n6. **Cancel** pending delayed shutdowns when contradictory awake activity\n   resumes.\n7. Use an explicit concurrency mode (`single` unless a documented reason for\n   another mode exists) so overlapping runs cannot stack destructive actions.\n8. Avoid latching “already processed” helpers until a genuine disruptive\n   sequence begins or completes as designed.\n9. When skipping because the occupant appears awake, **log the reason only** —\n   do not send a phone notification for a successful veto.\n10. Validate behaviour with traces, template evaluation, or controlled helper\n    tests — **not** by shutting down a room the occupant is actively using.",
+      "source": "handbook/03-automations.md",
+      "rationale": "A false sleep or presence signal must not black out a room while",
+      "verification": "Review of disruptive automations shows sustained triggers, viewing/"
     },
     {
       "id": "HA-UX-001",

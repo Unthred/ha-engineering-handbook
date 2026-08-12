@@ -6,6 +6,9 @@ All notable handbook changes will be recorded here.
 
 ### Added
 
+- Disruptive automation corroboration: `HA-AUTO-007` (sustained evidence,
+  viewing/activity vetoes, fail-safe sensors, last-moment revalidation,
+  cancel-on-awake, non-destructive tests); `HA-AUTO-003` cross-link
 - Agent CI ownership through green: `HA-AI-007` (every managed install; monitor
   exact head SHA through terminal success or evidenced blocker; forbid handoff
   while latest head is failing or unverified; local overlay alone is not
