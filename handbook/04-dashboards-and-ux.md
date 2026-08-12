@@ -187,3 +187,36 @@ leak internal process into the living space.
 **Verify:** Review every new or changed user-visible string on the view; reject
 issue/PR markers, raw entity IDs, and implementation narration in ordinary
 cards.
+
+## HA-UX-019 — Prefer a characterful page header with status pills
+
+**Level:** Guideline
+
+Operational dashboard pages SHOULD use the standard page-header pattern from
+`handbook/09-visual-design-system.md` when the repository dashboard profile
+sets `page_header.mode` to `preferred` or `required`: a centred title with
+personality, an optional compact subtitle only when it adds context, and a
+centred wrapping row of page-relevant status pills.
+
+This is the project's preferred visual signature, not an inflexible requirement
+for every possible view. Agents SHOULD preserve or create the pattern when
+working on a dashboard that already uses it or whose profile prefers it. Agents
+MUST NOT mechanically add a header where it would reduce clarity, consume
+excessive mobile height, or invent decorative pills with no task value.
+
+When `page_header.mode` is `required`, absence of the pattern on covered views
+is a defect unless the profile lists an explicit exception. When `optional` or
+`disabled`, do not force the pattern.
+
+Title humour MUST remain understandable, non-offensive, and appropriate.
+Safety-critical or operationally urgent information MUST use clear language
+rather than jokes. Pills MUST follow `HA-UX-018` content hygiene and the pill
+rules in `HA-DESIGN-009`.
+
+**Why:** Approved household dashboards establish identity with characterful
+titles and at-a-glance pills; without a documented pattern, agents either strip
+personality into dry headings or omit useful orientation chips.
+
+**Verify:** Profile `page_header.mode` is respected; covered views have a
+centred title and relevant pills (or a documented reason not to); matrix checks
+confirm wrapping without clipping (`HA-TEST-016`, `HA-DESIGN-009`).

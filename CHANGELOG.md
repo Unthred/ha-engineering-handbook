@@ -11,10 +11,13 @@ All notable handbook changes will be recorded here.
   (operational UI content hygiene), `HA-DESIGN-007` (structural layout-gap
   prevention), `HA-DESIGN-008` (section span and packing behaviour),
   `HA-TEST-016` (visual breakpoint verification)
+- Preferred page-header pattern: `HA-UX-019` (characterful title + status
+  pills), `HA-DESIGN-009` (header composition and pill behaviour); profile
+  `page_header.mode` (`preferred` | `required` | `optional` | `disabled`)
 - ADR-0004: enforceable responsive dashboard visual contract
 - Dashboard profile v2 example + `schemas/dashboard-profile.schema.json`
 - Audit template responsive acceptance table and pass/fail examples
-- `HA-TEST-015` — refuse merge-before-deploy prompt conflicts; require recorded
+- Example native/Mushroom-shaped page-header snippet (non-normative)- `HA-TEST-015` — refuse merge-before-deploy prompt conflicts; require recorded
   pre-merge production-proof gate evidence
 - One-active-implementation work-in-progress discipline (`HA-AI-006`): finish,
   close, or formally park before starting another implementation

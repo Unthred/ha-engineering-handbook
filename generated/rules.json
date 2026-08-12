@@ -402,6 +402,16 @@
       "verification": "Review every new or changed user-visible string on the view; reject"
     },
     {
+      "id": "HA-UX-019",
+      "title": "Prefer a characterful page header with status pills",
+      "area": "UX",
+      "level": "Guideline",
+      "text": "Operational dashboard pages SHOULD use the standard page-header pattern from\n`handbook/09-visual-design-system.md` when the repository dashboard profile\nsets `page_header.mode` to `preferred` or `required`: a centred title with\npersonality, an optional compact subtitle only when it adds context, and a\ncentred wrapping row of page-relevant status pills.\n\nThis is the project's preferred visual signature, not an inflexible requirement\nfor every possible view. Agents SHOULD preserve or create the pattern when\nworking on a dashboard that already uses it or whose profile prefers it. Agents\nMUST NOT mechanically add a header where it would reduce clarity, consume\nexcessive mobile height, or invent decorative pills with no task value.\n\nWhen `page_header.mode` is `required`, absence of the pattern on covered views\nis a defect unless the profile lists an explicit exception. When `optional` or\n`disabled`, do not force the pattern.\n\nTitle humour MUST remain understandable, non-offensive, and appropriate.\nSafety-critical or operationally urgent information MUST use clear language\nrather than jokes. Pills MUST follow `HA-UX-018` content hygiene and the pill\nrules in `HA-DESIGN-009`.",
+      "source": "handbook/04-dashboards-and-ux.md",
+      "rationale": "Approved household dashboards establish identity with characterful",
+      "verification": "Profile `page_header.mode` is respected; covered views have a"
+    },
+    {
       "id": "HA-SEC-001",
       "title": "Never commit secrets",
       "area": "SEC",
@@ -820,6 +830,16 @@
       "source": "handbook/09-visual-design-system.md",
       "rationale": "Sections defaults and indiscriminate full-width spans are a common source of desktop holes and phone-order surprises.",
       "verification": "Profile or change record states packing policy and spans; normal-view phone stack matches the intended order; desktop shows justified shared rows or full-width bands without empty columns."
+    },
+    {
+      "id": "HA-DESIGN-009",
+      "title": "Page-header composition and pill behaviour",
+      "area": "DESIGN",
+      "level": "Standard",
+      "text": "When a view uses the standard page-header pattern (`HA-UX-019`), the header MUST\ncomprise a centred characterful title, an optional compact subtitle only when\nuseful, and a centred wrapping collection of status pills selected for that\npage’s purpose. The complete header MUST establish identity and useful context\nwithout dominating the viewport.\n\nPills MUST be relevant, concise, readable on narrow phones, and explicit about\nunavailable, unknown, and stale states. They MUST NOT expose implementation\ndebris (`HA-UX-018`), duplicate the next prominent card without purpose, or\nstretch into a sparse full-viewport band on desktop. Prefer 2–5 pills; permit\nfewer or none when no useful summary exists. Do not add pills for symmetry.\n\nTitle humour MUST NOT obscure the page’s function. Safety-critical or\noperationally urgent facts MUST use clear language. Header layout MUST wrap\ncleanly across the responsive acceptance matrix without horizontal scrolling,\nclipping, tiny text, large empty gaps, or an avoidable orphaned final pill.",
+      "source": "handbook/09-visual-design-system.md",
+      "rationale": "Without composition rules, headers either become decorative clutter or",
+      "verification": "Normal-view matrix checks show a centred compact header; pill count"
     },
     {
       "id": "HA-REVIEW-001",

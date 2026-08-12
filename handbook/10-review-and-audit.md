@@ -32,6 +32,9 @@ Reviewers MUST explicitly inspect responsive quality. Ask or observe:
 | Development debris | Issue/PR refs, entity IDs, implementation notes in ordinary cards (`HA-UX-018`) |
 | Conditional states | Visibility states not exercised in normal view |
 | Repo vs live storage drift | Repository mirror treated as live, or live layout diverges without parity (`HA-UX-014`) |
+| Missing preferred header | Profile `page_header.mode` is `preferred`/`required` but view lacks centred title + relevant pills without exception (`HA-UX-019`) |
+| Decorative or excessive pills | Pills lack page purpose, exist only for symmetry, or routinely exceed ~5 (`HA-DESIGN-009`) |
+| Header debris / overflow | Issue/PR refs or entity IDs in pills; poor wrap, clipping, desktop stretch, or humour that obscures function (`HA-UX-018`, `HA-DESIGN-009`) |
 
 ### Pass / fail examples
 
@@ -43,7 +46,11 @@ Reviewers MUST explicitly inspect responsive quality. Ask or observe:
 
 **Fail — evidence:** PR says “checked desktop” with no widths, no normal-view note, and no confirmer. Cite `HA-TEST-016` / strengthened `HA-UX-005`.
 
-**Pass:** Profile lists phone 390 and desktop 1280; normal-view screenshots or human confirmation record stacking order, shared desktop row for two short sections, full-width analytics band, no issue numbers in cards, and conditional empty-state checked.
+**Fail — missing preferred header:** Profile sets `page_header.mode: preferred` but an operational analytics view opens with only raw entity rows and no centred title/pills, with no documented exception. Cite `HA-UX-019`.
+
+**Fail — decorative pills:** Six chips showing unrelated system metrics on a room lighting page, including an entity ID string. Cite `HA-DESIGN-009` / `HA-UX-018`.
+
+**Pass:** Profile lists phone 390 and desktop 1280; normal-view screenshots or human confirmation record stacking order, shared desktop row for two short sections, full-width analytics band, no issue numbers in cards, conditional empty-state checked, and a centred characterful title with 3–4 relevant pills that wrap cleanly.
 
 ## Finding format
 

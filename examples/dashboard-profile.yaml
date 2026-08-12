@@ -127,7 +127,20 @@ content_hygiene:
 # Worked example: analytical view with phone stack + two-column desktop enhancement.
 example_view:
   path: temperature_analytics
+  page_header:
+    title: "The Temperature Tally"
+    subtitle: "Tracking highs and lows, inside and out"
+    pills:
+      - label: Bedroom
+        value_role: room_temperature
+      - label: Outside
+        value_role: outdoor_temperature
+      - label: Humidity
+        value_role: indoor_humidity
+      - label: Updated
+        value_role: last_update
   mobile_stacking_order:
+    - page_header
     - headline_status
     - key_controls
     - secondary_chips
@@ -137,6 +150,9 @@ example_view:
     max_columns: 2
     dense_section_placement: true
     rows:
+      - sections: [page_header]
+        column_span: full
+        note: centred title + wrapping pills; compact on desktop
       - sections: [headline_status, secondary_chips]
         note: shorter operational sections share a row
       - sections: [key_controls]
@@ -150,4 +166,58 @@ example_view:
     - "(#248)"
     - entity_id_literals
 
+# Illustrative Lovelace-shaped snippet (non-normative). Prefer native cards;
+# Mushroom title/chips are acceptable only when listed in custom_cards.allowed.
+example_page_header_cards:
+  goal: Centred characterful title with wrapping relevant pills
+  rule_ids: [HA-UX-019, HA-DESIGN-009, HA-UX-018, HA-TEST-016]
+  native_shaped:
+    - type: heading
+      heading: The Temperature Tally
+      heading_style: title
+      subheading: Tracking highs and lows, inside and out
+    - type: markdown
+      content: >
+        Compact pill/chip row goes here using the installation's established
+        chip, badge, or entity-button pattern — keep centred and wrapping.
+  mushroom_shaped_when_allowed:
+    - type: custom:mushroom-title-card
+      title: "🌡️ The Temperature Tally"
+      alignment: center
+      subtitle: Tracking highs and lows, inside and out
+    - type: custom:mushroom-chips-card
+      alignment: center
+      chips:
+        - type: entity
+          entity: sensor.example_bedroom_temperature
+          content_info: state
+          icon: mdi:thermometer
+        - type: entity
+          entity: sensor.example_outdoor_temperature
+          content_info: state
+          icon: mdi:home-thermometer-outline
+        - type: entity
+          entity: sensor.example_humidity
+          content_info: state
+          icon: mdi:water-percent
+
 exceptions: []
+
+# Preferred visual signature: characterful title + relevant status pills (HA-UX-019).
+page_header:
+  mode: preferred  # preferred | required | optional | disabled
+  title_style: characterful_centred
+  subtitle_policy: optional_when_useful
+  pill_count_guidance: typically_2_to_5
+  pill_selection: page_purpose_at_a_glance
+  forbid_decorative_or_symmetric_only_pills: true
+  forbid_implementation_debris_in_pills: true
+  max_header_vertical_dominance_on_phone: compact
+  desktop_pill_group: centred_compact_not_full_bleed
+  safety_critical_language: clear_not_joking
+  implementations_allowed_examples:
+    - native_heading_plus_chip_or_badge_row
+    - mushroom_title_and_chips_when_profile_allows
+  notes: >
+    Preserve personality in titles. Select pills for the page purpose; do not
+    hard-code household-specific entities into the handbook.

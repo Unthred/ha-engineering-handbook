@@ -33,7 +33,8 @@ Complete for every audited dashboard view. “Responsive: yes” without this ta
 - [ ] Not editor-only; normal view confirmed (`HA-TEST-016`)
 - [ ] No issue/PR refs, entity IDs, or implementation notes in ordinary cards (`HA-UX-018`)
 - [ ] Repository mirror vs live storage divergence labelled (`HA-UX-014`)
-
+- [ ] Page header matches profile mode (`HA-UX-019`); pills relevant and compact (`HA-DESIGN-009`)
+- [ ] Header wraps without clipping/overflow; desktop pills stay centred and compact
 ## Findings
 
 ### AUDIT-001 — Short finding title
@@ -55,6 +56,10 @@ Complete for every audited dashboard view. “Responsive: yes” without this ta
 **Content hygiene (fail):** Rule `HA-UX-018`; evidence card subtitle contains `(#248)`.
 
 **Missing evidence (fail):** Rule `HA-TEST-016`; PR claims “checked desktop” with no widths or confirmer.
+
+**Missing preferred header (fail):** Rule `HA-UX-019`; profile prefers header but view has none.
+
+**Decorative pills (fail):** Rule `HA-DESIGN-009`; pills exist only for symmetry or include entity IDs.
 
 ## Staged remediation plan
 

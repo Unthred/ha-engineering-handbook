@@ -226,6 +226,29 @@ view. Do **not** hide meaningful uncertainty, stale-data warnings, safety
 information, data provenance needed for trust, or reasons an automation cannot
 act.
 
+## HA-UX-019 — Prefer a characterful page header with status pills
+
+**Guideline.** Operational dashboard pages SHOULD use the standard page-header pattern from
+`handbook/09-visual-design-system.md` when the repository dashboard profile
+sets `page_header.mode` to `preferred` or `required`: a centred title with
+personality, an optional compact subtitle only when it adds context, and a
+centred wrapping row of page-relevant status pills.
+
+This is the project's preferred visual signature, not an inflexible requirement
+for every possible view. Agents SHOULD preserve or create the pattern when
+working on a dashboard that already uses it or whose profile prefers it. Agents
+MUST NOT mechanically add a header where it would reduce clarity, consume
+excessive mobile height, or invent decorative pills with no task value.
+
+When `page_header.mode` is `required`, absence of the pattern on covered views
+is a defect unless the profile lists an explicit exception. When `optional` or
+`disabled`, do not force the pattern.
+
+Title humour MUST remain understandable, non-offensive, and appropriate.
+Safety-critical or operationally urgent information MUST use clear language
+rather than jokes. Pills MUST follow `HA-UX-018` content hygiene and the pill
+rules in `HA-DESIGN-009`.
+
 ## HA-SEC-001 — Never commit secrets
 
 **Standard.** Passwords, tokens, private keys, webhook identifiers, precise sensitive locations, and recoverable credentials MUST NOT enter version control.
@@ -708,6 +731,25 @@ Purposeful whitespace that separates tasks or respects a documented maximum cont
 **Standard.** Home Assistant Sections layouts MUST explicitly consider `max_columns`, `dense_section_placement`, section `column_span`, card `grid_options`, unequal section heights, and mobile stacking order. A desktop layout with avoidable empty columns or substantial placement holes is defective.
 
 Designers MUST choose and record (in the dashboard profile or change record) whether dense placement is on or off and why; which sections stay full-width; which shorter sections share a desktop row; and the expected mobile stacking order. Dense packing MUST NOT be enabled merely to silence a gap if it produces a confusing reading order.
+
+## HA-DESIGN-009 — Page-header composition and pill behaviour
+
+**Standard.** When a view uses the standard page-header pattern (`HA-UX-019`), the header MUST
+comprise a centred characterful title, an optional compact subtitle only when
+useful, and a centred wrapping collection of status pills selected for that
+page’s purpose. The complete header MUST establish identity and useful context
+without dominating the viewport.
+
+Pills MUST be relevant, concise, readable on narrow phones, and explicit about
+unavailable, unknown, and stale states. They MUST NOT expose implementation
+debris (`HA-UX-018`), duplicate the next prominent card without purpose, or
+stretch into a sparse full-viewport band on desktop. Prefer 2–5 pills; permit
+fewer or none when no useful summary exists. Do not add pills for symmetry.
+
+Title humour MUST NOT obscure the page’s function. Safety-critical or
+operationally urgent facts MUST use clear language. Header layout MUST wrap
+cleanly across the responsive acceptance matrix without horizontal scrolling,
+clipping, tiny text, large empty gaps, or an avoidable orphaned final pill.
 
 ## HA-REVIEW-001 — Gather evidence before judging
 

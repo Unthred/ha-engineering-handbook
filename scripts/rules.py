@@ -30,7 +30,10 @@ DASHBOARD_PROFILE_REQUIRED_MARKERS = (
     "visual_confirmation:",
     "require_normal_dashboard_mode: true",
     "content_hygiene:",
+    "page_header:",
+    "mode: preferred",
     "example_view:",
+    "example_page_header_cards:",
     "desktop_quality_required: true",
     "allow_avoidable_structural_gaps: false",
 )
@@ -57,8 +60,23 @@ def check_dashboard_profile() -> list[str]:
             required = payload.get("required")
             if not isinstance(required, list) or "viewport_validation" not in required:
                 errors.append("dashboard-profile schema must require viewport_validation")
+            if "page_header" not in required:
+                errors.append("dashboard-profile schema must require page_header")
             if payload.get("properties", {}).get("mobile_first", {}).get("const") is not True:
                 errors.append("dashboard-profile schema must require mobile_first: true")
+            mode_enum = (
+                payload.get("properties", {})
+                .get("page_header", {})
+                .get("properties", {})
+                .get("mode", {})
+                .get("enum")
+            )
+            expected_modes = ["preferred", "required", "optional", "disabled"]
+            if mode_enum != expected_modes:
+                errors.append(
+                    "dashboard-profile schema page_header.mode enum must be "
+                    f"{expected_modes}"
+                )
     return errors
 
 

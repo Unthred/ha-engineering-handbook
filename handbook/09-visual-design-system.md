@@ -104,12 +104,96 @@ Home Assistant Sections layouts MUST explicitly consider `max_columns`, `dense_s
 
 Horizontal scrolling is forbidden for primary content. Minimum interactive target is 44 by 44 CSS pixels. Test light and dark themes, long labels, unavailable entities, conditional states, and the smallest supported display.
 
+## Standard page header (title + pills)
+
+Preferred operational page identity (`HA-UX-019`, `HA-DESIGN-009`). The header
+establishes which page the occupant is on and provides useful orientation
+without dominating the viewport.
+
+### Composition
+
+1. **Centred page title** with character and personality (for example “The
+   Temperature Tally” or “Mice Hate This One Weird Dashboard”). Preserve this
+   sense of voice rather than replacing it with dry technical headings.
+2. **Optional compact subtitle** only when it adds useful context.
+3. **Centred, wrapping status pills** selected for that page’s purpose.
+4. Content sections below, preserving the page’s reading order.
+
+### Pill selection
+
+Each pill MUST:
+
+- contain information relevant to the page’s purpose;
+- be understandable without opening entity details;
+- use a concise label and value;
+- use an appropriate icon where useful;
+- remain readable at narrow phone widths;
+- respond sensibly to unavailable, unknown, and stale states (`HA-UX-010`);
+- avoid entity IDs, GitHub references, or implementation mechanics (`HA-UX-018`);
+- avoid duplicating information already prominent immediately below it;
+- help with orientation, interpretation, or deciding what to do.
+
+Do **not** prescribe universal pill sets. A temperature page might show bedroom
+temperature, outdoor temperature, humidity, forecast condition, or last update;
+a mouse-hunt page might show recent detections, last detection time, active
+traps or cameras, or alert state. Selection follows the page’s purpose.
+
+### Guardrails
+
+- Prefer roughly **2–5** pills; fewer or none when the page has no useful
+  summary information.
+- Do not add pills merely for symmetry or decoration.
+- Do not include rapidly changing or noisy values unless they genuinely aid the
+  task.
+- Do not make the title so long that it becomes awkward on mobile.
+- Humour must remain understandable, non-offensive, and appropriate.
+- Safety-critical or operationally urgent information must use clear language
+  rather than jokes.
+- Title and pills must not consume excessive vertical space on mobile.
+- Pills must wrap cleanly without clipping, overflow, tiny text, or large empty
+  gaps.
+- On desktop, the pill group must remain visually centred and compact rather
+  than stretching across the entire viewport.
+
+### Responsive behaviour
+
+Validate the header with the same viewport matrix as `HA-TEST-016`:
+
+- centred title at all supported widths;
+- clean pill wrapping on small phones;
+- sensible spacing and touch targets (minimum 44×44 CSS px where interactive);
+- no horizontal scrolling;
+- no isolated final pill caused by an avoidable layout choice when a better
+  wrap exists;
+- compact maximum width on desktop;
+- preservation of reading order below the header.
+
+### Implementation notes (non-normative)
+
+Suitable Home Assistant implementations include:
+
+- native `heading` / `markdown` for the title plus a compact chip or badge row;
+- established project cards such as Mushroom `mushroom-title-card` and
+  `mushroom-chips-card` when already allowed in the consuming dashboard profile;
+- Lovelace badges for a compact top chip row when that fits the view.
+
+Do **not** make one specific custom card a universal handbook dependency.
+Document allowed custom cards in the repository dashboard profile
+(`HA-DESIGN-002`).
+
+### Profile contract
+
+The dashboard profile records `page_header.mode` as one of `preferred`,
+`required`, `optional`, or `disabled`, plus title-style and pill-selection
+expectations. It MUST NOT hard-code every dashboard’s content into the handbook.
+
 ## Visual definition of done
 
 Successful rendering alone is insufficient. A dashboard change is not complete until it has been checked for:
 
 - correct content and interaction;
 - clear information hierarchy and understandable labels;
+- page-header pattern compliance when the profile prefers or requires it (`HA-UX-019`, `HA-DESIGN-009`);
 - mobile usability and deliberate tablet/desktop layout;
 - absence of avoidable structural gaps, clipping, and overflow;
 - sensible section and card spans;
@@ -187,3 +271,30 @@ Designers MUST choose and record (in the dashboard profile or change record) whe
 **Why:** Sections defaults and indiscriminate full-width spans are a common source of desktop holes and phone-order surprises.
 
 **Verify:** Profile or change record states packing policy and spans; normal-view phone stack matches the intended order; desktop shows justified shared rows or full-width bands without empty columns.
+
+## HA-DESIGN-009 — Page-header composition and pill behaviour
+
+**Level:** Standard
+
+When a view uses the standard page-header pattern (`HA-UX-019`), the header MUST
+comprise a centred characterful title, an optional compact subtitle only when
+useful, and a centred wrapping collection of status pills selected for that
+page’s purpose. The complete header MUST establish identity and useful context
+without dominating the viewport.
+
+Pills MUST be relevant, concise, readable on narrow phones, and explicit about
+unavailable, unknown, and stale states. They MUST NOT expose implementation
+debris (`HA-UX-018`), duplicate the next prominent card without purpose, or
+stretch into a sparse full-viewport band on desktop. Prefer 2–5 pills; permit
+fewer or none when no useful summary exists. Do not add pills for symmetry.
+
+Title humour MUST NOT obscure the page’s function. Safety-critical or
+operationally urgent facts MUST use clear language. Header layout MUST wrap
+cleanly across the responsive acceptance matrix without horizontal scrolling,
+clipping, tiny text, large empty gaps, or an avoidable orphaned final pill.
+
+**Why:** Without composition rules, headers either become decorative clutter or
+lose the household’s approved visual signature.
+
+**Verify:** Normal-view matrix checks show a centred compact header; pill count
+and relevance pass audit; no debris or overflow (`HA-TEST-016`).

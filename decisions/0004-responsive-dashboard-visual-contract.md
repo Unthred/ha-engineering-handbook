@@ -31,11 +31,13 @@ needed an enforceable contract.
    hygiene; human confirmation when the agent cannot inspect the authenticated
    frontend.
 5. Propagate the rules through generated assistant instructions.
+6. Prefer a characterful centred page title with page-relevant status pills
+   (`HA-UX-019`, `HA-DESIGN-009`), controlled by dashboard-profile
+   `page_header.mode`, without mandating one custom-card implementation.
 
 Automated checks enforce existence and propagation of the contract. They do
 **not** prove that a layout looks good; visual acceptance remains a separate
 gate.
-
 ## Alternatives considered
 
 - Keep guidance advisory only: rejected; agents omitted it under time pressure.

@@ -38,3 +38,8 @@ content width (`HA-DESIGN-007`).
 **Dense section placement** — Home Assistant Sections option that packs shorter
 sections into leftover horizontal space; helpful for reclaiming empty columns,
 harmful when it confuses reading order (`HA-DESIGN-008`).
+
+**Page header pattern** — Preferred operational page identity: a centred
+characterful title, optional compact subtitle, and a centred wrapping row of
+page-relevant status pills (`HA-UX-019`, `HA-DESIGN-009`). Profile
+`page_header.mode` may be `preferred`, `required`, `optional`, or `disabled`.

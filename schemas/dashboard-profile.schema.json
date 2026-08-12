@@ -10,7 +10,8 @@
     "responsive_contract",
     "viewport_validation",
     "sections_policy",
-    "visual_confirmation"
+    "visual_confirmation",
+    "page_header"
   ],
   "properties": {
     "profile_version": { "type": "integer", "minimum": 2 },
@@ -89,7 +90,33 @@
     "custom_cards": { "type": "object" },
     "views": { "type": "object" },
     "content_hygiene": { "type": "object" },
+    "page_header": {
+      "type": "object",
+      "required": ["mode"],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["preferred", "required", "optional", "disabled"]
+        },
+        "title_style": { "type": "string" },
+        "subtitle_policy": { "type": "string" },
+        "pill_count_guidance": { "type": "string" },
+        "pill_selection": { "type": "string" },
+        "forbid_decorative_or_symmetric_only_pills": { "type": "boolean" },
+        "forbid_implementation_debris_in_pills": { "type": "boolean" },
+        "max_header_vertical_dominance_on_phone": { "type": "string" },
+        "desktop_pill_group": { "type": "string" },
+        "safety_critical_language": { "type": "string" },
+        "implementations_allowed_examples": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
     "example_view": { "type": "object" },
+    "example_page_header_cards": { "type": "object" },
     "exceptions": { "type": "array" }
   },
   "additionalProperties": true
