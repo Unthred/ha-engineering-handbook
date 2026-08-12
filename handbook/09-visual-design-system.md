@@ -66,12 +66,58 @@ Lead with actionable failures, then degraded dependencies, batteries, updates, b
 
 ## Responsive layout
 
-- Phone: one primary column; two columns only for compact controls with adequate touch targets.
-- Tablet and wall panel: two or three balanced columns; keep primary status in the upper-left reading path.
-- Desktop: cap content width or use three/four purposeful columns; never stretch sparse cards across the viewport.
-- Minimum interactive target is 44 by 44 CSS pixels.
-- Horizontal scrolling is forbidden for primary content.
-- Test light and dark themes, long labels, unavailable entities, and the smallest supported display.
+Dashboard layout is a **mobile-first progressive enhancement** contract (`HA-UX-016`, `HA-UX-017`). Phone defines the reading and task order; wider displays enhance that order without rewriting it.
+
+### Default responsive acceptance matrix
+
+Consuming repositories SHOULD copy and customise `examples/dashboard-profile.yaml`. Unless the profile overrides them, validate at least these default widths in **normal dashboard mode** (not editor-only):
+
+| Target | Default validation width | Required outcome |
+| --- | ---: | --- |
+| Small phone | 360 px | One-column hierarchy, usable controls, no clipping |
+| Typical phone | 390–430 px | Comfortable card and control sizing |
+| Tablet | 768–1024 px | Intentional use of additional width |
+| Desktop | 1280 px | Balanced layout without major holes |
+| Wide desktop | 1440–1920 px | Purposeful columns or deliberate maximum width |
+
+These are defaults, not unexplained universal magic numbers. A dashboard profile MAY narrow, widen, or rename targets, but MUST record the widths actually used for acceptance (`HA-TEST-016`).
+
+### Home Assistant Sections mechanics
+
+Home Assistant Sections layouts MUST explicitly consider `max_columns`, `dense_section_placement`, section spans, card `grid_options`, unequal section heights, and mobile stacking order. A desktop layout with avoidable empty columns or substantial placement holes is defective (`HA-DESIGN-007`, `HA-DESIGN-008`).
+
+| Mechanism | What to decide |
+| --- | --- |
+| `max_columns` | How many section columns the view may occupy at desktop width |
+| `dense_section_placement` | Whether shorter sections may pack into leftover horizontal space |
+| Section `column_span` | Full-width analytical bands versus shared operational columns |
+| Card `grid_options` | Per-card width within a section; preserve in storage-mode edits (`HA-UX-012`) |
+| Full-width vs single-column sections | Which bands must remain full width on every breakpoint |
+| Unequal section heights | Whether adjacent sections leave tall empty regions that denser packing or different spans would fix |
+| Section order / mobile stacking | Desktop left-to-right order becomes phone top-to-bottom; order MUST remain a coherent story |
+| Storage-mode preservation | Live Lovelace is authoritative; repository mirrors can drift (`HA-UX-014`) |
+| Conditional cards | Editor preview can show cards that are hidden in normal view — validate both |
+
+**When dense placement helps:** shorter status or control sections sharing a row beside a taller neighbour, reclaiming an otherwise empty column without changing task order.
+
+**When dense placement harms:** packing that produces a confusing reading order, interleaves unrelated tasks, or makes the phone stack jump between topics unpredictably. Prefer explicit section order and justified spans over automatic packing when narrative clarity matters more than density.
+
+Horizontal scrolling is forbidden for primary content. Minimum interactive target is 44 by 44 CSS pixels. Test light and dark themes, long labels, unavailable entities, conditional states, and the smallest supported display.
+
+## Visual definition of done
+
+Successful rendering alone is insufficient. A dashboard change is not complete until it has been checked for:
+
+- correct content and interaction;
+- clear information hierarchy and understandable labels;
+- mobile usability and deliberate tablet/desktop layout;
+- absence of avoidable structural gaps, clipping, and overflow;
+- sensible section and card spans;
+- correct conditional states in **normal view**;
+- operational UI content hygiene (`HA-UX-018`);
+- consistency with this design system.
+
+Valid JSON/YAML, a successful Lovelace save, editor preview, and inspection of storage data are **not** proof of acceptable visual output. If the agent cannot inspect the authenticated Home Assistant frontend, human visual confirmation is required before merging any material dashboard layout or presentation change (`HA-TEST-016`).
 
 ## HA-DESIGN-001 — Centralise visual tokens
 
@@ -95,7 +141,7 @@ Overview, room, security, and system-status views MUST follow the information hi
 
 **Level:** Standard
 
-Dashboards MUST avoid both entity-dump density and decorative empty space. Each visible item needs a task, status, or navigation purpose appropriate to that view.
+Dashboards MUST avoid both entity-dump density and purposeless empty space. Each visible item needs a task, status, or navigation purpose appropriate to that view. Decorative or accidental whitespace that creates avoidable structural gaps is governed by `HA-DESIGN-007`; density packing and spans are governed by `HA-DESIGN-008`. Do not mandate dense packing universally — choose and justify the packing behaviour for the view in the dashboard profile.
 
 ## HA-DESIGN-005 — Preserve accessibility
 
@@ -108,3 +154,36 @@ Dashboards MUST retain readable contrast, 44 by 44 pixel touch targets, text or 
 **Level:** Standard
 
 Reusable components MUST document their displayed state and tap, hold, double-tap, confirmation, and navigation behaviour; undefined gestures should do nothing rather than surprise the user.
+
+## HA-DESIGN-007 — Structural layout-gap prevention
+
+**Level:** Standard
+
+A dashboard layout MUST fail review when it contains avoidable structural defects, including:
+
+- large vertical or horizontal holes;
+- empty columns caused by section placement;
+- short sections stranded beside substantially taller sections;
+- unused desktop width without a deliberate maximum-width design;
+- inappropriate full-width cards or sections;
+- sparse content stretched across excessive width;
+- awkward spans caused by unsuitable grid settings;
+- gaps produced by unequal section heights where dense placement or a different span would solve them.
+
+Purposeful whitespace that separates tasks or respects a documented maximum content width is allowed. Accidental empty regions created by Sections defaults are not.
+
+**Why:** “Avoid decorative empty space” was too weak; agents treated large placement holes as acceptable as long as cards rendered.
+
+**Verify:** At desktop and wide-desktop matrix widths, no avoidable empty column or substantial hole remains unless the dashboard profile documents a deliberate max-width or packing exception.
+
+## HA-DESIGN-008 — Section span and packing behaviour
+
+**Level:** Standard
+
+Home Assistant Sections layouts MUST explicitly consider `max_columns`, `dense_section_placement`, section `column_span`, card `grid_options`, unequal section heights, and mobile stacking order. A desktop layout with avoidable empty columns or substantial placement holes is defective.
+
+Designers MUST choose and record (in the dashboard profile or change record) whether dense placement is on or off and why; which sections stay full-width; which shorter sections share a desktop row; and the expected mobile stacking order. Dense packing MUST NOT be enabled merely to silence a gap if it produces a confusing reading order.
+
+**Why:** Sections defaults and indiscriminate full-width spans are a common source of desktop holes and phone-order surprises.
+
+**Verify:** Profile or change record states packing policy and spans; normal-view phone stack matches the intended order; desktop shows justified shared rows or full-width bands without empty columns.

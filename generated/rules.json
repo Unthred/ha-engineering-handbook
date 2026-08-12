@@ -266,7 +266,7 @@
       "title": "Build for the actual displays",
       "area": "UX",
       "level": "Standard",
-      "text": "Views MUST be checked at their intended phone, tablet, desktop, or wall-panel sizes. Do not rely on editor preview alone.",
+      "text": "Views MUST be validated in normal dashboard mode against the repository dashboard profile's responsive acceptance matrix (`HA-TEST-016`), including at least one phone width and one desktop width. Editor preview alone is not validation. Passing a phone check does not excuse a poor desktop layout, and passing a desktop check does not excuse a compromised phone layout.",
       "source": "handbook/04-dashboards-and-ux.md",
       "rationale": null,
       "verification": null
@@ -370,6 +370,36 @@
       "source": "handbook/04-dashboards-and-ux.md",
       "rationale": null,
       "verification": null
+    },
+    {
+      "id": "HA-UX-016",
+      "title": "Mobile-first progressive enhancement",
+      "area": "UX",
+      "level": "Standard",
+      "text": "Dashboard work MUST begin with a coherent single-column phone hierarchy and\nprogressively enhance wider displays. Tablet and desktop layouts MUST use\navailable space deliberately without changing task order, creating substantial\nstructural gaps, stretching sparse content, or impairing the phone experience.\n“Mobile-first” does **not** mean “mobile-only”: desktop quality is part of the\ndefinition of done. Passing mobile validation does not excuse a poor desktop\nlayout, and passing desktop validation does not excuse a compromised phone\nlayout.\n\nRequired outcomes:\n\n- a logical single-column mobile reading and interaction order;\n- progressive enhancement at wider widths;\n- preservation of information hierarchy and task order across breakpoints;\n- deliberate use of additional desktop width;\n- no desktop layout that simply stretches phone cards excessively;\n- no desktop layout that leaves large avoidable holes or half the viewport unused;\n- no desktop optimisation that damages mobile stacking or usability.",
+      "source": "handbook/04-dashboards-and-ux.md",
+      "rationale": "Vague “check phone and desktop” guidance allowed agents to ship",
+      "verification": "Normal-view checks at profile phone and desktop widths show the"
+    },
+    {
+      "id": "HA-UX-017",
+      "title": "Deliberate responsive space use",
+      "area": "UX",
+      "level": "Standard",
+      "text": "At tablet and desktop widths, additional space MUST be used intentionally:\nbalanced columns, shared rows for shorter operational sections, deliberate\nfull-width analytical sections, or an explicit maximum content width. A layout\nthat merely scales a sparse phone composition across a wide viewport is\ndefective. Home Assistant Sections mechanics (`max_columns`,\n`dense_section_placement`, section `column_span`, card `grid_options`) MUST be\nchosen deliberately for the view (`HA-DESIGN-008`).",
+      "source": "handbook/04-dashboards-and-ux.md",
+      "rationale": "Default Sections packing often produces empty columns and stranded",
+      "verification": "Desktop and wide-desktop matrix checks show purposeful columns or a"
+    },
+    {
+      "id": "HA-UX-018",
+      "title": "Operational UI content hygiene",
+      "area": "UX",
+      "level": "Standard",
+      "text": "Normal operational UI MUST help the occupant understand state or decide what to\ndo. Ordinary user-facing cards MUST NOT expose development or implementation\ndebris unless explicitly requested or necessary for safe operation. Keep the\nfollowing out of everyday operational cards:\n\n- GitHub issue and pull-request references;\n- internal entity IDs;\n- internal automation, script, or helper names;\n- implementation notes and debugging comments;\n- model mechanics and source-code terminology;\n- historical development explanations;\n- caveats that belong in documentation or diagnostics.\n\nExamples of defective everyday copy: `plant humidity excluded (#248)`,\n`not sun-exposed gate/garden sensors`, or prose that describes exactly how a\ncalculation is implemented.\n\nRetain useful detail in documentation, diagnostics, or an explicitly technical\nview. Do **not** hide meaningful uncertainty, stale-data warnings, safety\ninformation, data provenance needed for trust, or reasons an automation cannot\nact.",
+      "source": "handbook/04-dashboards-and-ux.md",
+      "rationale": "Development notes left in cards train occupants to ignore the UI and",
+      "verification": "Review every new or changed user-visible string on the view; reject"
     },
     {
       "id": "HA-SEC-001",
@@ -622,6 +652,16 @@
       "verification": "A hypothetical prompt that says both “merge into develop” and “do"
     },
     {
+      "id": "HA-TEST-016",
+      "title": "Visual breakpoint verification",
+      "area": "TEST",
+      "level": "Standard",
+      "text": "Material dashboard layout or presentation changes MUST be visually verified in\n**normal dashboard mode** against the consuming repository's responsive\nacceptance matrix (defaults in `handbook/09-visual-design-system.md` and\n`examples/dashboard-profile.yaml`). “Checked desktop” without evidence is not\nsufficient.\n\nThe validation report MUST state:\n\n- the actual viewport widths checked;\n- whether normal dashboard mode was used (not editor-only);\n- layout and reading order at each width;\n- any clipping, overflow, excessive gaps, or awkward spans;\n- whether conditional states were tested;\n- who performed visual confirmation.\n\nEditor preview, valid JSON/YAML, a successful Lovelace save, and inspection of\nstorage data are **not** proof of acceptable visual output. If the agent cannot\ninspect the authenticated Home Assistant frontend, it MUST obtain human visual\nconfirmation before merging any material dashboard layout or presentation\nchange.\n\nAutomated linting and rule generation MAY enforce that the responsive contract\nexists and propagates; they MUST NOT be treated as substitutes for visual\nacceptance.",
+      "source": "handbook/07-testing-and-deployment.md",
+      "rationale": "Agents equated configuration validity with visual quality, shipping",
+      "verification": "Change records for material dashboard PRs list matrix widths,"
+    },
+    {
       "id": "HA-DOC-001",
       "title": "Document operational intent",
       "area": "DOC",
@@ -736,7 +776,7 @@
       "title": "Keep density purposeful",
       "area": "DESIGN",
       "level": "Standard",
-      "text": "Dashboards MUST avoid both entity-dump density and decorative empty space. Each visible item needs a task, status, or navigation purpose appropriate to that view.",
+      "text": "Dashboards MUST avoid both entity-dump density and purposeless empty space. Each visible item needs a task, status, or navigation purpose appropriate to that view. Decorative or accidental whitespace that creates avoidable structural gaps is governed by `HA-DESIGN-007`; density packing and spans are governed by `HA-DESIGN-008`. Do not mandate dense packing universally — choose and justify the packing behaviour for the view in the dashboard profile.",
       "source": "handbook/09-visual-design-system.md",
       "rationale": null,
       "verification": null
@@ -760,6 +800,26 @@
       "source": "handbook/09-visual-design-system.md",
       "rationale": null,
       "verification": null
+    },
+    {
+      "id": "HA-DESIGN-007",
+      "title": "Structural layout-gap prevention",
+      "area": "DESIGN",
+      "level": "Standard",
+      "text": "A dashboard layout MUST fail review when it contains avoidable structural defects, including:\n\n- large vertical or horizontal holes;\n- empty columns caused by section placement;\n- short sections stranded beside substantially taller sections;\n- unused desktop width without a deliberate maximum-width design;\n- inappropriate full-width cards or sections;\n- sparse content stretched across excessive width;\n- awkward spans caused by unsuitable grid settings;\n- gaps produced by unequal section heights where dense placement or a different span would solve them.\n\nPurposeful whitespace that separates tasks or respects a documented maximum content width is allowed. Accidental empty regions created by Sections defaults are not.",
+      "source": "handbook/09-visual-design-system.md",
+      "rationale": "“Avoid decorative empty space” was too weak; agents treated large placement holes as acceptable as long as cards rendered.",
+      "verification": "At desktop and wide-desktop matrix widths, no avoidable empty column or substantial hole remains unless the dashboard profile documents a deliberate max-width or packing exception."
+    },
+    {
+      "id": "HA-DESIGN-008",
+      "title": "Section span and packing behaviour",
+      "area": "DESIGN",
+      "level": "Standard",
+      "text": "Home Assistant Sections layouts MUST explicitly consider `max_columns`, `dense_section_placement`, section `column_span`, card `grid_options`, unequal section heights, and mobile stacking order. A desktop layout with avoidable empty columns or substantial placement holes is defective.\n\nDesigners MUST choose and record (in the dashboard profile or change record) whether dense placement is on or off and why; which sections stay full-width; which shorter sections share a desktop row; and the expected mobile stacking order. Dense packing MUST NOT be enabled merely to silence a gap if it produces a confusing reading order.",
+      "source": "handbook/09-visual-design-system.md",
+      "rationale": "Sections defaults and indiscriminate full-width spans are a common source of desktop holes and phone-order surprises.",
+      "verification": "Profile or change record states packing policy and spans; normal-view phone stack matches the intended order; desktop shows justified shared rows or full-width bands without empty columns."
     },
     {
       "id": "HA-REVIEW-001",

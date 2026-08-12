@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Unthred/ha-engineering-handbook/schemas/dashboard-profile.schema.json",
+  "title": "Home Assistant dashboard profile (responsive layout contract)",
+  "type": "object",
+  "required": [
+    "profile_version",
+    "layout_type",
+    "mobile_first",
+    "responsive_contract",
+    "viewport_validation",
+    "sections_policy",
+    "visual_confirmation"
+  ],
+  "properties": {
+    "profile_version": { "type": "integer", "minimum": 2 },
+    "style": { "type": "string" },
+    "layout_type": { "type": "string", "enum": ["sections", "masonry", "panel", "custom"] },
+    "mobile_first": { "const": true },
+    "responsive_contract": {
+      "type": "object",
+      "required": [
+        "preserve_task_order_across_breakpoints",
+        "allow_stretching_sparse_phone_cards",
+        "allow_avoidable_structural_gaps",
+        "desktop_quality_required"
+      ],
+      "properties": {
+        "preserve_task_order_across_breakpoints": { "const": true },
+        "allow_stretching_sparse_phone_cards": { "const": false },
+        "allow_avoidable_structural_gaps": { "const": false },
+        "desktop_quality_required": { "const": true }
+      },
+      "additionalProperties": true
+    },
+    "viewport_validation": {
+      "type": "object",
+      "required": ["typical_phone", "desktop"],
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "width_px": { "type": "integer", "minimum": 320 },
+          "width_px_range": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": { "type": "integer", "minimum": 320 }
+          },
+          "required_outcome": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "sections_policy": {
+      "type": "object",
+      "required": ["max_columns", "dense_section_placement"],
+      "properties": {
+        "max_columns": { "type": "object" },
+        "dense_section_placement": { "type": "boolean" },
+        "dense_placement_rationale": { "type": "string" },
+        "max_content_width_px": { "type": ["integer", "null"] },
+        "permitted_section_spans": { "type": "array" },
+        "full_width_sections": { "type": "array", "items": { "type": "string" } },
+        "expected_mobile_stacking_order": { "type": "array", "items": { "type": "string" } },
+        "expected_desktop_grouping": { "type": "array" }
+      },
+      "additionalProperties": true
+    },
+    "visual_confirmation": {
+      "type": "object",
+      "required": [
+        "require_normal_dashboard_mode",
+        "require_authenticated_human_when_agent_cannot_inspect_frontend"
+      ],
+      "properties": {
+        "require_normal_dashboard_mode": { "const": true },
+        "require_authenticated_human_when_agent_cannot_inspect_frontend": { "const": true },
+        "material_layout_changes_require_named_confirmer": { "type": "boolean" },
+        "conditional_states_requiring_visual_checks": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "report_must_include": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    },
+    "targets": { "type": "object" },
+    "tokens": { "type": "object" },
+    "interactions": { "type": "object" },
+    "custom_cards": { "type": "object" },
+    "views": { "type": "object" },
+    "content_hygiene": { "type": "object" },
+    "example_view": { "type": "object" },
+    "exceptions": { "type": "array" }
+  },
+  "additionalProperties": true
+}

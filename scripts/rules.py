@@ -19,6 +19,47 @@ RULE_HEADING = re.compile(r"^## (HA-([A-Z]+)-\d{3}) — (.+)$", re.MULTILINE)
 LEVEL = re.compile(r"^\*\*Level:\*\* (Principle|Standard|Guideline|Example)\s*$", re.MULTILINE)
 FIELD = re.compile(r"^\*\*(Why|Verify):\*\*\s*(.+)$", re.MULTILINE)
 INSTALL_MANIFEST = ".ha-handbook-install.json"
+DASHBOARD_PROFILE = ROOT / "examples" / "dashboard-profile.yaml"
+DASHBOARD_PROFILE_REQUIRED_MARKERS = (
+    "profile_version: 2",
+    "mobile_first: true",
+    "responsive_contract:",
+    "viewport_validation:",
+    "sections_policy:",
+    "dense_section_placement:",
+    "visual_confirmation:",
+    "require_normal_dashboard_mode: true",
+    "content_hygiene:",
+    "example_view:",
+    "desktop_quality_required: true",
+    "allow_avoidable_structural_gaps: false",
+)
+
+
+def check_dashboard_profile() -> list[str]:
+    """Structurally validate the example dashboard profile without PyYAML."""
+    errors: list[str] = []
+    if not DASHBOARD_PROFILE.is_file():
+        return [f"missing {DASHBOARD_PROFILE.relative_to(ROOT).as_posix()}"]
+    text = DASHBOARD_PROFILE.read_text(encoding="utf-8")
+    for marker in DASHBOARD_PROFILE_REQUIRED_MARKERS:
+        if marker not in text:
+            errors.append(f"dashboard profile missing required marker: {marker}")
+    schema = ROOT / "schemas" / "dashboard-profile.schema.json"
+    if not schema.is_file():
+        errors.append("missing schemas/dashboard-profile.schema.json")
+    else:
+        try:
+            payload = json.loads(schema.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as error:
+            errors.append(f"invalid dashboard-profile schema JSON: {error}")
+        else:
+            required = payload.get("required")
+            if not isinstance(required, list) or "viewport_validation" not in required:
+                errors.append("dashboard-profile schema must require viewport_validation")
+            if payload.get("properties", {}).get("mobile_first", {}).get("const") is not True:
+                errors.append("dashboard-profile schema must require mobile_first: true")
+    return errors
 
 
 @dataclass(frozen=True)
@@ -123,13 +164,19 @@ def check(rules: list[Rule]) -> bool:
     for path, expected in outputs(rules).items():
         if not path.exists() or path.read_text(encoding="utf-8") != expected:
             stale.append(path.relative_to(ROOT).as_posix())
+    profile_errors = check_dashboard_profile()
     if stale:
         print("Generated files are missing or stale:", file=sys.stderr)
         for path in stale:
             print(f"  - {path}", file=sys.stderr)
         print("Run: python scripts/rules.py generate", file=sys.stderr)
+    if profile_errors:
+        print("Dashboard profile contract validation failed:", file=sys.stderr)
+        for error in profile_errors:
+            print(f"  - {error}", file=sys.stderr)
+    if stale or profile_errors:
         return False
-    print(f"Validated {len(rules)} rules; generated files are current.")
+    print(f"Validated {len(rules)} rules; generated files are current; dashboard profile OK.")
     return True
 
 
