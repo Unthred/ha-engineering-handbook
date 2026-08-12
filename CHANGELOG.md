@@ -6,6 +6,11 @@ All notable handbook changes will be recorded here.
 
 ### Added
 
+- Disruptive automation corroboration: `HA-AUTO-007` (inferred-state actions
+  need confirming evidence, confirmation/grace with deliberate-interaction
+  cancel, automatic media transitions must not cancel, playback may be room
+  context not permanent veto; fail-safe; non-destructive tests);
+  `HA-AUTO-003` cross-link
 - Responsive dashboard visual contract: `HA-UX-016` (mobile-first progressive
   enhancement), `HA-UX-017` (deliberate responsive space use), `HA-UX-018`
   (operational UI content hygiene), `HA-DESIGN-007` (structural layout-gap
