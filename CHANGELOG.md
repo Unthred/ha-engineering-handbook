@@ -17,7 +17,8 @@ All notable handbook changes will be recorded here.
 - ADR-0004: enforceable responsive dashboard visual contract
 - Dashboard profile v2 example + `schemas/dashboard-profile.schema.json`
 - Audit template responsive acceptance table and pass/fail examples
-- Example native/Mushroom-shaped page-header snippet (non-normative)- `HA-TEST-015` — refuse merge-before-deploy prompt conflicts; require recorded
+- Example native/Mushroom-shaped page-header snippet (non-normative)
+- `HA-TEST-015` — refuse merge-before-deploy prompt conflicts; require recorded
   pre-merge production-proof gate evidence
 - One-active-implementation work-in-progress discipline (`HA-AI-006`): finish,
   close, or formally park before starting another implementation
