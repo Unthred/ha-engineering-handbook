@@ -16,6 +16,10 @@ All notable handbook changes will be recorded here.
   context not permanent veto; fail-safe; non-destructive tests;
   external side-effect isolation pointer to `HA-TEST-017`);
   `HA-AUTO-003` cross-link
+- Agent CI ownership through green: `HA-AI-007` (every managed install; monitor
+  exact head SHA through terminal success or evidenced blocker; forbid handoff
+  while latest head is failing or unverified; local overlay alone is not
+  compliance)
 - Responsive dashboard visual contract: `HA-UX-016` (mobile-first progressive
   enhancement), `HA-UX-017` (deliberate responsive space use), `HA-UX-018`
   (operational UI content hygiene), `HA-DESIGN-007` (structural layout-gap

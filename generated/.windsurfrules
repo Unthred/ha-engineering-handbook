@@ -671,6 +671,8 @@ applicable:
 - requested implementation and success criteria
 - tests and verification (including production or physical proof when
   authorized and required)
+- required pull-request CI for the exact head SHA green, or an evidenced
+  external blocker recorded (`HA-AI-007`)
 - repository state and changelog / durable documentation
 - issue status (completed, duplicate, superseded, or separately recorded
   follow-up)
@@ -785,6 +787,90 @@ separate worktree.
 **Invalid handoff:** “Mostly done, will finish later,” with open issues, an
 unmerged PR, and no parking record, while starting unrelated implementation in
 the same workspace.
+
+## HA-AI-007 — Own pull-request CI through green or evidenced blocker
+
+**Standard.** **Scope:** This standard applies to **every repository** that installs this
+handbook. It is not Home Assistant-specific. A consuming project MAY add a
+local overlay that names its required check IDs or `gh` helpers; that overlay
+MUST NOT weaken, replace, or substitute for this rule. Installing only a
+project-local CI-ownership note without the generated handbook rule is
+**not** compliance.
+
+An agent that creates or updates a pull request MUST retain ownership of
+required checks for the **exact pushed head SHA** through a **terminal
+result**: success for every required check, or a clearly evidenced external
+blocker reported with URLs and inspected evidence. Ownership includes
+monitoring, failure inspection, repair of failures caused by the agent’s
+changes, re-push, and re-check of the new head.
+
+### Forbidden handoff (the defect this rule forbids)
+
+The unacceptable behaviour is **not** merely that CI failed. It is that the
+agent pushed a pull request, failed to retain ownership of its checks, and
+handed the work back while the latest head was **failing** or **unverified**.
+
+The following are forbidden as completed handoffs after an agent push:
+
+- “CI should pass,” “checks started,” “pending at last check,” or equivalent
+- reporting an older SHA’s green result while a newer head remains unmonitored
+- leaving required checks red or pending and asking the human to watch them
+- treating a local parse, config reload, or workflow trigger as CI completion
+
+### After every push
+
+1. Record the pushed commit SHA.
+2. Confirm the pull-request head matches that SHA.
+3. Wait for required checks to appear for that SHA (not a superseded run).
+4. Monitor those checks to a terminal state (success, failure, cancelled, or
+   timed-out).
+5. If a GitHub Actions check fails:
+   - retrieve the job log and annotations with `gh` (for example `gh pr checks`,
+     `gh run view`, and failed-job logs)
+   - identify the failing command and root cause
+   - implement the smallest correct fix (or prove the failure is unrelated /
+     external)
+   - run the closest local equivalent where practical
+   - push the correction
+   - restart monitoring against the **new** head SHA
+6. If a check stays pending for an unusually long time, inspect the workflow or
+   run instead of silently abandoning it.
+7. If a check is cancelled or superseded, follow the newest head SHA.
+8. If an external check fails, report its URL and evidence; do not pretend its
+   logs were inspected.
+9. Never merge unless the human separately authorises merging.
+
+### Boundaries
+
+- Do not blindly re-run a deterministic failing workflow without changing
+  anything. One re-run is acceptable only when evidence indicates infrastructure
+  or transient failure.
+- Do not modify application behaviour merely to appease a broken test; determine
+  which is wrong.
+- Do not weaken, skip, or disable checks to make the pull request green.
+- Do not add broad exclusions or `continue-on-error` to hide failures.
+- Never expose secrets from Actions logs.
+- If a failure appears unrelated to the pull-request diff, prove that by
+  checking the base branch or a previous successful run before changing
+  unrelated code.
+- After three materially different attempted fixes without success, stop,
+  preserve evidence, and report the blocker rather than looping indefinitely.
+
+### Completion report (mandatory)
+
+When handing work back after a pull-request update, the agent MUST include:
+
+- pull-request URL
+- final head SHA
+- every required check and its terminal result for **that** SHA
+- failing commands and root causes encountered
+- fixes made
+- local verification performed
+- links to any remaining failed or externally blocked checks
+
+If required checks are still pending, the agent’s work is still in progress.
+Pushing code, a local parse, a Home Assistant reload, or triggering a workflow
+is not completion.
 
 ## HA-DESIGN-001 — Centralise visual tokens
 
