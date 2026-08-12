@@ -198,16 +198,38 @@ the same workspace.
 
 **Level:** Standard
 
-An agent that creates or updates a pull request MUST monitor the checks for the
-exact pushed head SHA, inspect all failures, correct failures caused by its
-changes, push the correction, and re-check until required CI reaches a terminal
-successful state or a clearly evidenced external blocker is reported.
+**Scope:** This standard applies to **every repository** that installs this
+handbook. It is not Home Assistant-specific. A consuming project MAY add a
+local overlay that names its required check IDs or `gh` helpers; that overlay
+MUST NOT weaken, replace, or substitute for this rule. Installing only a
+project-local CI-ownership note without the generated handbook rule is
+**not** compliance.
+
+An agent that creates or updates a pull request MUST retain ownership of
+required checks for the **exact pushed head SHA** through a **terminal
+result**: success for every required check, or a clearly evidenced external
+blocker reported with URLs and inspected evidence. Ownership includes
+monitoring, failure inspection, repair of failures caused by the agent’s
+changes, re-push, and re-check of the new head.
+
+### Forbidden handoff (the defect this rule forbids)
+
+The unacceptable behaviour is **not** merely that CI failed. It is that the
+agent pushed a pull request, failed to retain ownership of its checks, and
+handed the work back while the latest head was **failing** or **unverified**.
+
+The following are forbidden as completed handoffs after an agent push:
+
+- “CI should pass,” “checks started,” “pending at last check,” or equivalent
+- reporting an older SHA’s green result while a newer head remains unmonitored
+- leaving required checks red or pending and asking the human to watch them
+- treating a local parse, config reload, or workflow trigger as CI completion
 
 ### After every push
 
 1. Record the pushed commit SHA.
 2. Confirm the pull-request head matches that SHA.
-3. Wait for required checks to appear.
+3. Wait for required checks to appear for that SHA (not a superseded run).
 4. Monitor those checks to a terminal state (success, failure, cancelled, or
    timed-out).
 5. If a GitHub Actions check fails:
@@ -248,20 +270,22 @@ When handing work back after a pull-request update, the agent MUST include:
 
 - pull-request URL
 - final head SHA
-- every required check and its terminal result
+- every required check and its terminal result for **that** SHA
 - failing commands and root causes encountered
 - fixes made
 - local verification performed
 - links to any remaining failed or externally blocked checks
 
-The agent MUST NOT use wording such as “CI should pass,” “checks started,” or
-“pending at last check” as a completed handoff. If required checks are still
-pending, the agent’s work is still in progress. Pushing code, a local parse, a
-Home Assistant reload, or triggering a workflow is not completion.
+If required checks are still pending, the agent’s work is still in progress.
+Pushing code, a local parse, a Home Assistant reload, or triggering a workflow
+is not completion.
 
-**Why:** Failure emails and abandoned red CI shift recovery onto the human.
-Agents that own the push must own the checks for that push.
+**Why:** Failure emails and abandoned red or unverified CI shift recovery onto
+the human. The agent that owns the push must own the checks for that push
+through a terminal result.
 
 **Verify:** After an agent push, required checks for the reported head SHA are
 green, or the handoff names an evidenced external blocker with URLs and logs.
-Sample invalid handoffs (“should pass”, “pending”) are rejected in review.
+Sample invalid handoffs (“should pass”, “pending”, “older SHA was green”) are
+rejected in review. Consuming installs include the generated handbook rule, not
+only a local overlay.

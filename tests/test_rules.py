@@ -224,6 +224,10 @@ class AgentCiOwnershipTests(unittest.TestCase):
         chapter = (HANDBOOK / "08-documentation-and-ai.md").read_text(encoding="utf-8")
         self.assertIn("## HA-AI-007 — Own pull-request CI through green or evidenced blocker", chapter)
         self.assertIn("exact pushed head SHA", chapter)
+        self.assertIn("Forbidden handoff", chapter)
+        self.assertIn("failing** or **unverified", chapter)
+        self.assertIn("every repository", chapter)
+        self.assertIn("project-local CI-ownership note without the generated handbook rule", chapter)
         self.assertIn("CI should pass", chapter)
         self.assertIn("pending at last check", chapter)
         self.assertIn("three materially different attempted fixes", chapter)
@@ -242,6 +246,8 @@ class AgentCiOwnershipTests(unittest.TestCase):
         self.assertIn("HA-AI-007", ids)
         rule = next(r for r in catalog["rules"] if r["id"] == "HA-AI-007")
         self.assertIn("exact pushed head SHA", rule["text"])
+        self.assertIn("Forbidden handoff", rule["text"])
+        self.assertIn("every repository", rule["text"])
 
         cursor = (
             GENERATED / ".cursor/rules/home-assistant-engineering.mdc"
@@ -250,6 +256,7 @@ class AgentCiOwnershipTests(unittest.TestCase):
         for blob in (cursor, claude):
             self.assertIn("HA-AI-007", blob)
             self.assertIn("CI should pass", blob)
+            self.assertIn("Forbidden handoff", blob)
             self.assertIn("gh pr checks", blob)
 
 

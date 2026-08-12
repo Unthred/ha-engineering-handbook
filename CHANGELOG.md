@@ -6,9 +6,10 @@ All notable handbook changes will be recorded here.
 
 ### Added
 
-- Agent CI ownership through green: `HA-AI-007` (monitor exact head SHA, inspect
-  failures with `gh`, fix, re-push, re-check; forbid “should pass” / pending
-  handoffs)
+- Agent CI ownership through green: `HA-AI-007` (every managed install; monitor
+  exact head SHA through terminal success or evidenced blocker; forbid handoff
+  while latest head is failing or unverified; local overlay alone is not
+  compliance)
 - Responsive dashboard visual contract: `HA-UX-016` (mobile-first progressive
   enhancement), `HA-UX-017` (deliberate responsive space use), `HA-UX-018`
   (operational UI content hygiene), `HA-DESIGN-007` (structural layout-gap
