@@ -219,5 +219,62 @@ class ResponsiveDashboardContractTests(unittest.TestCase):
         self.assertIn("mushroom-title-card", profile)
 
 
+class CapabilityEvidenceTests(unittest.TestCase):
+    """Regression: forbid invented capability limits (#17 / HA-AI-008)."""
+
+    def test_ha_ai_008_present_with_level_and_requirements(self):
+        chapter = (HANDBOOK / "08-documentation-and-ai.md").read_text(encoding="utf-8")
+        self.assertIn(
+            "## HA-AI-008 — Verify capability claims with evidence before declaring unavailability",
+            chapter,
+        )
+        # Next free ID on main after HA-AI-006; HA-AI-007 reserved by open PR #14
+        self.assertNotIn("## HA-AI-007 —", chapter)
+        block = chapter.split("## HA-AI-008 —", 1)[1]
+        self.assertIn("**Level:** Standard", block)
+        self.assertIn("require evidence", block.lower())
+        self.assertRegex(block, r"safe\s*/\s*non-destructive\s+probe")
+        self.assertIn("not attempted", block)
+        self.assertIn("authentication or authorization denied", block)
+        self.assertIn("observed error or evidence", block)
+        self.assertIn("HA API calls are blocked in this session", block)
+        self.assertIn("HTTP 401", block)
+        self.assertIn("independently enforceable", block)
+        ai001 = chapter.split("## HA-AI-001 —", 1)[1].split("## HA-AI-002 —", 1)[0]
+        ai003 = chapter.split("## HA-AI-003 —", 1)[1].split("## HA-AI-004 —", 1)[0]
+        self.assertIn("HA-AI-008", ai001)
+        self.assertIn("HA-AI-008", ai003)
+
+    def test_generated_outputs_include_ha_ai_008(self):
+        subprocess.run(
+            ["python", "scripts/rules.py", "generate"],
+            cwd=HANDBOOK.parent,
+            check=True,
+        )
+        catalog = json.loads((GENERATED / "rules.json").read_text(encoding="utf-8"))
+        ids = {rule["id"] for rule in catalog["rules"]}
+        self.assertIn("HA-AI-008", ids)
+        rule = next(r for r in catalog["rules"] if r["id"] == "HA-AI-008")
+        self.assertEqual("Standard", rule["level"])
+        self.assertRegex(rule["text"], r"safe\s*/\s*non-destructive\s+probe")
+        self.assertIn("HA API calls are blocked in this session", rule["text"])
+        self.assertIn("observed error or evidence", rule["text"])
+
+        cursor = (
+            GENERATED / ".cursor/rules/home-assistant-engineering.mdc"
+        ).read_text(encoding="utf-8")
+        claude = (GENERATED / "CLAUDE.md").read_text(encoding="utf-8")
+        agents = (GENERATED / "AGENTS.md").read_text(encoding="utf-8")
+        windsurf = (GENERATED / ".windsurfrules").read_text(encoding="utf-8")
+        copilot = (
+            GENERATED / ".github/copilot-instructions.md"
+        ).read_text(encoding="utf-8")
+        for blob in (cursor, claude, agents, windsurf, copilot):
+            self.assertIn("HA-AI-008", blob)
+            self.assertRegex(blob, r"safe\s*/\s*non-destructive\s+probe")
+            self.assertIn("HA API calls are blocked in this session", blob)
+            self.assertIn("require evidence", blob.lower())
+
+
 if __name__ == "__main__":
     unittest.main()

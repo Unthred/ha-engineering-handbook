@@ -696,7 +696,7 @@
       "title": "Inspect before editing",
       "area": "AI",
       "level": "Standard",
-      "text": "An AI assistant MUST inspect relevant files, conventions, dependencies, and current state before proposing or applying changes.",
+      "text": "An AI assistant MUST inspect relevant files, conventions, dependencies, and current state before proposing or applying changes. Claims that a needed tool, API, host, credential, or other capability is unavailable are governed by `HA-AI-008` and MUST NOT replace that inspection with an unverified limitation.",
       "source": "handbook/08-documentation-and-ai.md",
       "rationale": null,
       "verification": null
@@ -716,7 +716,7 @@
       "title": "State assumptions and risk",
       "area": "AI",
       "level": "Standard",
-      "text": "When facts cannot be verified, an assistant MUST identify assumptions. Consequential or destructive actions require explicit scope and a recovery path.",
+      "text": "When facts cannot be verified, an assistant MUST identify assumptions. Consequential or destructive actions require explicit scope and a recovery path. An assumption about the assistant’s environment or capabilities MUST remain labelled as an assumption (`HA-AI-003`) and MUST NOT be restated as a categorical unavailability claim without the evidence required by `HA-AI-008`.",
       "source": "handbook/08-documentation-and-ai.md",
       "rationale": null,
       "verification": null
@@ -750,6 +750,16 @@
       "source": "handbook/08-documentation-and-ai.md",
       "rationale": "Unfinished implementation left behind as open issues, stale pull",
       "verification": "Active-task inventory shows at most one implementation; completed"
+    },
+    {
+      "id": "HA-AI-008",
+      "title": "Verify capability claims with evidence before declaring unavailability",
+      "area": "AI",
+      "level": "Standard",
+      "text": "**Principle.** Claims about the assistant’s environment or capabilities are\n**facts** and require evidence.\n\nAn assistant MUST NOT claim that a tool, API, network resource, credential,\ncommand, integration, repository, filesystem path, service, remote host, or\nother capability is unavailable, inaccessible, unsupported, blocked, missing,\nor broken without first performing an appropriate **safe / non-destructive\nprobe** when such a probe is possible.\n\nThis rule is complementary to `HA-AI-001` (inspect before editing) and\n`HA-AI-003` (label unverified assumptions). Those rules alone do not reliably\nprevent invented capability limitations: `HA-AI-001` is too general, and\n`HA-AI-003` only helps when the assistant recognises that it is assuming.\n`HA-AI-008` is independently enforceable.\n\n### Required behaviour\n\n1. Attempt the simplest safe operation capable of proving or disproving the\n   supposed limitation (for example a harmless authenticated GET, `which`\n   / path check, read-only `gh` / API call, or existence check).\n2. Distinguish clearly among outcomes:\n   - not attempted\n   - attempted and failed\n   - authentication or authorization denied\n   - configuration or credentials missing\n   - network or service failure\n   - capability genuinely unavailable\n3. Report the **observed error or evidence**, rather than inventing a cause.\n4. When safe and appropriate, try an already-available reasonable alternative\n   access path (different URL, host, CLI, token file, or transport) before\n   declaring the capability unusable.\n5. Never convert uncertainty or an assumption into a categorical capability\n   statement.\n6. Treat remembered limitations, previous-session behaviour, sandbox\n   expectations, documentation, and tool descriptions as **hypotheses** until\n   verified against the current environment where verification is possible.\n7. Re-probe capabilities when the result may be session-specific or stale\n   (including after a challenge, a changed working directory, or a new shell\n   / approval context).\n\nDestructive, mutating, or production-impacting probes are **not** required\nand MUST NOT be invented as “verification.” Prefer read-only checks.\n\n### Invalid\n\n- “HA API calls are blocked in this session,” when no Home Assistant API\n  request has actually been attempted.\n- “GitHub isn’t accessible from here,” without attempting the configured\n  GitHub access mechanism (for example `gh`).\n- “curl isn’t installed,” without checking for it.\n- Inferring “network access is blocked” from an authentication failure\n  (HTTP 401/403) against a reachable endpoint.\n\n### Valid\n\n- Attempt a harmless authenticated Home Assistant `GET /api/states/<entity>`.\n  If it succeeds, use the live state.\n- If it fails, report evidence such as: “I attempted\n  `GET /api/states/<entity>` and received HTTP 401, so the endpoint is\n  reachable but the current credentials were rejected.”\n- If a first path is refused by a local command hook or policy, try a safe\n  alternative already available in the environment, then report what was\n  attempted and what was observed.",
+      "source": "handbook/08-documentation-and-ai.md",
+      "rationale": "Invented capability limits stop useful work, hide real defects",
+      "verification": "Capability-unavailability statements in assistant output cite a"
     },
     {
       "id": "HA-DESIGN-001",

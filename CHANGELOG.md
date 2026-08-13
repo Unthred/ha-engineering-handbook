@@ -6,6 +6,12 @@ All notable handbook changes will be recorded here.
 
 ### Added
 
+- `HA-AI-008` — verify capability claims with evidence before declaring
+  unavailability (forbid invented “blocked / missing / inaccessible”
+  statements without a safe probe; report observed evidence; distinguish
+  auth vs network vs not-attempted). Complements `HA-AI-001` / `HA-AI-003`.
+  Note: `HA-AI-007` is reserved by open PR #14 (CI ownership) and is not on
+  `main` yet — this rule therefore uses `HA-AI-008`.
 - Responsive dashboard visual contract: `HA-UX-016` (mobile-first progressive
   enhancement), `HA-UX-017` (deliberate responsive space use), `HA-UX-018`
   (operational UI content hygiene), `HA-DESIGN-007` (structural layout-gap
@@ -30,6 +36,8 @@ All notable handbook changes will be recorded here.
 
 ### Changed
 
+- `HA-AI-001` / `HA-AI-003` — cross-reference `HA-AI-008` so capability
+  limitations cannot silently replace inspection or labelled assumptions
 - `HA-UX-005` — require profile matrix validation; phone/desktop each insufficient alone
 - `HA-DESIGN-004` — purposeless empty space; cross-ref structural gap and packing rules
 - Visual design system — default responsive matrix and Home Assistant Sections mechanics
