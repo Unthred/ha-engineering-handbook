@@ -276,5 +276,49 @@ class CapabilityEvidenceTests(unittest.TestCase):
             self.assertIn("require evidence", blob.lower())
 
 
+class SilentFailureObservabilityTests(unittest.TestCase):
+    """Regression: consequential failures must not be silent (Night shutdown incident)."""
+
+    REQUIRED = {
+        "HA-REL-007": "Treat failure paths as first-class execution",
+        "HA-REL-008": "Keep verification from destroying availability",
+        "HA-REL-009": "Evidence of health for important recurring workflows",
+    }
+
+    def test_chapter_has_silent_failure_requirements(self):
+        chapter = (HANDBOOK / "06-reliability-and-observability.md").read_text(encoding="utf-8")
+        self.assertIn("## HA-REL-007 — Treat failure paths as first-class execution", chapter)
+        self.assertIn("Safe cleanup, latch restoration", chapter)
+        self.assertIn("## HA-REL-008 — Keep verification from destroying availability", chapter)
+        self.assertIn("## HA-REL-009 — Evidence of health for important recurring workflows", chapter)
+        self.assertIn("verification could not run", chapter)
+        self.assertIn("temporary bedtime latch", chapter)
+        # Leave HA-REL-006 free for actionable phone Notification content (#11)
+        self.assertNotIn("## HA-REL-006", chapter)
+
+    def test_generated_outputs_include_silent_failure_rules(self):
+        subprocess.run(
+            ["python", "scripts/rules.py", "generate"],
+            cwd=HANDBOOK.parent,
+            check=True,
+        )
+        cursor = (
+            GENERATED / ".cursor/rules/home-assistant-engineering.mdc"
+        ).read_text(encoding="utf-8")
+        claude = (GENERATED / "CLAUDE.md").read_text(encoding="utf-8")
+        agents = (GENERATED / "AGENTS.md").read_text(encoding="utf-8")
+        catalog = json.loads((GENERATED / "rules.json").read_text(encoding="utf-8"))
+        ids = [rule["id"] for rule in catalog["rules"]]
+        for rule_id, title in self.REQUIRED.items():
+            self.assertIn(rule_id, ids)
+            match = next(rule for rule in catalog["rules"] if rule["id"] == rule_id)
+            self.assertEqual(title, match["title"])
+        for blob in (cursor, claude, agents):
+            for rule_id in self.REQUIRED:
+                self.assertIn(rule_id, blob)
+            self.assertIn("primary failure-detection mechanism", blob)
+            self.assertIn("verification could not run", blob)
+
+
 if __name__ == "__main__":
     unittest.main()
