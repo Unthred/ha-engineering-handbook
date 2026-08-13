@@ -6,6 +6,12 @@ All notable handbook changes will be recorded here.
 
 ### Added
 
+- `HA-REL-007` — treat failure paths as first-class execution (safe cleanup /
+  latch restoration must not depend solely on happy-path return)
+- `HA-REL-008` — keep verification from destroying availability (verifiers
+  must not abort primary workflow cleanup)
+- `HA-REL-009` — evidence of health for important recurring workflows
+  (stranded-latch / silent-abort detection)
 - `HA-AI-008` — verify capability claims with evidence before declaring
   unavailability (forbid invented “blocked / missing / inaccessible”
   statements without a safe probe; report observed evidence; distinguish
