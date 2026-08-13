@@ -277,9 +277,13 @@ rules in `HA-DESIGN-009`.
 
 **Standard.** Failures affecting essential or expected behaviour MUST surface through a proportionate persistent notification, dashboard status, log, or alert.
 
+The absence of expected behaviour MUST NOT be the primary failure-detection mechanism for important operational workflows. Occupants MUST NOT have to notice a secondary symptom and reverse-engineer traces to learn that a consequential automation has been failing repeatedly.
+
 ## HA-REL-003 — Avoid alert fatigue
 
 **Standard.** Notifications SHOULD be actionable, deduplicated, severity-appropriate, and clear about what happened and what the occupant should do.
+
+A single transient failure and a workflow failing repeatedly across nights MAY warrant different escalation. Prefer replaceable HA side notifications for first failures and reserve phone Notifications for actionable or repeated cases per installation policy.
 
 ## HA-REL-004 — Observe dependencies
 
@@ -288,6 +292,37 @@ rules in `HA-DESIGN-009`.
 ## HA-REL-005 — Restore safely
 
 **Standard.** After restart or reconnection, logic MUST re-evaluate current reality rather than blindly replaying stale actions.
+
+## HA-REL-007 — Treat failure paths as first-class execution
+
+**Standard.** Important workflows MUST consider what happens when an intermediate action fails.
+
+Safe cleanup, latch restoration, and other recovery operations that remain correct after failure MUST NOT depend solely on the happy path when they can execute after the failure.
+
+Do NOT blindly continue after every error. If proceeding would create an unsafe or misleading state, fail safely and make that failure explicit.
+
+**Invalid:** Night shutdown fails during verification, leaves a temporary bedtime latch set, skips downstream Good Morning state, and only exposes the problem through traces.
+
+**Valid:** Night shutdown encounters a verification error, records the exact failing stage, performs any safe required cleanup, exposes the degraded or failed execution through the established observability mechanism, and preserves enough evidence to diagnose the problem.
+
+## HA-REL-008 — Keep verification from destroying availability
+
+**Standard.** Verification is important, but verification code itself MUST NOT unnecessarily abort an otherwise safe workflow.
+
+Where appropriate, distinguish:
+
+- the operation failed;
+- verification failed;
+- verification could not run;
+- verification found an unexpected state.
+
+Those outcomes are not automatically equivalent and MUST NOT all be treated as a hard abort of unrelated safe cleanup or state management.
+
+## HA-REL-009 — Evidence of health for important recurring workflows
+
+**Guideline.** Important recurring workflows SHOULD provide enough observability to determine whether they are succeeding without waiting for an occupant to notice a secondary symptom.
+
+Appropriate evidence includes last-success / last-failure state, replaceable persistent notifications, dashboard/system-health indication, and repeated-failure escalation that avoids notification spam.
 
 ## HA-TEST-001 — Validate before deployment
 
