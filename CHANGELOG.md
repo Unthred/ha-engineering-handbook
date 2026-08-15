@@ -6,6 +6,16 @@ All notable handbook changes will be recorded here.
 
 ### Added
 
+- `HA-AUTO-008` — treat accessibility and sensory constraints as safety
+  requirements (no invented/reused default colour, brightness, or other
+  sensory output; a standing documented sensitivity is not covered by a
+  toggle-gated acute-episode setting defaulting to off). Note: `HA-AUTO-007`
+  is reserved by open PR #16 (automation corroboration standard) and is not
+  on `main` yet — this rule therefore uses `HA-AUTO-008`.
+- `HA-TEST-019` — physical verification starts with the least hazardous
+  target and intensity; a candidate is live to real triggers from the moment
+  of reload, not from the moment of an agent-initiated test; "fired without
+  error" is not evidence of a safe physical outcome
 - `HA-TEST-018` — reimplemented-logic tests require parity proof (a Python/
   other-language mirror of production template/script/config logic is not
   proof the real artifact is correct; pair it with a real-artifact-executing

@@ -123,6 +123,26 @@ triggers does not satisfy this rule.
 
 **Guideline.** Give triggers IDs, use descriptive aliases for branches and actions, and keep traces useful enough to explain why a decision occurred.
 
+## HA-AUTO-008 — Treat accessibility and sensory constraints as safety requirements
+
+**Principle.** Documented accessibility needs and sensory sensitivities (light, sound,
+motion, or similar) are safety requirements, not preferences to normalise
+away or design around only when convenient (see also `HA-REVIEW-005`). An
+automation MUST NOT invent, assume, or silently reuse a default colour,
+brightness, sound, or other sensory output value the user has never
+specified for that purpose — including promoting an existing preset built for
+one context (for example, a rarely-hit stale-state fallback) into a
+different, more frequently-triggered context (for example, a universal
+activation default) without the same explicit approval a new value would
+need.
+
+A safety mitigation gated on a manually-toggled, acute-episode-style setting
+(for example, a migraine-severity selector defaulting to "off") MUST NOT be
+treated as covering a standing, chronic condition the user has separately
+documented. Absence of an active acute flag is not evidence that a standing
+sensitivity does not apply; the safe default MUST hold whether or not the
+user remembered to set an unrelated toggle.
+
 ## HA-UX-001 — Design around tasks
 
 **Principle.** A dashboard SHOULD prioritise what an occupant needs to understand or do, not expose every available entity.
@@ -598,6 +618,27 @@ A regression test that claims to catch a specific defect MUST be run once
 against the known-bad version of the artifact and shown to fail, before it
 is trusted to pass against the fix. A test suite that only ever ran against
 the fixed version has not demonstrated it catches anything.
+
+## HA-TEST-019 — Physical verification starts with the least hazardous target and intensity
+
+**Standard.** When a candidate's proof requires exercising real hardware (`HA-TEST-011`),
+the first target and intensity exercised MUST be the least hazardous
+available — lowest brightness, most reversible action, least sensory-impactful
+output — not the first convenient one, and not one selected only for coverage
+efficiency. A deployment plan that pauses for physical confirmation MUST name
+which target is safest to test first when several are available, and MUST
+NOT treat a live, reloaded candidate as "not yet tested" merely because the
+agent has not personally triggered it: once a candidate is reloaded, real
+triggers (physical switches, schedules, other automations) can exercise it at
+any time, so containment and least-hazardous ordering apply from the moment
+of reload, not from the moment of an agent-initiated test.
+
+A trace showing an automation fired without error, or a service call that is
+syntactically valid, is evidence the *code ran* — it is not evidence the
+*physical output was safe*. Deployment-window verification MUST assert the
+actual commanded values (colour, brightness, sound level, motion, unlock
+state, and similar) against known-safe bounds for the affected space, not only
+absence of exceptions.
 
 ## HA-DOC-001 — Document operational intent
 

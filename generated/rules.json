@@ -222,6 +222,16 @@
       "verification": null
     },
     {
+      "id": "HA-AUTO-008",
+      "title": "Treat accessibility and sensory constraints as safety requirements",
+      "area": "AUTO",
+      "level": "Principle",
+      "text": "Documented accessibility needs and sensory sensitivities (light, sound,\nmotion, or similar) are safety requirements, not preferences to normalise\naway or design around only when convenient (see also `HA-REVIEW-005`). An\nautomation MUST NOT invent, assume, or silently reuse a default colour,\nbrightness, sound, or other sensory output value the user has never\nspecified for that purpose — including promoting an existing preset built for\none context (for example, a rarely-hit stale-state fallback) into a\ndifferent, more frequently-triggered context (for example, a universal\nactivation default) without the same explicit approval a new value would\nneed.\n\nA safety mitigation gated on a manually-toggled, acute-episode-style setting\n(for example, a migraine-severity selector defaulting to \"off\") MUST NOT be\ntreated as covering a standing, chronic condition the user has separately\ndocumented. Absence of an active acute flag is not evidence that a standing\nsensitivity does not apply; the safe default MUST hold whether or not the\nuser remembered to set an unrelated toggle.",
+      "source": "handbook/03-automations.md",
+      "rationale": "A blueprint automation hardcoded a single \"day colour\" (a",
+      "verification": "Any automation or script that commands a sensory-affecting output"
+    },
+    {
       "id": "HA-UX-001",
       "title": "Design around tasks",
       "area": "UX",
@@ -710,6 +720,16 @@
       "source": "handbook/07-testing-and-deployment.md",
       "rationale": "A Python mirror of a Jinja helper module silently \"fixed\" a real",
       "verification": "Test suites covering reimplemented logic name, for each mirrored"
+    },
+    {
+      "id": "HA-TEST-019",
+      "title": "Physical verification starts with the least hazardous target and intensity",
+      "area": "TEST",
+      "level": "Standard",
+      "text": "When a candidate's proof requires exercising real hardware (`HA-TEST-011`),\nthe first target and intensity exercised MUST be the least hazardous\navailable — lowest brightness, most reversible action, least sensory-impactful\noutput — not the first convenient one, and not one selected only for coverage\nefficiency. A deployment plan that pauses for physical confirmation MUST name\nwhich target is safest to test first when several are available, and MUST\nNOT treat a live, reloaded candidate as \"not yet tested\" merely because the\nagent has not personally triggered it: once a candidate is reloaded, real\ntriggers (physical switches, schedules, other automations) can exercise it at\nany time, so containment and least-hazardous ordering apply from the moment\nof reload, not from the moment of an agent-initiated test.\n\nA trace showing an automation fired without error, or a service call that is\nsyntactically valid, is evidence the *code ran* — it is not evidence the\n*physical output was safe*. Deployment-window verification MUST assert the\nactual commanded values (colour, brightness, sound level, motion, unlock\nstate, and similar) against known-safe bounds for the affected space, not only\nabsence of exceptions.",
+      "source": "handbook/07-testing-and-deployment.md",
+      "rationale": "A candidate reload made a new \"complete command from off\" code path",
+      "verification": "Deployment plans for candidates touching hazard-relevant hardware"
     },
     {
       "id": "HA-DOC-001",

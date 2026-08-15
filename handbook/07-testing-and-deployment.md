@@ -349,3 +349,44 @@ function, either the real-artifact test that proves parity or the reason
 none is needed (no artifact exists to mirror). Any test whose commit message
 or docstring claims to be a regression test for a specific defect shows, in
 the same change record, that it was run against the pre-fix code and failed.
+
+## HA-TEST-019 — Physical verification starts with the least hazardous target and intensity
+
+**Level:** Standard
+
+When a candidate's proof requires exercising real hardware (`HA-TEST-011`),
+the first target and intensity exercised MUST be the least hazardous
+available — lowest brightness, most reversible action, least sensory-impactful
+output — not the first convenient one, and not one selected only for coverage
+efficiency. A deployment plan that pauses for physical confirmation MUST name
+which target is safest to test first when several are available, and MUST
+NOT treat a live, reloaded candidate as "not yet tested" merely because the
+agent has not personally triggered it: once a candidate is reloaded, real
+triggers (physical switches, schedules, other automations) can exercise it at
+any time, so containment and least-hazardous ordering apply from the moment
+of reload, not from the moment of an agent-initiated test.
+
+A trace showing an automation fired without error, or a service call that is
+syntactically valid, is evidence the *code ran* — it is not evidence the
+*physical output was safe*. Deployment-window verification MUST assert the
+actual commanded values (colour, brightness, sound level, motion, unlock
+state, and similar) against known-safe bounds for the affected space, not only
+absence of exceptions.
+
+**Why:** A candidate reload made a new "complete command from off" code path
+live at the moment of `automation.reload`. Fifteen minutes later, a genuine
+independent household button press — not an agent-initiated test — exercised
+that path for the first time and commanded an unrequested near-white colour
+into a bedroom belonging to an occupant with documented chronic migraines and
+evening light sensitivity. The deployment-window verification already
+observed this exact automation firing for real physical gestures during the
+window and correctly reported "zero errors" — that report was true and still
+missed the safety defect, because it checked for exceptions, not for whether
+the commanded output was an acceptable thing to happen to that person in that
+room at that hour.
+
+**Verify:** Deployment plans for candidates touching hazard-relevant hardware
+(lighting colour/brightness, sound, locks, climate, motorised equipment) name
+the least-hazardous first target explicitly, and record the actual commanded
+values observed during the verification window — not only that verification
+ran without error. Cross-reference `HA-AUTO-008`.
