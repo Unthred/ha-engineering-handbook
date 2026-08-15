@@ -30,6 +30,18 @@ Retries MUST have a limit, delay, and observable failure outcome. Infinite retry
 
 Manual intervention SHOULD win for a documented period or until a clear reset condition. An automation must not immediately undo an occupant's action.
 
+A manual-override mechanism MUST define a complete lifecycle, not just a set
+condition: what sets or renews it (a repeated deliberate command MUST renew
+protection, never toggle it off), what leaves it unchanged (an in-progress
+manual adjustment, such as a hold or a colour cycle, MUST NOT cancel its own
+protection), what clears it, and what happens under ambiguity. Clearing on
+"the controlled equipment went off" MUST be based on a confirmed observed
+state per affected physical unit, not assumed from the command that was
+sent — a partial, unavailable, or otherwise ambiguous reading MUST fail
+closed (leave the override in place) rather than clear it. A mechanism that
+can only describe "protected" or "not protected" without naming its clearing
+triggers does not satisfy this rule.
+
 ## HA-AUTO-006 — Use traceable structure
 
 **Level:** Guideline

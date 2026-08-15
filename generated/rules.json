@@ -66,7 +66,7 @@
       "title": "Define ownership",
       "area": "ARCH",
       "level": "Standard",
-      "text": "Each behaviour MUST have one authoritative owner. Avoid overlapping automations that compete to control the same outcome without an explicit arbitration design.",
+      "text": "Each behaviour MUST have one authoritative owner. Avoid overlapping automations that compete to control the same outcome without an explicit arbitration design.\n\nWhen multiple entities can address overlapping physical scope (for example a\ncombined-group wrapper and its individual-member wrappers controlling the\nsame underlying hardware), any state that models \"this equipment was just\ndeliberately commanded\" MUST be tracked against a canonical mapping to the\nfinest addressable physical unit, not against whichever entity happened to\nreceive the command. Two entities describing the same hardware MUST NOT be\nable to silently disagree about who is responsible for it, or about whether\nit was just deliberately touched. A change that adds a new wrapper over\nexisting physical scope MUST update that canonical mapping in the same\nchange, not as a follow-up.",
       "source": "handbook/01-architecture.md",
       "rationale": null,
       "verification": null
@@ -206,7 +206,7 @@
       "title": "Preserve user intent",
       "area": "AUTO",
       "level": "Principle",
-      "text": "Manual intervention SHOULD win for a documented period or until a clear reset condition. An automation must not immediately undo an occupant's action.",
+      "text": "Manual intervention SHOULD win for a documented period or until a clear reset condition. An automation must not immediately undo an occupant's action.\n\nA manual-override mechanism MUST define a complete lifecycle, not just a set\ncondition: what sets or renews it (a repeated deliberate command MUST renew\nprotection, never toggle it off), what leaves it unchanged (an in-progress\nmanual adjustment, such as a hold or a colour cycle, MUST NOT cancel its own\nprotection), what clears it, and what happens under ambiguity. Clearing on\n\"the controlled equipment went off\" MUST be based on a confirmed observed\nstate per affected physical unit, not assumed from the command that was\nsent — a partial, unavailable, or otherwise ambiguous reading MUST fail\nclosed (leave the override in place) rather than clear it. A mechanism that\ncan only describe \"protected\" or \"not protected\" without naming its clearing\ntriggers does not satisfy this rule.",
       "source": "handbook/03-automations.md",
       "rationale": null,
       "verification": null
@@ -702,6 +702,16 @@
       "verification": "Change records for material dashboard PRs list matrix widths,"
     },
     {
+      "id": "HA-TEST-018",
+      "title": "Reimplemented-logic tests require parity proof",
+      "area": "TEST",
+      "level": "Standard",
+      "text": "A test that reimplements production template, script, or configuration logic\nin another language or format (a \"mirror\") MUST NOT be treated as proof the\nproduction artifact itself is correct, no matter how thorough its own\nscenario coverage is. Such coverage MUST be paired with either:\n\n- a test that executes the actual production artifact (the real Jinja\n  template, script, or config file) through a compatible renderer or\n  interpreter, exercising the same scenarios; or\n- explicit, documented evidence that the mirror and the real artifact were\n  verified to produce identical output for every scenario the mirror covers.\n\nA regression test that claims to catch a specific defect MUST be run once\nagainst the known-bad version of the artifact and shown to fail, before it\nis trusted to pass against the fix. A test suite that only ever ran against\nthe fixed version has not demonstrated it catches anything.",
+      "source": "handbook/07-testing-and-deployment.md",
+      "rationale": "A Python mirror of a Jinja helper module silently \"fixed\" a real",
+      "verification": "Test suites covering reimplemented logic name, for each mirrored"
+    },
+    {
       "id": "HA-DOC-001",
       "title": "Document operational intent",
       "area": "DOC",
@@ -926,7 +936,7 @@
       "title": "Preserve user-specific intent",
       "area": "REVIEW",
       "level": "Principle",
-      "text": "An agent MUST treat documented accessibility needs, household routines, display constraints, and deliberate exceptions as design inputs rather than normalising them away.",
+      "text": "An agent MUST treat documented accessibility needs, household routines, display constraints, and deliberate exceptions as design inputs rather than normalising them away.\n\nOnce the user settles a previously ambiguous or open decision, every\ndocument, test, comment, and finding produced in the same body of work that\nstill frames it as open MUST be corrected in the same pass, not only the\nlocation the user directly pointed at. An agent MUST NOT leave a stale \"open\ndecision\" or \"unresolved item\" marker standing in one artifact while a\ncorrected, settled statement exists elsewhere for the same decision — a\nreviewer or future agent must not be able to find contradictory framings of\na decision that has already been made.",
       "source": "handbook/10-review-and-audit.md",
       "rationale": null,
       "verification": null

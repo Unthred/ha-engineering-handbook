@@ -315,3 +315,37 @@ desktop holes and editor-only checks.
 **Verify:** Change records for material dashboard PRs list matrix widths,
 normal-view confirmation, gap/clipping notes, conditional-state checks, and
 named visual confirmer when the agent lacked frontend access.
+
+## HA-TEST-018 — Reimplemented-logic tests require parity proof
+
+**Level:** Standard
+
+A test that reimplements production template, script, or configuration logic
+in another language or format (a "mirror") MUST NOT be treated as proof the
+production artifact itself is correct, no matter how thorough its own
+scenario coverage is. Such coverage MUST be paired with either:
+
+- a test that executes the actual production artifact (the real Jinja
+  template, script, or config file) through a compatible renderer or
+  interpreter, exercising the same scenarios; or
+- explicit, documented evidence that the mirror and the real artifact were
+  verified to produce identical output for every scenario the mirror covers.
+
+A regression test that claims to catch a specific defect MUST be run once
+against the known-bad version of the artifact and shown to fail, before it
+is trusted to pass against the fix. A test suite that only ever ran against
+the fixed version has not demonstrated it catches anything.
+
+**Why:** A Python mirror of a Jinja helper module silently "fixed" a real
+bug the actual template file had (a missing prefix-stripping step) by
+implementing the corrected behaviour in the mirror without realising the
+real artifact disagreed. Every mirror-based test passed while the deployed
+template was broken; the defect was only caught by a live read-only render
+of the real artifact during a production candidate deploy, immediately
+before a physical test would have exercised the broken path.
+
+**Verify:** Test suites covering reimplemented logic name, for each mirrored
+function, either the real-artifact test that proves parity or the reason
+none is needed (no artifact exists to mirror). Any test whose commit message
+or docstring claims to be a regression test for a specific defect shows, in
+the same change record, that it was run against the pre-fix code and failed.
