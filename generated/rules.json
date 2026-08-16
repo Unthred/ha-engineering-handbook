@@ -712,7 +712,7 @@
       "verification": "Change records for material dashboard PRs list matrix widths,"
     },
     {
-      "id": "HA-TEST-018",
+      "id": "HA-TEST-020",
       "title": "Reimplemented-logic tests require parity proof",
       "area": "TEST",
       "level": "Standard",

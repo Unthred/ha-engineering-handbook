@@ -601,7 +601,7 @@ Automated linting and rule generation MAY enforce that the responsive contract
 exists and propagates; they MUST NOT be treated as substitutes for visual
 acceptance.
 
-## HA-TEST-018 — Reimplemented-logic tests require parity proof
+## HA-TEST-020 — Reimplemented-logic tests require parity proof
 
 **Standard.** A test that reimplements production template, script, or configuration logic
 in another language or format (a "mirror") MUST NOT be treated as proof the

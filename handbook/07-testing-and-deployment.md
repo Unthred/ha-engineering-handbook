@@ -316,7 +316,7 @@ desktop holes and editor-only checks.
 normal-view confirmation, gap/clipping notes, conditional-state checks, and
 named visual confirmer when the agent lacked frontend access.
 
-## HA-TEST-018 — Reimplemented-logic tests require parity proof
+## HA-TEST-020 — Reimplemented-logic tests require parity proof
 
 **Level:** Standard
 

@@ -16,12 +16,17 @@ All notable handbook changes will be recorded here.
   target and intensity; a candidate is live to real triggers from the moment
   of reload, not from the moment of an agent-initiated test; "fired without
   error" is not evidence of a safe physical outcome
-- `HA-TEST-018` — reimplemented-logic tests require parity proof (a Python/
+- `HA-TEST-020` — reimplemented-logic tests require parity proof (a Python/
   other-language mirror of production template/script/config logic is not
   proof the real artifact is correct; pair it with a real-artifact-executing
   test or documented parity evidence; regression tests must be shown to fail
-  against the known-bad version). Note: `HA-TEST-017` is reserved elsewhere
-  and is not used here.
+  against the known-bad version). Note: both `HA-TEST-017` and `HA-TEST-018`
+  are already claimed by open PR #16 (`HA-TEST-017` — structurally isolate
+  disruptive test execution; `HA-TEST-018` — treat domain reloads as
+  potentially state-changing), confirmed by diffing PR #16 directly (not
+  merged to `main` yet, so not visible by inventorying `main` alone) — this
+  rule was renumbered from an earlier, colliding `HA-TEST-018` draft to
+  `HA-TEST-020` for that reason.
 - Extended `HA-ARCH-003` (Define ownership) — canonical physical-scope
   mapping required when multiple entities can address overlapping hardware,
   so two entities describing the same equipment cannot silently disagree
