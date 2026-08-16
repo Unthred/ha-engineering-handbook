@@ -31,6 +31,17 @@ Use these instructions when suggesting Home Assistant changes.
 
 **Standard.** Each behaviour MUST have one authoritative owner. Avoid overlapping automations that compete to control the same outcome without an explicit arbitration design.
 
+When multiple entities can address overlapping physical scope (for example a
+combined-group wrapper and its individual-member wrappers controlling the
+same underlying hardware), any state that models "this equipment was just
+deliberately commanded" MUST be tracked against a canonical mapping to the
+finest addressable physical unit, not against whichever entity happened to
+receive the command. Two entities describing the same hardware MUST NOT be
+able to silently disagree about who is responsible for it, or about whether
+it was just deliberately touched. A change that adds a new wrapper over
+existing physical scope MUST update that canonical mapping in the same
+change, not as a follow-up.
+
 ## HA-ARCH-004 — Design for degraded operation
 
 **Standard.** Critical flows MUST define what happens when a sensor is unavailable, data is stale, a service call fails, or Home Assistant restarts mid-flow.
@@ -92,9 +103,41 @@ parity checks are forbidden for new work.
 
 **Principle.** Manual intervention SHOULD win for a documented period or until a clear reset condition. An automation must not immediately undo an occupant's action.
 
+A manual-override mechanism MUST define a complete lifecycle, not just a set
+condition: what sets or renews it (a repeated deliberate command MUST renew
+protection, never toggle it off), what leaves it unchanged (an in-progress
+manual adjustment, such as a hold or a colour cycle, MUST NOT cancel its own
+protection), what clears it, and what happens under ambiguity. Clearing on
+"the controlled equipment went off" MUST be based on a confirmed observed
+state per affected physical unit, not assumed from the command that was
+sent — a partial, unavailable, or otherwise ambiguous reading MUST fail
+closed (leave the override in place) rather than clear it. A mechanism that
+can only describe "protected" or "not protected" without naming its clearing
+triggers does not satisfy this rule.
+
 ## HA-AUTO-006 — Use traceable structure
 
 **Guideline.** Give triggers IDs, use descriptive aliases for branches and actions, and keep traces useful enough to explain why a decision occurred.
+
+## HA-AUTO-008 — Treat accessibility and sensory constraints as safety requirements
+
+**Principle.** Documented accessibility needs and sensory sensitivities (light, sound,
+motion, or similar) are safety requirements, not preferences to normalise
+away or design around only when convenient (see also `HA-REVIEW-005`). An
+automation MUST NOT invent, assume, or silently reuse a default colour,
+brightness, sound, or other sensory output value the user has never
+specified for that purpose — including promoting an existing preset built for
+one context (for example, a rarely-hit stale-state fallback) into a
+different, more frequently-triggered context (for example, a universal
+activation default) without the same explicit approval a new value would
+need.
+
+A safety mitigation gated on a manually-toggled, acute-episode-style setting
+(for example, a migraine-severity selector defaulting to "off") MUST NOT be
+treated as covering a standing, chronic condition the user has separately
+documented. Absence of an active acute flag is not evidence that a standing
+sensitivity does not apply; the safe default MUST hold whether or not the
+user remembered to set an unrelated toggle.
 
 ## HA-UX-001 — Design around tasks
 
@@ -554,6 +597,45 @@ Automated linting and rule generation MAY enforce that the responsive contract
 exists and propagates; they MUST NOT be treated as substitutes for visual
 acceptance.
 
+## HA-TEST-020 — Reimplemented-logic tests require parity proof
+
+**Standard.** A test that reimplements production template, script, or configuration logic
+in another language or format (a "mirror") MUST NOT be treated as proof the
+production artifact itself is correct, no matter how thorough its own
+scenario coverage is. Such coverage MUST be paired with either:
+
+- a test that executes the actual production artifact (the real Jinja
+  template, script, or config file) through a compatible renderer or
+  interpreter, exercising the same scenarios; or
+- explicit, documented evidence that the mirror and the real artifact were
+  verified to produce identical output for every scenario the mirror covers.
+
+A regression test that claims to catch a specific defect MUST be run once
+against the known-bad version of the artifact and shown to fail, before it
+is trusted to pass against the fix. A test suite that only ever ran against
+the fixed version has not demonstrated it catches anything.
+
+## HA-TEST-019 — Physical verification starts with the least hazardous target and intensity
+
+**Standard.** When a candidate's proof requires exercising real hardware (`HA-TEST-011`),
+the first target and intensity exercised MUST be the least hazardous
+available — lowest brightness, most reversible action, least sensory-impactful
+output — not the first convenient one, and not one selected only for coverage
+efficiency. A deployment plan that pauses for physical confirmation MUST name
+which target is safest to test first when several are available, and MUST
+NOT treat a live, reloaded candidate as "not yet tested" merely because the
+agent has not personally triggered it: once a candidate is reloaded, real
+triggers (physical switches, schedules, other automations) can exercise it at
+any time, so containment and least-hazardous ordering apply from the moment
+of reload, not from the moment of an agent-initiated test.
+
+A trace showing an automation fired without error, or a service call that is
+syntactically valid, is evidence the *code ran* — it is not evidence the
+*physical output was safe*. Deployment-window verification MUST assert the
+actual commanded values (colour, brightness, sound level, motion, unlock
+state, and similar) against known-safe bounds for the affected space, not only
+absence of exceptions.
+
 ## HA-DOC-001 — Document operational intent
 
 **Standard.** Documentation MUST explain purpose, dependencies, expected behaviour, fallback, and verification for important systems.
@@ -871,6 +953,15 @@ clipping, tiny text, large empty gaps, or an avoidable orphaned final pill.
 ## HA-REVIEW-005 — Preserve user-specific intent
 
 **Principle.** An agent MUST treat documented accessibility needs, household routines, display constraints, and deliberate exceptions as design inputs rather than normalising them away.
+
+Once the user settles a previously ambiguous or open decision, every
+document, test, comment, and finding produced in the same body of work that
+still frames it as open MUST be corrected in the same pass, not only the
+location the user directly pointed at. An agent MUST NOT leave a stale "open
+decision" or "unresolved item" marker standing in one artifact while a
+corrected, settled statement exists elsewhere for the same decision — a
+reviewer or future agent must not be able to find contradictory framings of
+a decision that has already been made.
 
 ## HA-MIGRATE-001 — Back up active instructions
 

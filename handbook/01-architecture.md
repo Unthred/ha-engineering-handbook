@@ -18,6 +18,17 @@ Automations MUST depend on stable entity semantics rather than device IDs or tra
 
 Each behaviour MUST have one authoritative owner. Avoid overlapping automations that compete to control the same outcome without an explicit arbitration design.
 
+When multiple entities can address overlapping physical scope (for example a
+combined-group wrapper and its individual-member wrappers controlling the
+same underlying hardware), any state that models "this equipment was just
+deliberately commanded" MUST be tracked against a canonical mapping to the
+finest addressable physical unit, not against whichever entity happened to
+receive the command. Two entities describing the same hardware MUST NOT be
+able to silently disagree about who is responsible for it, or about whether
+it was just deliberately touched. A change that adds a new wrapper over
+existing physical scope MUST update that canonical mapping in the same
+change, not as a follow-up.
+
 ## HA-ARCH-004 — Design for degraded operation
 
 **Level:** Standard

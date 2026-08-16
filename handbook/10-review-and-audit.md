@@ -104,3 +104,12 @@ Remediation plans MUST prioritise safety and correctness, preserve working behav
 **Level:** Principle
 
 An agent MUST treat documented accessibility needs, household routines, display constraints, and deliberate exceptions as design inputs rather than normalising them away.
+
+Once the user settles a previously ambiguous or open decision, every
+document, test, comment, and finding produced in the same body of work that
+still frames it as open MUST be corrected in the same pass, not only the
+location the user directly pointed at. An agent MUST NOT leave a stale "open
+decision" or "unresolved item" marker standing in one artifact while a
+corrected, settled statement exists elsewhere for the same decision — a
+reviewer or future agent must not be able to find contradictory framings of
+a decision that has already been made.

@@ -6,6 +6,40 @@ All notable handbook changes will be recorded here.
 
 ### Added
 
+- `HA-AUTO-008` — treat accessibility and sensory constraints as safety
+  requirements (no invented/reused default colour, brightness, or other
+  sensory output; a standing documented sensitivity is not covered by a
+  toggle-gated acute-episode setting defaulting to off). Note: `HA-AUTO-007`
+  is reserved by open PR #16 (automation corroboration standard) and is not
+  on `main` yet — this rule therefore uses `HA-AUTO-008`.
+- `HA-TEST-019` — physical verification starts with the least hazardous
+  target and intensity; a candidate is live to real triggers from the moment
+  of reload, not from the moment of an agent-initiated test; "fired without
+  error" is not evidence of a safe physical outcome
+- `HA-TEST-020` — reimplemented-logic tests require parity proof (a Python/
+  other-language mirror of production template/script/config logic is not
+  proof the real artifact is correct; pair it with a real-artifact-executing
+  test or documented parity evidence; regression tests must be shown to fail
+  against the known-bad version). Note: both `HA-TEST-017` and `HA-TEST-018`
+  are already claimed by open PR #16 (`HA-TEST-017` — structurally isolate
+  disruptive test execution; `HA-TEST-018` — treat domain reloads as
+  potentially state-changing), confirmed by diffing PR #16 directly (not
+  merged to `main` yet, so not visible by inventorying `main` alone) — this
+  rule was renumbered from an earlier, colliding `HA-TEST-018` draft to
+  `HA-TEST-020` for that reason.
+- Extended `HA-ARCH-003` (Define ownership) — canonical physical-scope
+  mapping required when multiple entities can address overlapping hardware,
+  so two entities describing the same equipment cannot silently disagree
+  about who is responsible for it.
+- Extended `HA-AUTO-005` (Preserve user intent) — a manual-override mechanism
+  must define its full lifecycle (set/renew, unchanged-while-in-progress,
+  clear, ambiguity handling); clearing on "went off" must be a confirmed
+  per-unit observation, not assumed from the command sent, and must fail
+  closed on ambiguity.
+- Extended `HA-REVIEW-005` (Preserve user-specific intent) — once the user
+  settles a previously open decision, every document/test/finding in the
+  same body of work that still frames it as open must be corrected in the
+  same pass, not only the location the user pointed at.
 - `HA-REL-007` — treat failure paths as first-class execution (safe cleanup /
   latch restoration must not depend solely on happy-path return)
 - `HA-REL-008` — keep verification from destroying availability (verifiers
