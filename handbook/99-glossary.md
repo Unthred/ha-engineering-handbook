@@ -8,7 +8,9 @@
 
 **Helper** — A Home Assistant entity used to store policy, state, thresholds, selections, or user overrides.
 
-**Manual override** — An occupant action that temporarily or persistently takes precedence over automation.
+**Manual override** — An occupant action that temporarily or persistently takes precedence over automation. Typical end conditions are a documented maximum duration and/or the next genuine schedule or mode transition (`HA-AUTO-005`, `HA-AUTO-007`).
+
+**Human-first operation** — The expectation that essential household functions remain usable via ordinary physical or local controls without requiring assistant UIs or special modes (`HA-PHIL-005`).
 
 **Normative rule** — A rule with a stable `HA-<AREA>-NNN` identifier and declared level.
 
