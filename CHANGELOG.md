@@ -6,6 +6,10 @@ All notable handbook changes will be recorded here.
 
 ### Added
 
+- Human-first control contract: `HA-PHIL-005` (human-first operation),
+  `HA-AUTO-007` (honour physical and manual controls); clarify `HA-AUTO-005`
+  (ordinary re-evals and write echoes must not cancel valid manual intent);
+  ADR-0005
 - `HA-REL-007` — treat failure paths as first-class execution (safe cleanup /
   latch restoration must not depend solely on happy-path return)
 - `HA-REL-008` — keep verification from destroying availability (verifiers

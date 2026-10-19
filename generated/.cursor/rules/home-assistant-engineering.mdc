@@ -23,6 +23,10 @@ Apply these rules when changing a Home Assistant repository.
 
 **Guideline.** Choose the simplest design that meets reliability and usability needs. Every helper, template, dependency, and abstraction creates maintenance cost.
 
+## HA-PHIL-005 — Human-first operation
+
+**Principle.** Anyone SHOULD be able to enter the house and operate essential functions as an ordinary home, using physical controls and obvious local interfaces, without needing Home Assistant, dashboards, voice assistants, or special modes. Advanced automation remains an optional homeowner extra, subject to hardware capability.
+
 ## HA-ARCH-001 — Separate concerns
 
 **Standard.** Inputs, decision logic, and actions SHOULD be distinguishable. Reusable behaviour belongs in scripts; reusable calculations belong in helpers or template entities.
@@ -94,11 +98,22 @@ parity checks are forbidden for new work.
 
 ## HA-AUTO-005 — Preserve user intent
 
-**Principle.** Manual intervention SHOULD win for a documented period or until a clear reset condition. An automation must not immediately undo an occupant's action.
+**Principle.** Manual intervention SHOULD win for a documented period or until a clear reset condition. An automation MUST NOT immediately undo an occupant's action.
+
+Ordinary re-evaluations, occupancy changes, sensor updates, and the automation's own write echoes MUST NOT cancel a still-valid manual intervention. Occupant- or policy-selected timed override modes (distinct from ambient re-evaluation) MAY stack above schedules and manual holds only where that precedence is explicitly documented.
 
 ## HA-AUTO-006 — Use traceable structure
 
 **Guideline.** Give triggers IDs, use descriptive aliases for branches and actions, and keep traces useful enough to explain why a decision occurred.
+
+## HA-AUTO-007 — Honour physical and manual controls
+
+**Standard.** Where hardware exposes a physical or local control (thermostat, wall switch, lock pad, and equivalent Home Assistant entity UIs for the same device):
+
+1. A deliberate human setpoint or state change MUST become a temporary manual override (or an equivalent documented hold), not a race the automation immediately "corrects".
+2. Automations MUST distinguish occupant-initiated changes from their own commanded writes before deciding to reassert.
+3. Override end conditions MUST be explicit (for example a maximum duration and/or the next genuine schedule or mode transition). When an override ends, recalculate the desired state through the authoritative owner (`HA-ARCH-003`); do not issue an unconditional off/min/reset as the end policy unless that is the recalculated result.
+4. Graceful degradation (`HA-ARCH-004`, `HA-PHIL-001`) still applies: unavailable devices hold safely; equipment protections remain in force.
 
 ## HA-UX-001 — Design around tasks
 

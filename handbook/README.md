@@ -17,3 +17,5 @@ The chapters progress from durable principles to concrete engineering practice.
 13. [Glossary](99-glossary.md)
 
 Rules are normative only when they have a stable `HA-<AREA>-NNN` identifier.
+
+Human-first / manual-control entry points: `HA-PHIL-001`, `HA-PHIL-003`, `HA-PHIL-005`, `HA-AUTO-005`, `HA-AUTO-007`, `HA-ARCH-003`, `HA-ARCH-004`.

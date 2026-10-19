@@ -42,6 +42,16 @@
       "verification": null
     },
     {
+      "id": "HA-PHIL-005",
+      "title": "Human-first operation",
+      "area": "PHIL",
+      "level": "Principle",
+      "text": "Anyone SHOULD be able to enter the house and operate essential functions as an ordinary home, using physical controls and obvious local interfaces, without needing Home Assistant, dashboards, voice assistants, or special modes. Advanced automation remains an optional homeowner extra, subject to hardware capability.",
+      "source": "handbook/00-philosophy.md",
+      "rationale": "Guests and distracted occupants must not be blocked by opaque smart-home behaviour. Physical controls that silently reverse themselves train people not to trust the house. This complements `HA-PHIL-001` (fallback when HA is unavailable): human-first applies while automation is running.",
+      "verification": "For heating, lighting, access, and similar essential functions, confirm a visitor can achieve a sensible outcome from the room's physical control alone, and that automation does not immediately undo that action (`HA-AUTO-005`, `HA-AUTO-007`)."
+    },
+    {
       "id": "HA-ARCH-001",
       "title": "Separate concerns",
       "area": "ARCH",
@@ -206,7 +216,7 @@
       "title": "Preserve user intent",
       "area": "AUTO",
       "level": "Principle",
-      "text": "Manual intervention SHOULD win for a documented period or until a clear reset condition. An automation must not immediately undo an occupant's action.",
+      "text": "Manual intervention SHOULD win for a documented period or until a clear reset condition. An automation MUST NOT immediately undo an occupant's action.\n\nOrdinary re-evaluations, occupancy changes, sensor updates, and the automation's own write echoes MUST NOT cancel a still-valid manual intervention. Occupant- or policy-selected timed override modes (distinct from ambient re-evaluation) MAY stack above schedules and manual holds only where that precedence is explicitly documented.",
       "source": "handbook/03-automations.md",
       "rationale": null,
       "verification": null
@@ -220,6 +230,16 @@
       "source": "handbook/03-automations.md",
       "rationale": null,
       "verification": null
+    },
+    {
+      "id": "HA-AUTO-007",
+      "title": "Honour physical and manual controls",
+      "area": "AUTO",
+      "level": "Standard",
+      "text": "Where hardware exposes a physical or local control (thermostat, wall switch, lock pad, and equivalent Home Assistant entity UIs for the same device):\n\n1. A deliberate human setpoint or state change MUST become a temporary manual override (or an equivalent documented hold), not a race the automation immediately \"corrects\".\n2. Automations MUST distinguish occupant-initiated changes from their own commanded writes before deciding to reassert.\n3. Override end conditions MUST be explicit (for example a maximum duration and/or the next genuine schedule or mode transition). When an override ends, recalculate the desired state through the authoritative owner (`HA-ARCH-003`); do not issue an unconditional off/min/reset as the end policy unless that is the recalculated result.\n4. Graceful degradation (`HA-ARCH-004`, `HA-PHIL-001`) still applies: unavailable devices hold safely; equipment protections remain in force.",
+      "source": "handbook/03-automations.md",
+      "rationale": "Extends `HA-AUTO-005` and `HA-PHIL-005` into enforceable control-plane behaviour for visitor-friendly homes.",
+      "verification": "Tests or shadow traces cover physical/UI change, automation echo suppression, scheduled handover, expiry, restart recovery, and failure hold."
     },
     {
       "id": "HA-UX-001",
