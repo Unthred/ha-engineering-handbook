@@ -228,7 +228,7 @@ class CapabilityEvidenceTests(unittest.TestCase):
             "## HA-AI-008 — Verify capability claims with evidence before declaring unavailability",
             chapter,
         )
-        # Next free ID on main after HA-AI-006; HA-AI-007 reserved by open PR #14
+        # HA-AI-007 reserved by open PR #14; HA-AI-009 is the handover rule
         self.assertNotIn("## HA-AI-007 —", chapter)
         block = chapter.split("## HA-AI-008 —", 1)[1]
         self.assertIn("**Level:** Standard", block)
@@ -274,6 +274,49 @@ class CapabilityEvidenceTests(unittest.TestCase):
             self.assertRegex(blob, r"safe\s*/\s*non-destructive\s+probe")
             self.assertIn("HA API calls are blocked in this session", blob)
             self.assertIn("require evidence", blob.lower())
+
+
+class CampaignHandoverTests(unittest.TestCase):
+    """HA-AI-009 durable handover protocol."""
+
+    def test_ha_ai_009_present(self) -> None:
+        chapter = (HANDBOOK / "08-documentation-and-ai.md").read_text(encoding="utf-8")
+        self.assertIn("## HA-AI-009 — Publish a durable AI campaign handover", chapter)
+        block = chapter.split("## HA-AI-009 —", 1)[1]
+        self.assertIn("**Level:** Standard", block)
+        self.assertIn("check handover", block)
+        self.assertIn("docs/ai/latest.json", block)
+        self.assertIn("publish-handover", block)
+        self.assertIn("does **not** install anything into ChatGPT", block)
+        self.assertIn("agreed pointer branch", block)
+
+    def test_schema_and_reader_exist(self) -> None:
+        schema = json.loads(
+            (HANDBOOK.parent / "schemas" / "ai-handover.schema.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(schema["properties"]["protocol_version"]["const"], 1)
+        reader = (HANDBOOK.parent / "examples" / "ai-handover-reader.md").read_text(encoding="utf-8")
+        self.assertIn("check handover for Home Assistant", reader)
+        self.assertIn("check handover for SquigOS", reader)
+        skill = (
+            HANDBOOK.parent / ".cursor" / "skills" / "publish-handover" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("name: publish-handover", skill)
+        self.assertIn("ChatGPT is **not** installed", skill)
+
+    def test_generated_outputs_include_ha_ai_009(self) -> None:
+        subprocess.run(
+            ["python", "scripts/rules.py", "generate"],
+            cwd=HANDBOOK.parent,
+            check=True,
+        )
+        catalog = json.loads((GENERATED / "rules.json").read_text(encoding="utf-8"))
+        ids = {rule["id"] for rule in catalog["rules"]}
+        self.assertIn("HA-AI-009", ids)
+        cursor = (
+            GENERATED / ".cursor/rules/home-assistant-engineering.mdc"
+        ).read_text(encoding="utf-8")
+        self.assertIn("HA-AI-009", cursor)
 
 
 class SilentFailureObservabilityTests(unittest.TestCase):

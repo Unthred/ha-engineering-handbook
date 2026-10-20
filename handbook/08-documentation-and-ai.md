@@ -78,6 +78,8 @@ applicable:
 - known defects and deliberately recorded remaining work
 - rollback or recovery information
 - a final report to the human that matches repository and operational reality
+- a GitHub-retrievable campaign handover (`HA-AI-009`) when the work is an
+  engineering campaign that Overseer may later **check handover**
 
 A task MAY be called complete only when its success criteria are satisfied,
 repository and operational reality agree, related issues accurately reflect
@@ -270,3 +272,54 @@ probe that was attempted; generated assistant instructions include
 `HA-AI-008` and the evidence requirement; handbook tests assert the rule ID,
 level, and key normative phrases in `rules.json`, Cursor rules, AGENTS.md,
 and CLAUDE.md.
+
+## HA-AI-009 — Publish a durable AI campaign handover
+
+**Level:** Standard
+
+At the end of an engineering campaign, an assistant MUST publish a complete,
+persistent handover that another assistant can retrieve from GitHub when a
+human says **check handover**. Chat transcripts are not the system of record.
+
+The machine contract is protocol version 1 in
+`schemas/ai-handover.schema.json`. The conversational reader contract is
+`examples/ai-handover-reader.md`. A Cursor publishing skill named
+`publish-handover` in the consuming repository MUST implement publication.
+This rule does **not** install anything into ChatGPT; it defines the shared
+contract ChatGPT can follow through an existing GitHub connector.
+
+Each handover MUST identify: protocol version; unique handover ID; project
+and repository; UTC creation timestamp; source branch and exact commit;
+relevant issues and PRs; campaign objective and outcome; independent
+development, review, deployment, and merge states; full report path and
+supporting evidence; tests, CI, and independent review; production
+modifications, backups, and rollback where applicable; remaining risks,
+blockers, and human acceptance; recommended next Overseer action.
+
+Reports MUST NOT impose an arbitrary length limit. Failures and reservations
+MUST be preserved. Large logs or binary evidence MAY live elsewhere with
+immutable references and SHA-256 hashes. Credentials, tokens, cookies,
+private keys, and secret values MUST NOT be published.
+
+Publication MUST write an immutable uniquely named Markdown report, update
+`docs/ai/latest.json` atomically, validate metadata and links, and never
+overwrite a prior handover file. A newer `created_utc` on the canonical
+pointer MUST NOT be silently replaced by an older campaign. If publication
+fails, the assistant MUST report failure rather than claim the handover is
+retrievable.
+
+The canonical `docs/ai/latest.json` pointer MUST be discoverable from the
+consuming repository’s **agreed pointer branch** (Home Assistant: `develop`;
+fallback: the GitHub default branch) even when the campaign remains on an
+unmerged feature branch. Assistants MUST NOT merge unrelated feature
+branches solely to publish a handover. Copying the report onto a
+docs-only pointer update is the allowed path.
+
+**Why:** Overseer review was blocked when campaign evidence lived only in a
+Cursor chat. A GitHub-retrievable pointer lets a human say “check handover”
+and get the full report.
+
+**Verify:** Consuming repositories have `docs/ai/latest.json`, immutable
+handovers under `docs/ai/handovers/`, a `publish-handover` skill, and tests
+for pointer freshness, secret scanning, and missing evidence; handbook tests
+assert `HA-AI-009` in generated outputs.
