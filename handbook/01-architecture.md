@@ -46,3 +46,17 @@ canonical inventory that declares identity, classification, capabilities, and
 notification policy. Downstream surfaces MUST derive from or be parity-checked
 against that inventory. Hand-maintained duplicate lists without automated
 parity checks are forbidden for new work.
+
+## HA-ARCH-008 — Equivalent devices should behave consistently unless an explicit, justified exception exists
+
+**Level:** Standard
+
+Equivalent occupant-facing devices of the same class MUST present the same behaviour for the same gesture or control, wherever the hardware can support that gesture, unless an explicit justified exception is recorded in the domain behaviour specification (`HA-DOC-003`).
+
+Historical accretion, copy-paste differences, and undocumented special cases are defects, not exceptions. Hardware that cannot emit a gesture (for example a two-button device with no hold payload) MAY be a justified exception when the domain specification records the limitation.
+
+Dashboard-equivalent controls remain governed by `HA-UX-008`. This rule covers physical and other occupant-facing device classes, including wall switches. Device identity inventories remain governed by `HA-ARCH-007`; this rule governs interaction behaviour, not merely identity.
+
+**Why:** House-wide predictability fails when equivalent controls mean different things in different rooms without a labelled reason.
+
+**Verify:** Domain specifications list shared behaviour and justified exceptions separately; occupant-facing device-class changes either match the shared contract or cite a recorded exception; generated assistant instructions include `HA-ARCH-008`.

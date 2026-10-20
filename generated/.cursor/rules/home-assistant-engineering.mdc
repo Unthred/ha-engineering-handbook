@@ -60,6 +60,14 @@ notification policy. Downstream surfaces MUST derive from or be parity-checked
 against that inventory. Hand-maintained duplicate lists without automated
 parity checks are forbidden for new work.
 
+## HA-ARCH-008 — Equivalent devices should behave consistently unless an explicit, justified exception exists
+
+**Standard.** Equivalent occupant-facing devices of the same class MUST present the same behaviour for the same gesture or control, wherever the hardware can support that gesture, unless an explicit justified exception is recorded in the domain behaviour specification (`HA-DOC-003`).
+
+Historical accretion, copy-paste differences, and undocumented special cases are defects, not exceptions. Hardware that cannot emit a gesture (for example a two-button device with no hold payload) MAY be a justified exception when the domain specification records the limitation.
+
+Dashboard-equivalent controls remain governed by `HA-UX-008`. This rule covers physical and other occupant-facing device classes, including wall switches. Device identity inventories remain governed by `HA-ARCH-007`; this rule governs interaction behaviour, not merely identity.
+
 ## HA-YAML-001 — Name by purpose
 
 **Standard.** IDs and aliases MUST describe intent, not merely location or implementation. Prefer `bedroom_blackout_close` to `blind_automation_2`.
@@ -581,9 +589,21 @@ acceptance.
 
 **Standard.** Assistant-specific instruction files MUST be generated from handbook rules. Conflicts are resolved in favour of the handbook.
 
+## HA-DOC-003 — Maintain and consult domain behaviour specifications
+
+**Standard.** An Implementer MUST maintain and consult domain behaviour specifications in the consuming Home Assistant repository before changing occupant-facing behaviour. Shared handbook rules own the obligation; instance-specific behaviour tables MUST remain in the product repository, not this handbook (`HA-DOC-002`, ADR-0005, ADR-0007).
+
+Production YAML, live entity state, and audit notes that equate “intended” with “what the current files do” are evidence of current implementation. They MUST NOT be treated as the intended specification unless a specification requirement records that alignment with confirmation provenance.
+
+Each individual requirement in a domain specification MUST have a status of confirmed, proposed, or unknown, and MUST record confirmation provenance (who confirmed it, which artefact records the confirmation, or why the status is not confirmed).
+
+When no relevant specification exists, the Implementer MUST record a documented specification gap and obtain an explicit review decision before treating current YAML as intended occupant-facing behaviour. Missing specifications MUST NOT unconditionally block urgent repairs: an urgent repair MAY proceed when that review decision records the gap and the repair scope.
+
+Do not invent specifications for domains that have not been confirmed. A recorded gap is preferable to a fabricated contract.
+
 ## HA-AI-001 — Inspect before editing
 
-**Standard.** An AI assistant MUST inspect relevant files, conventions, dependencies, and current state before proposing or applying changes. Claims that a needed tool, API, host, credential, or other capability is unavailable are governed by `HA-AI-008` and MUST NOT replace that inspection with an unverified limitation.
+**Standard.** An AI assistant MUST inspect relevant files, conventions, dependencies, current state, and — when the change is occupant-facing — the relevant domain behaviour specification (`HA-DOC-003`) before proposing or applying changes. If no specification exists, the assistant MUST record a specification gap rather than inferring intent solely from production YAML. Claims that a needed tool, API, host, credential, or other capability is unavailable are governed by `HA-AI-008` and MUST NOT replace that inspection with an unverified limitation.
 
 ## HA-AI-002 — Never invent entity IDs
 

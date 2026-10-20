@@ -122,6 +122,16 @@
       "verification": null
     },
     {
+      "id": "HA-ARCH-008",
+      "title": "Equivalent devices should behave consistently unless an explicit, justified exception exists",
+      "area": "ARCH",
+      "level": "Standard",
+      "text": "Equivalent occupant-facing devices of the same class MUST present the same behaviour for the same gesture or control, wherever the hardware can support that gesture, unless an explicit justified exception is recorded in the domain behaviour specification (`HA-DOC-003`).\n\nHistorical accretion, copy-paste differences, and undocumented special cases are defects, not exceptions. Hardware that cannot emit a gesture (for example a two-button device with no hold payload) MAY be a justified exception when the domain specification records the limitation.\n\nDashboard-equivalent controls remain governed by `HA-UX-008`. This rule covers physical and other occupant-facing device classes, including wall switches. Device identity inventories remain governed by `HA-ARCH-007`; this rule governs interaction behaviour, not merely identity.",
+      "source": "handbook/01-architecture.md",
+      "rationale": "House-wide predictability fails when equivalent controls mean different things in different rooms without a labelled reason.",
+      "verification": "Domain specifications list shared behaviour and justified exceptions separately; occupant-facing device-class changes either match the shared contract or cite a recorded exception; generated assistant instructions include `HA-ARCH-008`."
+    },
+    {
       "id": "HA-YAML-001",
       "title": "Name by purpose",
       "area": "YAML",
@@ -742,11 +752,21 @@
       "verification": null
     },
     {
+      "id": "HA-DOC-003",
+      "title": "Maintain and consult domain behaviour specifications",
+      "area": "DOC",
+      "level": "Standard",
+      "text": "An Implementer MUST maintain and consult domain behaviour specifications in the consuming Home Assistant repository before changing occupant-facing behaviour. Shared handbook rules own the obligation; instance-specific behaviour tables MUST remain in the product repository, not this handbook (`HA-DOC-002`, ADR-0005, ADR-0007).\n\nProduction YAML, live entity state, and audit notes that equate “intended” with “what the current files do” are evidence of current implementation. They MUST NOT be treated as the intended specification unless a specification requirement records that alignment with confirmation provenance.\n\nEach individual requirement in a domain specification MUST have a status of confirmed, proposed, or unknown, and MUST record confirmation provenance (who confirmed it, which artefact records the confirmation, or why the status is not confirmed).\n\nWhen no relevant specification exists, the Implementer MUST record a documented specification gap and obtain an explicit review decision before treating current YAML as intended occupant-facing behaviour. Missing specifications MUST NOT unconditionally block urgent repairs: an urgent repair MAY proceed when that review decision records the gap and the repair scope.\n\nDo not invent specifications for domains that have not been confirmed. A recorded gap is preferable to a fabricated contract.",
+      "source": "handbook/08-documentation-and-ai.md",
+      "rationale": "Occupant-facing behaviour drifted because Implementers inferred intent from YAML and room-by-room history; equivalent devices then diverged without a labelled exception.",
+      "verification": "Occupant-facing change records cite the domain specification or a recorded gap plus review decision; each requirement has status and provenance; generated assistant instructions include `HA-DOC-003`; handbook tests assert the rule ID, status vocabulary, evidence-not-spec language, and urgent-repair exception."
+    },
+    {
       "id": "HA-AI-001",
       "title": "Inspect before editing",
       "area": "AI",
       "level": "Standard",
-      "text": "An AI assistant MUST inspect relevant files, conventions, dependencies, and current state before proposing or applying changes. Claims that a needed tool, API, host, credential, or other capability is unavailable are governed by `HA-AI-008` and MUST NOT replace that inspection with an unverified limitation.",
+      "text": "An AI assistant MUST inspect relevant files, conventions, dependencies, current state, and — when the change is occupant-facing — the relevant domain behaviour specification (`HA-DOC-003`) before proposing or applying changes. If no specification exists, the assistant MUST record a specification gap rather than inferring intent solely from production YAML. Claims that a needed tool, API, host, credential, or other capability is unavailable are governed by `HA-AI-008` and MUST NOT replace that inspection with an unverified limitation.",
       "source": "handbook/08-documentation-and-ai.md",
       "rationale": null,
       "verification": null

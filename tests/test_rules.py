@@ -328,6 +328,85 @@ class CampaignHandoverTests(unittest.TestCase):
         self.assertIn("Mandatory closeout", cursor)
 
 
+class DomainBehaviourCatalogueTests(unittest.TestCase):
+    """HA-DOC-003 / HA-ARCH-008 domain behaviour specifications."""
+
+    REQUIRED = {
+        "HA-DOC-003": "Maintain and consult domain behaviour specifications",
+        "HA-ARCH-008": (
+            "Equivalent devices should behave consistently unless an "
+            "explicit, justified exception exists"
+        ),
+    }
+
+    def test_chapter_has_domain_behaviour_requirements(self) -> None:
+        docs = (HANDBOOK / "08-documentation-and-ai.md").read_text(encoding="utf-8")
+        arch = (HANDBOOK / "01-architecture.md").read_text(encoding="utf-8")
+        review = (HANDBOOK / "10-review-and-audit.md").read_text(encoding="utf-8")
+        glossary = (HANDBOOK / "99-glossary.md").read_text(encoding="utf-8")
+        adr = (
+            HANDBOOK.parent / "decisions" / "0007-domain-behaviour-specifications.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn(
+            "## HA-DOC-003 — Maintain and consult domain behaviour specifications",
+            docs,
+        )
+        self.assertIn(
+            "## HA-ARCH-008 — Equivalent devices should behave consistently "
+            "unless an explicit, justified exception exists",
+            arch,
+        )
+        doc_block = docs.split("## HA-DOC-003 —", 1)[1].split("## HA-AI-001 —", 1)[0]
+        arch_block = arch.split("## HA-ARCH-008 —", 1)[1]
+        for blob in (doc_block, arch_block):
+            self.assertIn("**Level:** Standard", blob)
+        self.assertIn("consuming Home Assistant repository", doc_block)
+        self.assertIn("not this handbook", doc_block)
+        self.assertIn("evidence of current implementation", doc_block)
+        self.assertIn("confirmed, proposed, or unknown", doc_block)
+        self.assertIn("confirmation provenance", doc_block)
+        self.assertIn("MUST NOT unconditionally block urgent repairs", doc_block)
+        self.assertIn("Do not invent specifications", doc_block)
+        self.assertIn("justified exception", arch_block)
+        self.assertIn("defects, not exceptions", arch_block)
+        self.assertIn("HA-DOC-003", review)
+        self.assertIn("HA-ARCH-008", review)
+        self.assertIn("Domain behaviour specification", glossary)
+        self.assertIn("Requirement status", glossary)
+        self.assertIn("Specification gap", glossary)
+        self.assertIn("HA-DOC-003", adr)
+        self.assertIn("HA-ARCH-008", adr)
+        self.assertIn("ADR-0007", docs)
+        ai001 = docs.split("## HA-AI-001 —", 1)[1].split("## HA-AI-002 —", 1)[0]
+        self.assertIn("HA-DOC-003", ai001)
+        self.assertIn("specification gap", ai001)
+
+    def test_generated_outputs_include_domain_behaviour_rules(self) -> None:
+        subprocess.run(
+            ["python", "scripts/rules.py", "generate"],
+            cwd=HANDBOOK.parent,
+            check=True,
+        )
+        cursor = (
+            GENERATED / ".cursor/rules/home-assistant-engineering.mdc"
+        ).read_text(encoding="utf-8")
+        claude = (GENERATED / "CLAUDE.md").read_text(encoding="utf-8")
+        agents = (GENERATED / "AGENTS.md").read_text(encoding="utf-8")
+        catalog = json.loads((GENERATED / "rules.json").read_text(encoding="utf-8"))
+        ids = [rule["id"] for rule in catalog["rules"]]
+        for rule_id, title in self.REQUIRED.items():
+            self.assertIn(rule_id, ids)
+            match = next(rule for rule in catalog["rules"] if rule["id"] == rule_id)
+            self.assertEqual(title, match["title"])
+        for blob in (cursor, claude, agents):
+            for rule_id in self.REQUIRED:
+                self.assertIn(rule_id, blob)
+            self.assertIn("confirmed, proposed, or unknown", blob)
+            self.assertIn("MUST NOT unconditionally block urgent repairs", blob)
+            self.assertIn("justified exception", blob)
+            self.assertIn("evidence of current implementation", blob)
+
+
 class SilentFailureObservabilityTests(unittest.TestCase):
     """Regression: consequential failures must not be silent (Night shutdown incident)."""
 

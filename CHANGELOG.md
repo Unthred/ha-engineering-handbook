@@ -6,6 +6,15 @@ All notable handbook changes will be recorded here.
 
 ### Added
 
+- `HA-DOC-003` — maintain and consult domain behaviour specifications in the
+  consuming Home Assistant repository. Production YAML is evidence, not
+  automatically the intended specification. Each requirement has status
+  confirmed, proposed, or unknown, with confirmation provenance. Missing
+  specifications trigger a documented gap and explicit review decision; they
+  MUST NOT unconditionally block urgent repairs. Instance tables stay in the
+  product repository (`ADR-0007`).
+- `HA-ARCH-008` — equivalent devices should behave consistently unless an
+  explicit, justified exception exists in the domain specification.
 - `HA-AI-009` — publish a durable AI campaign handover (`docs/ai/latest.json`
   + immutable reports) so Overseer can `check handover` from GitHub. Protocol
   v1 schema, reader contract, ADR-0006. `HA-AI-007` remains reserved (PR #14).
