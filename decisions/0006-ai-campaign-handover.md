@@ -35,5 +35,6 @@ not durable, not hashed, and not independently fetchable.
 
 ## Follow-up
 
-- Home Assistant pilot: PR #341 lighting deployment handover.
+- Home Assistant pilot: PR #341 lighting deployment and physical acceptance.
+- Mandatory closeout (failed/partial/paused campaigns still publish).
 - SquigOS adoption after the HA pointer is proven retrievable.

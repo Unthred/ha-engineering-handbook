@@ -57,5 +57,7 @@ token.
 
 - Treating a Cursor chat as the SoT
 - Claiming the ChatGPT skill is “installed”
+- Treating a missing or pre-acceptance pointer as the current campaign
+  when a later `created_utc` should exist
 - Merging unrelated feature branches solely to read a handover
 - Publishing or echoing credentials found in evidence (redact and flag)
