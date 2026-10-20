@@ -12,7 +12,7 @@ When the homeowner says **check handover for the handbook**, ChatGPT
 | Repository | `Unthred/ha-engineering-handbook` |
 | Pointer branch | **`main`** |
 | Latest pointer | [`docs/ai/latest.json`](latest.json) |
-| Raw latest | https://raw.githubusercontent.com/Unthred/ha-engineering-handbook/main/docs/ai/latest.json |
+| Latest pointer | GitHub Contents API `docs/ai/latest.json?ref=main` (repo is private; anonymous raw URLs 404) |
 | Reports | [`docs/ai/handovers/`](handovers/) |
 | Schema | [`../../schemas/ai-handover.schema.json`](../../schemas/ai-handover.schema.json) |
 | Reader | [`../../examples/ai-handover-reader.md`](../../examples/ai-handover-reader.md) |

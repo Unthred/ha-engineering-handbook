@@ -816,7 +816,9 @@ The machine contract is protocol version 1 in
 `examples/ai-handover-reader.md`. A Cursor publishing skill named
 `publish-handover` in the consuming repository MUST implement publication.
 This rule does **not** install anything into ChatGPT; it defines the shared
-contract ChatGPT can follow through an existing GitHub connector.
+contract ChatGPT can follow through an existing GitHub connector. Consuming
+repositories in this house are typically **private**; the reader MUST use the
+authenticated GitHub connector, not anonymous raw URLs.
 
 Each handover MUST identify: protocol version; unique handover ID; project
 and repository; UTC creation timestamp; source branch and exact commit;
