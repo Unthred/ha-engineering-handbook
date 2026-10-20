@@ -298,6 +298,8 @@ class CampaignHandoverTests(unittest.TestCase):
         reader = (HANDBOOK.parent / "examples" / "ai-handover-reader.md").read_text(encoding="utf-8")
         self.assertIn("check handover for Home Assistant", reader)
         self.assertIn("check handover for SquigOS", reader)
+        self.assertIn("private", reader.lower())
+        self.assertIn("GitHub connector", reader)
         skill = (
             HANDBOOK.parent / ".cursor" / "skills" / "publish-handover" / "SKILL.md"
         ).read_text(encoding="utf-8")

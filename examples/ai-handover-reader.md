@@ -24,16 +24,23 @@ If the project is ambiguous, ask once. Do not guess.
 
 ## Retrieval
 
-1. Fetch `https://raw.githubusercontent.com/<owner>/<repo>/<pointer-branch>/docs/ai/latest.json`.
+These product repositories are **private**. Anonymous
+`raw.githubusercontent.com` URLs return **404**. Use the existing **GitHub
+connector** (authenticated Contents API). Do not ask the homeowner to paste a
+token.
+
+1. Fetch `docs/ai/latest.json` from the pointer branch
+   (`develop` for Home Assistant, `main` for the handbook):
+   `GET /repos/<owner>/<repo>/contents/docs/ai/latest.json?ref=<pointer-branch>`.
 2. If that 404s, try the repository default branch.
 3. Parse `protocol_version` (must be `1`).
 4. Resolve `repository`, `pointer_branch`, `source_branch`, `source_commit`,
    `report_path`, `github_url`, `raw_url`. `source_commit` is the **campaign**
    SHA (code/config reviewed or deployed). The Markdown report usually lives
    on the pointer branch, not at `source_commit`.
-5. Fetch the **complete** Markdown report (no truncation). Prefer `raw_url`,
-   then `github_url`, then
-   `https://raw.githubusercontent.com/<repository>/<pointer_branch>/<report_path>`.
+5. Fetch the **complete** Markdown report (no truncation) via Contents API:
+   `GET /repos/<repository>/contents/<report_path>?ref=<pointer_branch>`.
+   Browser `github_url` / `raw_url` also work when the connector is signed in.
    If those 404 and a docs-only branch is named in the report, try that ref.
    Do not treat a 404 at `source_commit` as proof the handover is missing.
 6. Fetch linked evidence as needed. Verify SHA-256 when present. Evidence may
