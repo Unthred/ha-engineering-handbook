@@ -815,6 +815,41 @@ and MUST NOT be invented as “verification.” Prefer read-only checks.
 persistent handover that another assistant can retrieve from GitHub when a
 human says **check handover**. Chat transcripts are not the system of record.
 
+### Mandatory closeout
+
+Publication is **mandatory before** the Implementer declares completion,
+parks the work, or returns control to the Overseer. This includes:
+
+- successful work
+- partially completed work
+- blocked or failed work
+- live investigations and acceptance testing
+- tasks where no code was changed
+- tasks stopped for human intervention
+
+A failed or incomplete campaign still requires a handover. Waiting to “fix
+it first” is not a reason to skip publication. If publication fails, the
+assistant MUST report **HANDOVER PUBLICATION BLOCKED**, retain the evidence,
+and give recovery instructions. The assistant MUST NOT silently skip
+publication or claim that Overseer can retrieve a report that was not
+pushed to the agreed pointer branch.
+
+Consuming repositories MUST provide a Cursor `publish-handover` skill, a
+publisher that writes immutable `docs/ai/handovers/<id>.md` and atomically
+updates `docs/ai/latest.json`, and a closeout check (`scripts/ai/` in the
+product repo) that validates the pointer. Generated Cursor rules MUST
+include this closeout duty. Assistants MUST run the publisher as part of
+normal closeout, not only when a human says “publish handover”.
+
+This rule MUST NOT block emergency recovery: operators may still revert,
+disarm, or restore from backup without waiting for a handover. The handover
+is then published as soon as it is safe, recording the emergency action.
+
+A Markdown skill alone is not sufficient enforcement. Shared generated
+Cursor rules, closeout-check tests, and repository docs MUST state the
+duty. Cursor cannot intercept end-of-chat; remaining gaps are agent
+compliance and Overseer retrieval checks.
+
 The machine contract is protocol version 1 in
 `schemas/ai-handover.schema.json`. The conversational reader contract is
 `examples/ai-handover-reader.md`. A Cursor publishing skill named

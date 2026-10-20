@@ -289,6 +289,11 @@ class CampaignHandoverTests(unittest.TestCase):
         self.assertIn("publish-handover", block)
         self.assertIn("does **not** install anything into ChatGPT", block)
         self.assertIn("agreed pointer branch", block)
+        self.assertIn("Mandatory closeout", block)
+        self.assertIn("HANDOVER PUBLICATION BLOCKED", block)
+        self.assertIn("partially completed work", block)
+        self.assertIn("tasks stopped for human intervention", block)
+        self.assertIn("MUST NOT block emergency recovery", block)
 
     def test_schema_and_reader_exist(self) -> None:
         schema = json.loads(
@@ -319,6 +324,8 @@ class CampaignHandoverTests(unittest.TestCase):
             GENERATED / ".cursor/rules/home-assistant-engineering.mdc"
         ).read_text(encoding="utf-8")
         self.assertIn("HA-AI-009", cursor)
+        self.assertIn("HANDOVER PUBLICATION BLOCKED", cursor)
+        self.assertIn("Mandatory closeout", cursor)
 
 
 class SilentFailureObservabilityTests(unittest.TestCase):

@@ -2,9 +2,10 @@
 name: publish-handover
 description: >-
   Publish an immutable GitHub-retrievable AI campaign handover
-  (docs/ai/handovers/* and docs/ai/latest.json). Use at campaign closeout,
-  when the user says publish handover, check handover (publisher side),
-  or HA-AI-009 applies.
+  (docs/ai/handovers/* and docs/ai/latest.json). Mandatory at every
+  campaign closeout (success, fail, partial, blocked, live acceptance,
+  no-code, paused for a human) under HA-AI-009. Also when the user says
+  publish handover or check handover (publisher side).
 ---
 
 # Publish handover
@@ -16,8 +17,10 @@ human the GitHub URL and tell them to say **check handover**.
 
 ## When
 
-End of an engineering campaign (implementation, review, deploy, or park).
-Do not skip because a PR is still unmerged.
+Before declaring completion or returning control to Overseer. Includes
+failed, partial, blocked, live-acceptance, no-code, and human-paused work.
+Do not skip because a PR is still unmerged or because a defect is unfixed.
+If this publisher fails, report **HANDOVER PUBLICATION BLOCKED**.
 
 ## Steps
 

@@ -9,6 +9,11 @@ All notable handbook changes will be recorded here.
 - `HA-AI-009` — publish a durable AI campaign handover (`docs/ai/latest.json`
   + immutable reports) so Overseer can `check handover` from GitHub. Protocol
   v1 schema, reader contract, ADR-0006. `HA-AI-007` remains reserved (PR #14).
+- `HA-AI-009` mandatory closeout — every substantive Implementer campaign
+  (success, partial, fail, live acceptance, no-code, paused for a human)
+  MUST publish before returning to Overseer; report
+  `HANDOVER PUBLICATION BLOCKED` rather than skip. Does not block emergency
+  recovery.
 
 - Human-first control contract: `HA-PHIL-005` (human-first operation),
   `HA-AUTO-007` (honour physical and manual controls); clarify `HA-AUTO-005`
