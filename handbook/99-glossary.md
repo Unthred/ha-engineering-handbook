@@ -2,6 +2,14 @@
 
 **ADR** — Architecture Decision Record; a durable record of context, decision, and consequences.
 
+**AI campaign handover** — Immutable Markdown report plus `docs/ai/latest.json`
+pointer (`HA-AI-009`) so Overseer can retrieve the full campaign record from
+GitHub when a human says **check handover**.
+
+**Pointer branch** — Agreed stable branch that hosts `docs/ai/latest.json`
+without requiring the campaign feature branch to merge (Home Assistant:
+`develop`).
+
 **Essential function** — A household capability whose loss affects safety, access, accessibility, sleep, heating, or other significant needs.
 
 **Generated rule** — Assistant-specific guidance derived mechanically from normative handbook rules.

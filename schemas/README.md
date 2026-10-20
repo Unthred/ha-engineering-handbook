@@ -4,6 +4,9 @@
 The handbook Markdown remains authoritative; the catalog is a deterministic,
 machine-readable representation for tools and assistants.
 
+`ai-handover.schema.json` is protocol version 1 for `docs/ai/latest.json`
+in consuming repositories (`HA-AI-009`).
+
 `dashboard-profile.schema.json` describes the responsive-layout contract recorded
 in consuming repositories (see `examples/dashboard-profile.yaml`). The example is
 validated structurally by `python scripts/rules.py check` without third-party

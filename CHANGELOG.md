@@ -6,6 +6,10 @@ All notable handbook changes will be recorded here.
 
 ### Added
 
+- `HA-AI-009` — publish a durable AI campaign handover (`docs/ai/latest.json`
+  + immutable reports) so Overseer can `check handover` from GitHub. Protocol
+  v1 schema, reader contract, ADR-0006. `HA-AI-007` remains reserved (PR #14).
+
 - Human-first control contract: `HA-PHIL-005` (human-first operation),
   `HA-AUTO-007` (honour physical and manual controls); clarify `HA-AUTO-005`
   (ordinary re-evals and write echoes must not cancel valid manual intent);

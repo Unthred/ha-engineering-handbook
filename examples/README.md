@@ -9,6 +9,8 @@
   `page_header.mode`; schema at `schemas/dashboard-profile.schema.json`.
 - `audit-report-template.md` includes the mandatory responsive acceptance table
   and page-header checks.
+- `ai-handover-reader.md` is the ChatGPT/Overseer retrieval contract for
+  **check handover** (`HA-AI-009`).
 
 Examples demonstrate how rules work together in realistic Home Assistant configurations. They are non-normative: when an example and a handbook rule differ, the handbook wins.
 
