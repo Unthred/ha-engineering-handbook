@@ -12,11 +12,29 @@ Documentation MUST explain purpose, dependencies, expected behaviour, fallback, 
 
 Assistant-specific instruction files MUST be generated from handbook rules. Conflicts are resolved in favour of the handbook.
 
+## HA-DOC-003 — Maintain and consult domain behaviour specifications
+
+**Level:** Standard
+
+An Implementer MUST maintain and consult domain behaviour specifications in the consuming Home Assistant repository before changing occupant-facing behaviour. Shared handbook rules own the obligation; instance-specific behaviour tables MUST remain in the product repository, not this handbook (`HA-DOC-002`, ADR-0005, ADR-0007).
+
+Production YAML, live entity state, and audit notes that equate “intended” with “what the current files do” are evidence of current implementation. They MUST NOT be treated as the intended specification unless a specification requirement records that alignment with confirmation provenance.
+
+Each individual requirement in a domain specification MUST have a status of confirmed, proposed, or unknown, and MUST record confirmation provenance (who confirmed it, which artefact records the confirmation, or why the status is not confirmed).
+
+When no relevant specification exists, the Implementer MUST record a documented specification gap and obtain an explicit review decision before treating current YAML as intended occupant-facing behaviour. Missing specifications MUST NOT unconditionally block urgent repairs: an urgent repair MAY proceed when that review decision records the gap and the repair scope.
+
+Do not invent specifications for domains that have not been confirmed. A recorded gap is preferable to a fabricated contract.
+
+**Why:** Occupant-facing behaviour drifted because Implementers inferred intent from YAML and room-by-room history; equivalent devices then diverged without a labelled exception.
+
+**Verify:** Occupant-facing change records cite the domain specification or a recorded gap plus review decision; each requirement has status and provenance; generated assistant instructions include `HA-DOC-003`; handbook tests assert the rule ID, status vocabulary, evidence-not-spec language, and urgent-repair exception.
+
 ## HA-AI-001 — Inspect before editing
 
 **Level:** Standard
 
-An AI assistant MUST inspect relevant files, conventions, dependencies, and current state before proposing or applying changes. Claims that a needed tool, API, host, credential, or other capability is unavailable are governed by `HA-AI-008` and MUST NOT replace that inspection with an unverified limitation.
+An AI assistant MUST inspect relevant files, conventions, dependencies, current state, and — when the change is occupant-facing — the relevant domain behaviour specification (`HA-DOC-003`) before proposing or applying changes. If no specification exists, the assistant MUST record a specification gap rather than inferring intent solely from production YAML. Claims that a needed tool, API, host, credential, or other capability is unavailable are governed by `HA-AI-008` and MUST NOT replace that inspection with an unverified limitation.
 
 ## HA-AI-002 — Never invent entity IDs
 

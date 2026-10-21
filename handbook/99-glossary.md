@@ -30,6 +30,12 @@ the act of editing files.
 parking record so it can be resumed safely without guessing; parking is not
 authorization to resume.
 
+**Domain behaviour specification** — Product-repository document of occupant-facing intended behaviour for one domain (for example lighting). The handbook owns the obligation to maintain and consult it (`HA-DOC-003`); instance tables stay in the consuming repository. Production YAML is evidence, not automatically this specification.
+
+**Requirement status** — Label on each domain-specification requirement: `confirmed` (homeowner or authorised campaign artefact), `proposed` (Implementer inference awaiting review), or `unknown` (open question). Each status needs confirmation provenance.
+
+**Specification gap** — Missing domain behaviour specification for occupant-facing work. Triggers a documented gap and explicit review decision (`HA-DOC-003`); does not unconditionally block urgent repairs.
+
 **Source of truth** — The authoritative location from which derivative configuration or documentation is produced.
 
 **Dashboard profile** — Repository-owned YAML that records responsive layout

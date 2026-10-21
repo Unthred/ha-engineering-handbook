@@ -11,6 +11,8 @@
 - Lovelace mode (storage / YAML):
 - Authenticated normal-view access available:
 - Constraints and documented exceptions:
+- Domain behaviour specification path (or “missing” / specification gap):
+- Requirement statuses consulted (`confirmed` / `proposed` / `unknown`):
 
 ## Executive summary
 
@@ -60,6 +62,10 @@ Complete for every audited dashboard view. “Responsive: yes” without this ta
 **Missing preferred header (fail):** Rule `HA-UX-019`; profile prefers header but view has none.
 
 **Decorative pills (fail):** Rule `HA-DESIGN-009`; pills exist only for symmetry or include entity IDs.
+
+**Specification gap (review decision, not an unconditional block):** Rule `HA-DOC-003`; occupant-facing change has no domain specification; record the gap, the repair or change scope, and the review decision. Do not treat production YAML as intended behaviour solely because it is what currently runs.
+
+**Undocumented device exception (fail):** Rule `HA-ARCH-008`; equivalent devices differ in occupant-facing behaviour with no justified exception in the domain specification.
 
 ## Staged remediation plan
 

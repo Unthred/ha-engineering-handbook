@@ -6,14 +6,16 @@ Use this framework before changing an existing Home Assistant system. An audit i
 
 Inspect the repository structure, configuration entry points, dashboards, themes, custom cards, helpers, automations, scripts, blueprints, secrets boundaries, deployment method, validation tools, and repository-local agent instructions. Obtain actual entity IDs from configuration or the running system; never infer them from friendly names.
 
+For occupant-facing behaviour, obtain the relevant domain behaviour specification (`HA-DOC-003`) or record its absence as a specification gap with an explicit review decision. Production YAML is evidence of current implementation, not automatically the intended specification. Equivalent-device consistency is governed by `HA-ARCH-008`.
+
 For dashboard work, also obtain the repository dashboard profile (or note its absence), target displays, whether Lovelace is storage-mode or YAML-mode, and whether the auditor can open the authenticated normal-view frontend.
 
 ## Audit process
 
 1. Inventory the system and identify which files are authoritative versus generated or UI-managed.
 2. Record supported displays, household priorities, essential functions, custom frontend dependencies, and known constraints.
-3. Evaluate each applicable handbook rule and cite concrete evidence by path and object name.
-4. Separate defects from preferences. Do not call a stylistic alternative a violation unless a rule or repository profile requires it.
+3. Evaluate each applicable handbook rule and cite concrete evidence by path and object name. For occupant-facing behaviour, compare evidence against the domain specification; do not treat current YAML as intended behaviour solely because it is what production currently does.
+4. Separate defects from preferences. Do not call a stylistic alternative a violation unless a rule, repository profile, or confirmed domain-specification requirement requires it. Historical device differences without a recorded exception are defects under `HA-ARCH-008`.
 5. Group findings by risk and dependency, then propose small reversible stages.
 6. Validate each stage and state what still requires physical or user verification.
 7. For dashboards, complete the responsive and content-hygiene checks below; do not tick “responsive” without matrix evidence.
