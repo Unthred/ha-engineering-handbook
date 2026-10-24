@@ -883,6 +883,13 @@ supporting evidence; tests, CI, and independent review; production
 modifications, backups, and rollback where applicable; remaining risks,
 blockers, and human acceptance; recommended next Overseer action.
 
+Each report MUST also state its publication coordinates: repository, exact
+path, branch/ref, PR URL when applicable, commit SHA, whether the report is
+retrievable only from an open PR head or is present on the canonical pointer
+branch, whether it supersedes an earlier handover, and whether the canonical
+pointer update is merged. An open PR head is retrievable, but MUST NOT be
+described as present on the target branch until merged.
+
 Reports MUST NOT impose an arbitrary length limit. Failures and reservations
 MUST be preserved. Large logs or binary evidence MAY live elsewhere with
 immutable references and SHA-256 hashes. Credentials, tokens, cookies,
@@ -901,6 +908,15 @@ fallback: the GitHub default branch) even when the campaign remains on an
 unmerged feature branch. Assistants MUST NOT merge unrelated feature
 branches solely to publish a handover. Copying the report onto a
 docs-only pointer update is the allowed path.
+
+When the pointer is stale or a known campaign is newer, the reader MUST also
+inspect open handover PRs and fetch candidate reports from their exact head
+branches. A missing or older target-branch file MUST NOT be treated as proof
+that no progress or handover exists. The report and reader MUST distinguish
+an open, retrievable proposal from a merged canonical publication. A
+coordination repository MAY use a consistent handover PR title prefix as a
+searchable active-handover index; that index MUST NOT imply that the PR has
+merged.
 
 ## HA-DESIGN-001 — Centralise visual tokens
 
