@@ -43,14 +43,24 @@ token.
    Browser `github_url` / `raw_url` also work when the connector is signed in.
    If those 404 and a docs-only branch is named in the report, try that ref.
    Do not treat a 404 at `source_commit` as proof the handover is missing.
-6. Fetch linked evidence as needed. Verify SHA-256 when present. Evidence may
+6. If the pointer is stale or the conversation identifies a newer campaign,
+   search open handover PRs in the product repository and coordination
+   repository. Inspect PR metadata, exact head refs, changed paths, and the
+   complete report at each candidate head. Use a coordination repository's
+   documented title prefix/index when available. Do not conclude “no progress”
+   from an older target-branch pointer alone.
+7. Verify each report's repository, path, branch/ref, PR URL, commit SHA,
+   publication state, superseded handover, and canonical-pointer merge state.
+   Describe an open-PR head as retrievable but proposed; it is not on the
+   target branch until merged.
+8. Fetch linked evidence as needed. Verify SHA-256 when present. Evidence may
    be GitHub blob/raw URLs on an unmerged feature commit.
-7. Distinguish:
+9. Distinguish:
    - **fresh** — pointer `created_utc` matches the report; links resolve
    - **stale** — pointer commit/branch moved or `created_utc` older than a
      newer known campaign
    - **inaccessible** — 404, permission denied, or hash mismatch
-8. Analyse as Overseer. Return verdict, risks, and next action. Do not
+10. Analyse as Overseer. Return verdict, risks, and next action. Do not
    summarise away failures or reservations.
 
 ## Forbidden

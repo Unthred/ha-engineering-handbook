@@ -294,6 +294,9 @@ class CampaignHandoverTests(unittest.TestCase):
         self.assertIn("partially completed work", block)
         self.assertIn("tasks stopped for human intervention", block)
         self.assertIn("MUST NOT block emergency recovery", block)
+        self.assertIn("publication coordinates", block)
+        self.assertIn("open handover PRs", block)
+        self.assertIn("searchable active-handover index", block)
 
     def test_schema_and_reader_exist(self) -> None:
         schema = json.loads(
@@ -305,6 +308,8 @@ class CampaignHandoverTests(unittest.TestCase):
         self.assertIn("check handover for SquigOS", reader)
         self.assertIn("private", reader.lower())
         self.assertIn("GitHub connector", reader)
+        self.assertIn("search open handover PRs", reader)
+        self.assertIn("retrievable but proposed", reader)
         skill = (
             HANDBOOK.parent / ".cursor" / "skills" / "publish-handover" / "SKILL.md"
         ).read_text(encoding="utf-8")
