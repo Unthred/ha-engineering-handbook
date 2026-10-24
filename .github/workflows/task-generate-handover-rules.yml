@@ -5,7 +5,7 @@ on:
     branches: [docs/ai-handover-discovery-20261024]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   generate:
@@ -16,8 +16,12 @@ jobs:
         with:
           python-version: "3.12"
       - run: python scripts/rules.py generate && python scripts/rules.py check
-      - uses: actions/upload-artifact@v4
-        with:
-          name: generated-handover-rules
-          path: generated/
-          retention-days: 1
+      - name: Commit generated files to the task branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add generated/
+          if ! git diff --cached --quiet; then
+            git commit -m "docs(ai): generate handover discovery rule outputs"
+            git push origin HEAD:refs/heads/docs/ai-handover-discovery-20261024
+          fi
