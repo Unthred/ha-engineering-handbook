@@ -34,7 +34,12 @@ If this publisher fails, report **HANDOVER PUBLICATION BLOCKED**.
    - Remaining risks
    - Recommended next Overseer action
 2. Never include credentials, tokens, cookies, private keys, or secret values.
-3. Run from the product repo root:
+3. State publication coordinates in the report: repository, exact path,
+   branch/ref, PR URL when applicable, commit SHA, whether it is retrievable
+   only from an open PR head or is present on the canonical pointer branch,
+   whether it supersedes a prior report, and whether the pointer update is
+   merged. An open PR is not present on its target branch until merged.
+4. Run from the product repo root:
 
 ```bash
 python3 scripts/ai/publish_handover.py \
@@ -63,11 +68,18 @@ bash /boot/config/scripts/docker-run-limited.sh run --rm \
   python scripts/ai/publish_handover.py ...same args...
 ```
 
-4. If the script prints `FAIL:`, **stop**. Do not claim the handover is live.
-5. Commit `docs/ai/handovers/<id>.md` and `docs/ai/latest.json` (never overwrite
+5. If the script prints `FAIL:`, **stop**. Do not claim the handover is live.
+6. Commit `docs/ai/handovers/<id>.md` and `docs/ai/latest.json` (never overwrite
    an existing handover file).
-6. Push. Pointer branch for this repository is **`main`**.
-7. Return the `github_url` from the script output.
+7. Push. Pointer branch for this repository is **`main`**.
+8. Return the `github_url` from the script output.
+
+## Discovery when the pointer is stale
+
+When a known campaign is newer than the pointer, search open handover PRs in
+the product and coordination repositories. Fetch candidate reports from their
+exact head refs and report their proposed/merged state. Never infer that no
+progress exists from the target-branch pointer alone.
 
 ## Pointer safety
 

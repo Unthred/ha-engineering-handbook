@@ -1,0 +1,23 @@
+name: Temporary task rule generation
+
+on:
+  push:
+    branches: [docs/ai-handover-discovery-20261024]
+
+permissions:
+  contents: read
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python scripts/rules.py generate && python scripts/rules.py check
+      - uses: actions/upload-artifact@v4
+        with:
+          name: generated-handover-rules
+          path: generated/
+          retention-days: 1
