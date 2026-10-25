@@ -64,6 +64,8 @@ All notable handbook changes will be recorded here.
 
 ### Changed
 
+- Proposed owner-authorized, time-bounded campaign exception to `HA-AI-006`: concurrency only across isolated, owned work packages; preserve lifecycle and all safety gates.
+
 - `HA-AI-001` / `HA-AI-003` — cross-reference `HA-AI-008` so capability
   limitations cannot silently replace inspection or labelled assumptions
 - `HA-UX-005` — require profile matrix validation; phone/desktop each insufficient alone
