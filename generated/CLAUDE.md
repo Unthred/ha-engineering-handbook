@@ -634,6 +634,12 @@ A large feature MAY contain explicitly documented subtasks. Labelling work a
 “subtask” MUST NOT be used to evade the one-active-implementation limit or to
 start unrelated implementation in the same workspace.
 
+### Current campaign exception (temporary)
+
+For `2026-10-25-campaign-workflow-repair-multiworkstream-delivery` only, the owner has expressly authorized a time-bounded exception to the one-active-task scheduling default. Independent implementation packages may proceed concurrently; this does not waive each package’s lifecycle or definition of done. Each package MUST have a distinct clean worktree and branch, issue or tracked scope, named owner, checkpoint, dependency record, tests, independent review, and truthful closeout. Concurrent packages MUST NOT edit the same worktree or shared files; overlapping changes MUST be serialized and integrated deliberately. The campaign MUST keep a durable queue and resumable handover.
+
+This exception MUST NOT relax security, secret handling, workspace isolation, role separation, approval, production-proof, deployment, merge, or destructive-action controls. It expires at this named campaign’s closeout and MUST NOT be reused for another campaign without fresh explicit authorization. Waiting for review or approval does not itself authorize a production action or make a package complete.
+
 ### Definition of done
 
 Before declaring a task complete, the assistant MUST reconcile, where

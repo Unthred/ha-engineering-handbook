@@ -27,6 +27,10 @@ Normative rule `HA-AI-006` requires:
 Parking and deferred cleanup inventory do **not** authorize destructive cleanup
 or unauthorized resumption of deferred work.
 
+### Proposed one-time campaign exception (pending maintainer review)
+
+For `2026-10-25-campaign-workflow-repair-multiworkstream-delivery` only, the owner has expressly authorized an exception to item 1 above until this named campaign closes. It permits scheduling independent packages concurrently, but does not waive each package’s complete lifecycle or any safety control. Each package must use a separate clean worktree and branch, carry its own issue/scope/owner/checkpoint/review, and serialize shared-file edits. A durable queue and handover must identify dependencies, completed work, conflicts, blockers, and the end condition. This one-time exception MUST NOT be reused for another campaign without fresh explicit authorization. Security, secret handling, role separation, production approvals, deployment, merge, and destructive-action boundaries remain unchanged.
+
 ## Consequences
 
 - Generated assistant guidance gains an enforceable WIP gate.

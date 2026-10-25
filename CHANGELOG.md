@@ -64,6 +64,8 @@ All notable handbook changes will be recorded here.
 
 ### Changed
 
+- Proposed one-time `HA-AI-006` exception for campaign `2026-10-25-campaign-workflow-repair-multiworkstream-delivery`: concurrent isolated packages; preserve lifecycle and all safety gates; expires at closeout.
+
 - `HA-AI-001` / `HA-AI-003` — cross-reference `HA-AI-008` so capability
   limitations cannot silently replace inspection or labelled assumptions
 - `HA-UX-005` — require profile matrix validation; phone/desktop each insufficient alone
