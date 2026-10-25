@@ -634,6 +634,12 @@ A large feature MAY contain explicitly documented subtasks. Labelling work a
 “subtask” MUST NOT be used to evade the one-active-implementation limit or to
 start unrelated implementation in the same workspace.
 
+### Owner-authorized campaign exception
+
+A human MAY explicitly authorize a **time-bounded campaign** to schedule multiple independent implementation packages concurrently. This is an exception to the one-active-task scheduling default, not a waiver of the task lifecycle or definition of done. The authorization MUST name the campaign, scope, and end condition. Each package MUST have a distinct clean worktree and branch, issue or tracked scope, named owner, checkpoint, dependency record, tests, independent review, and truthful closeout. Concurrent packages MUST NOT edit the same worktree or shared files; overlapping changes MUST be serialized and integrated deliberately. The campaign MUST keep a durable queue and resumable handover.
+
+This exception MUST NOT relax security, secret handling, workspace isolation, role separation, approval, production-proof, deployment, merge, or destructive-action controls. It applies only to the explicitly named campaign and expires when that campaign ends. Waiting for review or approval does not itself authorize a production action or make a package complete.
+
 ### Definition of done
 
 Before declaring a task complete, the assistant MUST reconcile, where
