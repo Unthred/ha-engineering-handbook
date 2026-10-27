@@ -20,6 +20,11 @@ The handbook is the source of truth. Rules for Cursor, Claude, Copilot, Windsurf
 
 The visual baseline and audit workflow live in `handbook/09-visual-design-system.md` and `handbook/10-review-and-audit.md`. Controlled installation into an existing agent workspace is defined by `handbook/11-agent-rule-migration.md`; it requires a preservation matrix and a discoverable repository-local overlay. Testing, candidate deployment, and prove-before-merge gates live in `handbook/07-testing-and-deployment.md`. Responsive dashboard acceptance (`HA-UX-016`–`019`, `HA-DESIGN-007`–`009`, `HA-TEST-016`) is an enforceable contract: copy `examples/dashboard-profile.yaml`, validate layouts against its viewport matrix in normal view, prefer the characterful page-header pattern when the profile says so, and use `examples/audit-report-template.md` for rules-based review.
 
+For project-owned task continuity, `HA-AI-009` defines a single canonical
+handover per repository. Copy `examples/canonical-agent-handover-rule.md` and
+replace its path/ref with the repository's own agreed values; do not use a
+central dispatcher or imply that Markdown rules can intercept responses.
+
 After installation, copy and complete `examples/agent-install-manifest.json`,
 then verify the consuming repository with `python scripts/rules.py verify-install
 --target /path/to/project`. The command is safe for CI and never reads secret

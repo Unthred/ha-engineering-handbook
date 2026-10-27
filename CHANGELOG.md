@@ -64,6 +64,11 @@ All notable handbook changes will be recorded here.
 
 ### Changed
 
+- `HA-AI-009` — designate one project-owned canonical handover; read it at
+  startup and on **check handover**, and mirror each substantive response into
+  the same file. Legacy immutable archives remain optional history, not task
+  dispatch. State that Markdown cannot intercept responses or wake idle agents.
+
 - `HA-AI-001` / `HA-AI-003` — cross-reference `HA-AI-008` so capability
   limitations cannot silently replace inspection or labelled assumptions
 - `HA-UX-005` — require profile matrix validation; phone/desktop each insufficient alone
