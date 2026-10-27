@@ -291,108 +291,63 @@ probe that was attempted; generated assistant instructions include
 level, and key normative phrases in `rules.json`, Cursor rules, AGENTS.md,
 and CLAUDE.md.
 
-## HA-AI-009 — Publish a durable AI campaign handover
+## HA-AI-009 — Maintain one canonical project handover
 
 **Level:** Standard
 
-At the end of an engineering campaign, an assistant MUST publish a complete,
-persistent handover that another assistant can retrieve from GitHub when a
-human says **check handover**. Chat transcripts are not the system of record.
+Each adopting project MUST designate exactly one canonical handover file and
+its agreed stable repository/ref in instructions loaded by the Implementer and
+reader. A project-specific file on the project repository's stable working
+branch SHOULD be used; a central dispatcher MUST NOT replace per-project task
+records.
 
-### Mandatory closeout
+At task startup, and whenever a human says **check handover**, the assistant
+MUST fetch the agreed ref and read that exact file before selecting or reporting
+work. It MUST continue the pending authorized work recorded there when the
+current request invokes that handover, and MUST preserve project, role,
+security, production, and approval boundaries. A handover records authority; it
+does not grant authority.
 
-Publication is **mandatory before** the Implementer declares completion,
-parks the work, or returns control to the Overseer. This includes:
+Before each substantive user-visible response during the campaign—including
+progress, findings, questions, blocked status, errors, and completion—the
+assistant MUST update the same canonical file with the response's substance,
+current status, timestamp, evidence, and next action. Progress history MUST be
+preserved (for example, append dated entries and refresh a short latest-state
+section). Credentials, secret values, cookies, tokens, and private keys MUST
+NOT be recorded. The assistant MUST verify that the update reached the agreed
+ref before claiming that response was mirrored; on failure it MUST state the
+write failure and retry rather than silently substituting chat-only progress.
 
-- successful work
-- partially completed work
-- blocked or failed work
-- live investigations and acceptance testing
-- tasks where no code was changed
-- tasks stopped for human intervention
+An immutable report archive MAY supplement the canonical file when a project
+or operator requires it. Such an archive MUST NOT dispatch work, supersede the
+active file, or require a second report for each progress response. Existing
+archives and their schemas MAY be retained as historical records.
 
-A failed or incomplete campaign still requires a handover. Waiting to “fix
-it first” is not a reason to skip publication. If publication fails, the
-assistant MUST report **HANDOVER PUBLICATION BLOCKED**, retain the evidence,
-and give recovery instructions. The assistant MUST NOT silently skip
-publication or claim that Overseer can retrieve a report that was not
-pushed to the agreed pointer branch.
+These repository instructions guide agent behavior but are not, by themselves,
+a runtime interceptor. Markdown rules cannot wake an idle agent or guarantee
+execution after a process crash or platform interruption. Implementations MUST
+NOT claim those guarantees. If hard enforcement is required, it needs a
+separately reviewed runtime hook integrated with response emission and a
+fail-safe recovery path; that mechanism is outside this rule.
 
-Consuming repositories MUST provide a Cursor `publish-handover` skill, a
-publisher that writes immutable `docs/ai/handovers/<id>.md` and atomically
-updates `docs/ai/latest.json`, and a closeout check (`scripts/ai/` in the
-product repo) that validates the pointer. Generated Cursor rules MUST
-include this closeout duty. Assistants MUST run the publisher as part of
-normal closeout, not only when a human says “publish handover”.
+This rule MUST NOT block emergency recovery: an authorized safety action may
+proceed without waiting for a handover write, which MUST be recorded as soon as
+it is safe. Reports MUST preserve failures and reservations, link bounded
+evidence where useful, and state remaining risks honestly.
 
-This rule MUST NOT block emergency recovery: operators may still revert,
-disarm, or restore from backup without waiting for a handover. The handover
-is then published as soon as it is safe, recording the emergency action.
+The generic copyable rule is `examples/canonical-agent-handover-rule.md`.
+`examples/ai-handover-reader.md` describes the GitHub reader pattern for
+HomeAssistant's private repository; readers MUST use an authorized connector
+or checkout, not anonymous raw URLs. Legacy archive metadata and publisher
+schemas remain available for historical reports, not active dispatch.
 
-A Markdown skill alone is not sufficient enforcement. Shared generated
-Cursor rules, closeout-check tests, and repository docs MUST state the
-duty. Cursor cannot intercept end-of-chat; remaining gaps are agent
-compliance and Overseer retrieval checks.
+**Why:** Work and important evidence were lost when instructions pointed at
+different handovers or when progress lived only in chat. One stable,
+project-owned file lets the Implementer and Overseer resume from the same
+verified state without creating a central dispatcher.
 
-The machine contract is protocol version 1 in
-`schemas/ai-handover.schema.json`. The conversational reader contract is
-`examples/ai-handover-reader.md`. A Cursor publishing skill named
-`publish-handover` in the consuming repository MUST implement publication.
-This rule does **not** install anything into ChatGPT; it defines the shared
-contract ChatGPT can follow through an existing GitHub connector. Consuming
-repositories in this house are typically **private**; the reader MUST use the
-authenticated GitHub connector, not anonymous raw URLs.
-
-Each handover MUST identify: protocol version; unique handover ID; project
-and repository; UTC creation timestamp; source branch and exact commit;
-relevant issues and PRs; campaign objective and outcome; independent
-development, review, deployment, and merge states; full report path and
-supporting evidence; tests, CI, and independent review; production
-modifications, backups, and rollback where applicable; remaining risks,
-blockers, and human acceptance; recommended next Overseer action.
-
-Each report MUST also state its publication coordinates: repository, exact
-path, branch/ref, PR URL when applicable, commit SHA, whether the report is
-retrievable only from an open PR head or is present on the canonical pointer
-branch, whether it supersedes an earlier handover, and whether the canonical
-pointer update is merged. An open PR head is retrievable, but MUST NOT be
-described as present on the target branch until merged.
-
-Reports MUST NOT impose an arbitrary length limit. Failures and reservations
-MUST be preserved. Large logs or binary evidence MAY live elsewhere with
-immutable references and SHA-256 hashes. Credentials, tokens, cookies,
-private keys, and secret values MUST NOT be published.
-
-Publication MUST write an immutable uniquely named Markdown report, update
-`docs/ai/latest.json` atomically, validate metadata and links, and never
-overwrite a prior handover file. A newer `created_utc` on the canonical
-pointer MUST NOT be silently replaced by an older campaign. If publication
-fails, the assistant MUST report failure rather than claim the handover is
-retrievable.
-
-The canonical `docs/ai/latest.json` pointer MUST be discoverable from the
-consuming repository’s **agreed pointer branch** (Home Assistant: `develop`;
-fallback: the GitHub default branch) even when the campaign remains on an
-unmerged feature branch. Assistants MUST NOT merge unrelated feature
-branches solely to publish a handover. Copying the report onto a
-docs-only pointer update is the allowed path.
-
-When the pointer is stale or a known campaign is newer, the reader MUST also
-inspect open handover PRs and fetch candidate reports from their exact head
-branches. A missing or older target-branch file MUST NOT be treated as proof
-that no progress or handover exists. The report and reader MUST distinguish
-an open, retrievable proposal from a merged canonical publication. A
-coordination repository MAY use a consistent handover PR title prefix as a
-searchable active-handover index; that index MUST NOT imply that the PR has
-merged.
-
-**Why:** Overseer review was blocked when campaign evidence lived only in a
-Cursor chat. A GitHub-retrievable pointer lets a human say “check handover”
-and get the full report.
-
-**Verify:** Consuming repositories have `docs/ai/latest.json`, immutable
-handovers under `docs/ai/handovers/`, a `publish-handover` skill, a closeout
-check, and tests for pointer freshness, secret scanning, missing evidence,
-publication coordinates, open-PR head discovery, and mandatory-closeout
-phrasing; handbook tests assert `HA-AI-009` plus
-`HANDOVER PUBLICATION BLOCKED` in generated Cursor rules.
+**Verify:** Each consuming repository's normal startup path names its canonical
+file/ref; a dry-run confirms the assistant can fetch/read it; a harmless
+response is written and the resulting ref is inspected. Tests assert the
+required path, write-through duty, secret exclusion, authorization boundary,
+and explicit limitation that Markdown cannot wake or intercept an agent.

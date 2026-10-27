@@ -277,44 +277,35 @@ class CapabilityEvidenceTests(unittest.TestCase):
 
 
 class CampaignHandoverTests(unittest.TestCase):
-    """HA-AI-009 durable handover protocol."""
+    """HA-AI-009 single canonical project handover."""
 
     def test_ha_ai_009_present(self) -> None:
         chapter = (HANDBOOK / "08-documentation-and-ai.md").read_text(encoding="utf-8")
-        self.assertIn("## HA-AI-009 — Publish a durable AI campaign handover", chapter)
+        self.assertIn("## HA-AI-009 — Maintain one canonical project handover", chapter)
         block = chapter.split("## HA-AI-009 —", 1)[1]
         self.assertIn("**Level:** Standard", block)
         self.assertIn("check handover", block)
-        self.assertIn("docs/ai/latest.json", block)
-        self.assertIn("publish-handover", block)
-        self.assertIn("does **not** install anything into ChatGPT", block)
-        self.assertIn("agreed pointer branch", block)
-        self.assertIn("Mandatory closeout", block)
-        self.assertIn("HANDOVER PUBLICATION BLOCKED", block)
-        self.assertIn("partially completed work", block)
-        self.assertIn("tasks stopped for human intervention", block)
+        self.assertIn("exact file", block)
+        self.assertIn("Before each substantive user-visible response", block)
+        self.assertIn("same canonical file", block)
+        self.assertIn("does not grant authority", block)
+        self.assertIn("cannot wake an idle agent", block)
+        self.assertIn("historical records", block)
         self.assertIn("MUST NOT block emergency recovery", block)
-        self.assertIn("publication coordinates", block)
-        self.assertIn("open handover PRs", block)
-        self.assertIn("searchable active-handover index", block)
 
     def test_schema_and_reader_exist(self) -> None:
-        schema = json.loads(
-            (HANDBOOK.parent / "schemas" / "ai-handover.schema.json").read_text(encoding="utf-8")
-        )
-        self.assertEqual(schema["properties"]["protocol_version"]["const"], 1)
         reader = (HANDBOOK.parent / "examples" / "ai-handover-reader.md").read_text(encoding="utf-8")
         self.assertIn("check handover for Home Assistant", reader)
-        self.assertIn("check handover for SquigOS", reader)
+        self.assertIn("CURRENT_HANDOVER.md", reader)
+        self.assertIn("develop:docs/ai/CURRENT_HANDOVER.md", reader)
         self.assertIn("private", reader.lower())
-        self.assertIn("GitHub connector", reader)
-        self.assertIn("search open handover PRs", reader)
-        self.assertIn("retrievable but proposed", reader)
-        skill = (
-            HANDBOOK.parent / ".cursor" / "skills" / "publish-handover" / "SKILL.md"
-        ).read_text(encoding="utf-8")
-        self.assertIn("name: publish-handover", skill)
-        self.assertIn("ChatGPT is **not** installed", skill)
+        self.assertIn("authenticated GitHub Contents API", reader)
+        self.assertIn("not replace or supersede", reader)
+        generic = (HANDBOOK.parent / "examples" / "canonical-agent-handover-rule.md").read_text(encoding="utf-8")
+        self.assertIn("[REPOSITORY_PATH]", generic)
+        self.assertIn("[STABLE_BRANCH_OR_REF]", generic)
+        self.assertIn("Before every substantive user-visible response", generic)
+        self.assertIn("cannot wake an idle agent", generic)
 
     def test_generated_outputs_include_ha_ai_009(self) -> None:
         subprocess.run(
@@ -329,8 +320,9 @@ class CampaignHandoverTests(unittest.TestCase):
             GENERATED / ".cursor/rules/home-assistant-engineering.mdc"
         ).read_text(encoding="utf-8")
         self.assertIn("HA-AI-009", cursor)
-        self.assertIn("HANDOVER PUBLICATION BLOCKED", cursor)
-        self.assertIn("Mandatory closeout", cursor)
+        self.assertIn("Before each substantive user-visible response", cursor)
+        self.assertIn("cannot wake an idle agent", cursor)
+        self.assertIn("does not grant authority", cursor)
 
 
 class DomainBehaviourCatalogueTests(unittest.TestCase):
