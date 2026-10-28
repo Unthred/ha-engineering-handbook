@@ -90,6 +90,17 @@
     "custom_cards": { "type": "object" },
     "views": { "type": "object" },
     "content_hygiene": { "type": "object" },
+    "page_focus": {
+      "type": "object",
+      "properties": {
+        "max_primary_cards_per_section_phone": { "type": "integer", "minimum": 1 },
+        "overview_may_embed_editors": { "type": "boolean" },
+        "engineering_controls_location": { "type": "string" },
+        "navigation_pattern": { "type": "string" },
+        "like_items_share_one_template": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
     "page_header": {
       "type": "object",
       "required": ["mode"],

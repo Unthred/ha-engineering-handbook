@@ -31,6 +31,14 @@ viewport_validation:
     width_px_range: [1440, 1920]
     required_outcome: purposeful_columns_or_deliberate_max_width
 
+# Page focus (HA-UX-020..023): density budget and hub/spoke structure.
+page_focus:
+  max_primary_cards_per_section_phone: 6
+  overview_may_embed_editors: false
+  engineering_controls_location: advanced_subview_or_collapsed_section
+  navigation_pattern: overview_detail_advanced
+  like_items_share_one_template: true
+
 sections_policy:
   max_columns:
     phone: 1

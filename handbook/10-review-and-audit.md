@@ -35,6 +35,10 @@ Reviewers MUST explicitly inspect responsive quality. Ask or observe:
 | Conditional states | Visibility states not exercised in normal view |
 | Repo vs live storage drift | Repository mirror treated as live, or live layout diverges without parity (`HA-UX-014`) |
 | Missing preferred header | Profile `page_header.mode` is `preferred`/`required` but view lacks centred title + relevant pills without exception (`HA-UX-019`) |
+| Overloaded page | One page mixes unrelated controls, long scroll, or an editor/diagnostics on an overview (`HA-UX-020`, `HA-UX-022`) |
+| Engineering controls exposed | Ownership, gates, tuning, rollback or diagnostics outside an advanced subview or collapsed section (`HA-UX-021`) |
+| Per-item page drift | Like items have different layouts or show empty/broken cards for a missing entity (`HA-UX-023`) |
+| Valid but unusable | Declared complete on tests/save/render evidence while the occupant cannot easily do the task (`HA-UX-024`) |
 | Decorative or excessive pills | Pills lack page purpose, exist only for symmetry, or routinely exceed ~5 (`HA-DESIGN-009`) |
 | Header debris / overflow | Issue/PR refs or entity IDs in pills; poor wrap, clipping, desktop stretch, or humour that obscures function (`HA-UX-018`, `HA-DESIGN-009`) |
 
@@ -47,6 +51,8 @@ Reviewers MUST explicitly inspect responsive quality. Ask or observe:
 **Fail — content hygiene:** An operational card subtitle reads `plant humidity excluded (#248)`. Cite `HA-UX-018`.
 
 **Fail — evidence:** PR says “checked desktop” with no widths, no normal-view note, and no confirmer. Cite `HA-TEST-016` / strengthened `HA-UX-005`.
+
+**Fail — overloaded page:** A “Settings” view lists every helper, gate status, claim/rollback button and schedule for all rooms in one scroll. Cite `HA-UX-020` / `HA-UX-021`; split into overview, per-room pages and an advanced subview.
 
 **Fail — missing preferred header:** Profile sets `page_header.mode: preferred` but an operational analytics view opens with only raw entity rows and no centred title/pills, with no documented exception. Cite `HA-UX-019`.
 

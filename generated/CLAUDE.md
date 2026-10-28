@@ -272,6 +272,71 @@ Safety-critical or operationally urgent information MUST use clear language
 rather than jokes. Pills MUST follow `HA-UX-018` content hygiene and the pill
 rules in `HA-DESIGN-009`.
 
+## HA-UX-020 — One focused task per page
+
+**Standard.** Each dashboard page MUST serve one recognisable task or question for the
+occupant (for example “how warm is each room?” or “change this room's
+schedule”) and MUST be completable without scrolling through unrelated
+controls. A page that gathers many unrelated or rarely used controls, entities
+or explanations into one long scroll is defective even if every control works.
+
+A page SHOULD stay within a modest density budget recorded in the dashboard
+profile (`page_focus`), for example a small number of primary cards per section
+on a phone. Exceeding the budget requires splitting the page, moving detail to
+a subview (`HA-UX-009`), or documenting the exception.
+
+## HA-UX-021 — Separate everyday controls from engineering controls
+
+**Standard.** Everyday controls (current state, the target the occupant sets, the schedule,
+Boost, an on/off enable) MUST be reachable on the primary page for the thing
+they control. Engineering controls — ownership or mode selectors, safety-gate
+status, model and tuning parameters, rollback and commissioning actions,
+diagnostic sensors — MUST live in a clearly separated advanced area: a
+dedicated advanced subview, or a collapsed section that is closed by default.
+
+Engineering controls MUST NOT appear in an overview, and MUST NOT sit between
+the occupant and an everyday control. An advanced area MUST be reachable from
+the page it configures with one tap. Actions that can change who or what
+controls a device, or that can disable a safety function, belong only in the
+advanced area and follow `HA-UX-008`.
+
+## HA-UX-022 — Hub, spoke and advanced navigation
+
+**Standard.** A feature spanning several similar things (rooms, zones, devices) SHOULD use a
+three-level structure: a concise **overview** with one compact card per item,
+one **detail page per item**, and a separate **advanced** page. Every card on
+the overview MUST navigate to its item's page; every detail and advanced page
+MUST provide a back path to its parent using the view's native back
+navigation (`HA-UX-013`) rather than duplicate buttons.
+
+Overview cards show current state and one headline fact (for example current
+and target temperature and whether it is heating) and MUST degrade explicitly
+when the item is unavailable (`HA-UX-010`). The overview MUST NOT embed
+editors, schedules or settings.
+
+## HA-UX-023 — Reuse one page template for like things
+
+**Standard.** Items of the same kind MUST use the same page layout, the same card order and
+the same labels, generated from a single definition where practical. Capability
+differences between items (for example an optional helper that exists for only
+some rooms) MUST be expressed through conditional or omitted cards inside the
+shared layout, not by designing a different page, and MUST NOT show a broken or
+empty card for a missing entity.
+
+Generated dashboard source SHOULD have a drift check so the committed export
+cannot diverge from its generator (`HA-UX-014`).
+
+## HA-UX-024 — Usability is part of done
+
+**Standard.** A dashboard change is not complete when it is merely valid, saved and rendering.
+It is complete when an occupant can accomplish the page's task quickly and
+without help (`HA-UX-020`), the everyday and engineering separation holds
+(`HA-UX-021`), and the human-confirmation requirement of `HA-TEST-016` is met
+when the agent cannot inspect the authenticated frontend. An agent MUST NOT
+describe a dashboard as finished on the evidence of tests, JSON validity or a
+successful save alone, and MUST treat occupant feedback that a page is
+unusable as a defect to correct, not a preference to defend.
+
 ## HA-SEC-001 — Never commit secrets
 
 **Standard.** Passwords, tokens, private keys, webhook identifiers, precise sensitive locations, and recoverable credentials MUST NOT enter version control.

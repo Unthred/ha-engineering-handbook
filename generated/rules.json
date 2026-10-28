@@ -442,6 +442,56 @@
       "verification": "Profile `page_header.mode` is respected; covered views have a"
     },
     {
+      "id": "HA-UX-020",
+      "title": "One focused task per page",
+      "area": "UX",
+      "level": "Standard",
+      "text": "Each dashboard page MUST serve one recognisable task or question for the\noccupant (for example “how warm is each room?” or “change this room's\nschedule”) and MUST be completable without scrolling through unrelated\ncontrols. A page that gathers many unrelated or rarely used controls, entities\nor explanations into one long scroll is defective even if every control works.\n\nA page SHOULD stay within a modest density budget recorded in the dashboard\nprofile (`page_focus`), for example a small number of primary cards per section\non a phone. Exceeding the budget requires splitting the page, moving detail to\na subview (`HA-UX-009`), or documenting the exception.",
+      "source": "handbook/04-dashboards-and-ux.md",
+      "rationale": "A technically complete “settings” page that exposed every helper,",
+      "verification": "Review the page as an occupant: its purpose is statable in one"
+    },
+    {
+      "id": "HA-UX-021",
+      "title": "Separate everyday controls from engineering controls",
+      "area": "UX",
+      "level": "Standard",
+      "text": "Everyday controls (current state, the target the occupant sets, the schedule,\nBoost, an on/off enable) MUST be reachable on the primary page for the thing\nthey control. Engineering controls — ownership or mode selectors, safety-gate\nstatus, model and tuning parameters, rollback and commissioning actions,\ndiagnostic sensors — MUST live in a clearly separated advanced area: a\ndedicated advanced subview, or a collapsed section that is closed by default.\n\nEngineering controls MUST NOT appear in an overview, and MUST NOT sit between\nthe occupant and an everyday control. An advanced area MUST be reachable from\nthe page it configures with one tap. Actions that can change who or what\ncontrols a device, or that can disable a safety function, belong only in the\nadvanced area and follow `HA-UX-008`.",
+      "source": "handbook/04-dashboards-and-ux.md",
+      "rationale": "Mixing helpers, gates, and everyday controls forces occupants to",
+      "verification": "List every control on the primary pages; each one is something an"
+    },
+    {
+      "id": "HA-UX-022",
+      "title": "Hub, spoke and advanced navigation",
+      "area": "UX",
+      "level": "Standard",
+      "text": "A feature spanning several similar things (rooms, zones, devices) SHOULD use a\nthree-level structure: a concise **overview** with one compact card per item,\none **detail page per item**, and a separate **advanced** page. Every card on\nthe overview MUST navigate to its item's page; every detail and advanced page\nMUST provide a back path to its parent using the view's native back\nnavigation (`HA-UX-013`) rather than duplicate buttons.\n\nOverview cards show current state and one headline fact (for example current\nand target temperature and whether it is heating) and MUST degrade explicitly\nwhen the item is unavailable (`HA-UX-010`). The overview MUST NOT embed\neditors, schedules or settings.",
+      "source": "handbook/04-dashboards-and-ux.md",
+      "rationale": "A hub that links to focused spokes keeps the common question (“how is",
+      "verification": "From the overview, any item's page is one tap; from any page, the"
+    },
+    {
+      "id": "HA-UX-023",
+      "title": "Reuse one page template for like things",
+      "area": "UX",
+      "level": "Standard",
+      "text": "Items of the same kind MUST use the same page layout, the same card order and\nthe same labels, generated from a single definition where practical. Capability\ndifferences between items (for example an optional helper that exists for only\nsome rooms) MUST be expressed through conditional or omitted cards inside the\nshared layout, not by designing a different page, and MUST NOT show a broken or\nempty card for a missing entity.\n\nGenerated dashboard source SHOULD have a drift check so the committed export\ncannot diverge from its generator (`HA-UX-014`).",
+      "source": "handbook/04-dashboards-and-ux.md",
+      "rationale": "Per-item hand-built pages drift apart; occupants relearn each one and",
+      "verification": "Diff two item pages: differences are limited to names, entity IDs"
+    },
+    {
+      "id": "HA-UX-024",
+      "title": "Usability is part of done",
+      "area": "UX",
+      "level": "Standard",
+      "text": "A dashboard change is not complete when it is merely valid, saved and rendering.\nIt is complete when an occupant can accomplish the page's task quickly and\nwithout help (`HA-UX-020`), the everyday and engineering separation holds\n(`HA-UX-021`), and the human-confirmation requirement of `HA-TEST-016` is met\nwhen the agent cannot inspect the authenticated frontend. An agent MUST NOT\ndescribe a dashboard as finished on the evidence of tests, JSON validity or a\nsuccessful save alone, and MUST treat occupant feedback that a page is\nunusable as a defect to correct, not a preference to defend.",
+      "source": "handbook/04-dashboards-and-ux.md",
+      "rationale": "Automated gates prove structure, not usability.",
+      "verification": "The change record states the page's task, who confirmed it in"
+    },
+    {
       "id": "HA-SEC-001",
       "title": "Never commit secrets",
       "area": "SEC",

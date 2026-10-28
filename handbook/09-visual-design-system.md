@@ -199,6 +199,7 @@ Successful rendering alone is insufficient. A dashboard change is not complete u
 - sensible section and card spans;
 - correct conditional states in **normal view**;
 - operational UI content hygiene (`HA-UX-018`);
+- one focused task per page, with engineering controls separated from everyday controls and consistent hub/detail/advanced navigation (`HA-UX-020`–`HA-UX-024`);
 - consistency with this design system.
 
 Valid JSON/YAML, a successful Lovelace save, editor preview, and inspection of storage data are **not** proof of acceptable visual output. If the agent cannot inspect the authenticated Home Assistant frontend, human visual confirmation is required before merging any material dashboard layout or presentation change (`HA-TEST-016`).
