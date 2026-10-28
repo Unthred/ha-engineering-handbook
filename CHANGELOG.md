@@ -6,6 +6,12 @@ All notable handbook changes will be recorded here.
 
 ### Added
 
+- Focused-page UX contract: `HA-UX-020` (one task per page), `HA-UX-021`
+  (separate everyday from engineering controls), `HA-UX-022` (overview /
+  detail / advanced navigation), `HA-UX-023` (reuse one template for like
+  items), `HA-UX-024` (usability is part of done); `page_focus` dashboard
+  profile block; review-audit checks; ADR-0008.
+
 - `HA-DOC-003` — maintain and consult domain behaviour specifications in the
   consuming Home Assistant repository. Production YAML is evidence, not
   automatically the intended specification. Each requirement has status
