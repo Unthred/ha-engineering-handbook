@@ -6,6 +6,11 @@ All notable handbook changes will be recorded here.
 
 ### Added
 
+- `HA-UX-020` — everyday pages stay simple; anything configurable or
+  complicated lives in Settings pages. Assistants must not add unrequested
+  settings/control clusters to everyday pages and must move found clutter to
+  Settings. Dialog-only input for modes that need one value.
+
 - `HA-DOC-003` — maintain and consult domain behaviour specifications in the
   consuming Home Assistant repository. Production YAML is evidence, not
   automatically the intended specification. Each requirement has status

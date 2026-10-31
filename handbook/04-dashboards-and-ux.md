@@ -217,6 +217,35 @@ rules in `HA-DESIGN-009`.
 titles and at-a-glance pills; without a documented pattern, agents either strip
 personality into dry headings or omit useful orientation chips.
 
+## HA-UX-020 — Keep everyday pages simple; put configuration in Settings
+
+**Level:** Standard
+
+Everyday user pages (house modes, rooms, security, home overview) MUST stay clean
+and simple: current state plus the few actions the household uses daily.
+Anything configurable, tunable, schedulable or complicated — thresholds, date
+and season pickers, per-feature status dumps, multi-step control panels,
+diagnostics — MUST live on a Settings page (a settings hub and its subpages),
+linked from the hub, not on an everyday page.
+
+An assistant MUST NOT add settings, helpers or control clusters to an everyday
+page on its own initiative, and MUST NOT treat "the feature needs a knob" as a
+reason to place the knob there; a control belongs on an everyday page only when
+the homeowner explicitly asked for that control on that page. When a mode or
+action needs a single input, ask for it in a dialog that contains only that
+input and put everything else about the feature in Settings. When such clutter
+is found on an everyday page, move it to the matching Settings page in the same
+change (`HA-UX-011` surgical edits, `HA-UX-012` preserve properties).
+
+**Why:** Unrequested control clusters on a daily-use page (holiday-lighting
+controls and heating-season settings added to House Modes without authorisation)
+made the page hard to use for the household. Settings pages are where
+complexity is expected; everyday pages are where it is a defect.
+
+**Verification:** Every helper or control on an everyday view is a state display
+or a daily action the homeowner asked for; each tunable has a Settings-page home
+linked from the hub.
+
 **Verify:** Profile `page_header.mode` is respected; covered views have a
 centred title and relevant pills (or a documented reason not to); matrix checks
 confirm wrapping without clipping (`HA-TEST-016`, `HA-DESIGN-009`).
